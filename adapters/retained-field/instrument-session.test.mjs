@@ -92,6 +92,14 @@ function setup(options = {}) {
       // receipt and the field unchanged (host.rs stage_operation).
       if (['stage-retire', 'stage-bind', 'stage-unbind'].includes(request.command.operation))
         reply.stage = port.stageBody ?? { schema: 'ql.stage-receipt/v1', procedure_ref: request.command.procedure_ref ?? request.command.procedure?.procedure_ref, applied: true };
+      // Controlled protocol case: the Tarot score reads answer with the held
+      // score, its currentness and the event it was resolved against, the
+      // field unchanged (host.rs score_operation).
+      if (['score-resolve', 'score-state'].includes(request.command.operation)) {
+        reply.score = port.scoreBody ?? { schema: 'ql.tarot-score/v1', subject_ref: current.subject_ref, tokens: [] };
+        reply.current = port.scoreCurrent ?? true;
+        reply.resolved_event_ref = port.scoreEventRef ?? current.event_ref;
+      }
       if (port.effect) reply = port.effect(reply);
       if (port.delay) await port.delay;
       return reply;
@@ -623,5 +631,65 @@ test('a held owner takes no stage disclosure reads', async () => {
   const { session } = setup();
   session.hold('controlled hold');
   await assert.rejects(session.stageState(), /idle admitted owner/);
+  session.dispose();
+});
+
+test('a Tarot score resolve is a read: the score, its currentness and its event come through, the field never moves', async () => {
+  const { session, calls, port } = setup();
+  await session.pump();
+  const before = session.reading.acknowledged;
+  const score = { schema: 'ql.tarot-score/v1', subject_ref: 'controlled:one', basis_revision: 'controlled:basis', tokens: [{ token_ref: 't' }] };
+  port.scoreBody = score;
+  const command = { operation: 'score-resolve', basis: { subject_ref: 'controlled:one', locus_ref: 'controlled:sky' } };
+  const reading = await session.score(command);
+  assert.deepEqual(calls.at(-1).command, command, 'the resolve rides the envelope as asked');
+  assert.deepEqual(reading, { refused: false, score, current: true, resolved_event_ref: 'controlled:sky' });
+  reading.score.tokens.length = 0;
+  assert.equal(port.scoreBody.tokens.length, 1, 'the score is a copy');
+  assert.deepEqual(session.reading.acknowledged, before, 'a score read advances neither generation nor samples');
+  assert.ok(!session.journal().acts.some(act => act.operation === 'score-resolve'), 'a score read is not an owner act');
+  assert.equal(session.reading.available, true);
+  session.dispose();
+});
+
+test('a held Tarot score answers its own currentness: a score resolved against another event is not current', async () => {
+  const { session, port } = setup();
+  port.scoreCurrent = false; port.scoreEventRef = 'controlled:earlier-sky';
+  const reading = await session.score({ operation: 'score-state' });
+  assert.equal(reading.current, false, 'the host said not current, and the session says so');
+  assert.equal(reading.resolved_event_ref, 'controlled:earlier-sky');
+  session.dispose();
+});
+
+test('a refused Tarot score comes back as the owner\'s named reason and leaves the owner admitted', async () => {
+  const { session, port } = setup();
+  port.refuseOperation = 'score-resolve';
+  const reading = await session.score({ operation: 'score-resolve', basis: {} });
+  assert.deepEqual(reading, { refused: true, error: 'controlled refusal' });
+  assert.equal(session.reading.available, true, 'a named refusal is not an unknown owner');
+  assert.equal(session.reading.held, false);
+  port.refuseOperation = null;
+  assert.equal((await session.score({ operation: 'score-state' })).refused, false, 'the next read is admitted');
+  session.dispose();
+});
+
+test('a Tarot score read that moved the field, or carries no score, is refused', async () => {
+  const moved = setup();
+  moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
+  await assert.rejects(moved.session.score({ operation: 'score-state' }), /native cursor disagree/);
+  assert.equal(moved.session.reading.available, false, 'an unexplained acknowledgement ends this lifetime');
+  const empty = setup();
+  empty.port.effect = reply => ({ ...reply, score: { schema: 'ql.other/v1' } });
+  await assert.rejects(empty.session.score({ operation: 'score-state' }), /no ql.tarot-score\/v1 reading/);
+  empty.session.dispose();
+});
+
+test('the Tarot score admits only its two reads, and only on an idle admitted owner', async () => {
+  const { session, calls } = setup();
+  await assert.rejects(session.score({ operation: 'score-forge' }), /score-resolve and score-state/);
+  await assert.rejects(session.score({ operation: 'advance', frames: 512 }), /score-resolve and score-state/);
+  assert.equal(calls.length, 0, 'refused before any exchange');
+  session.hold('controlled hold');
+  await assert.rejects(session.score({ operation: 'score-state' }), /idle admitted owner/);
   session.dispose();
 });
