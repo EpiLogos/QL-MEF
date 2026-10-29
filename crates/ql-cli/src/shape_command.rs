@@ -1,10 +1,53 @@
-//! Read-only disclosure of the core's exact shape-address presentation.
+//! Read-only disclosure of the core's exact shape-address presentation (`ql shape presentation`), and the shape binding of a
+//! constellation a caller drafts (`ql shape bind <request.json|->`, `ql.shape-bind/v1`; O-I #742): the canonical shape its members
+//! disclose, the `ql-mef/shape-binding/v1` view a Wiki keeps for it and the identity of each same-position generated relation, so the
+//! Wiki owner can fold the whole. Bind reads no Wiki, keeps no store, creates no member and asserts no relation.
 use crate::CliError;
 use ql_core::{
     PresentationAddress, QL_GEOMETRY_SHAPE_VERSION, QlCoordinate, SHAPE_PRESENTATION_VERSION,
     shape_presentation,
 };
+use ql_wiki::{ShapeBindRequest, bind_shape};
 use serde_json::{Value, json};
+use std::io::Read;
+
+const USAGE: &str = "usage: ql shape presentation <exact-shape-ref> [--json] | ql shape bind <request.json|-> [--json]";
+const MAX_BIND_INPUT: u64 = 1024 * 1024;
+
+/// The bind request at `path` (`-` for stdin), bounded to 1 MiB.
+fn bind_input(path: &str) -> Result<String, CliError> {
+    let reader: Box<dyn Read> = if path == "-" {
+        Box::new(std::io::stdin())
+    } else {
+        Box::new(std::fs::File::open(path).map_err(|e| CliError(e.to_string()))?)
+    };
+    let mut input = String::new();
+    reader
+        .take(MAX_BIND_INPUT + 1)
+        .read_to_string(&mut input)
+        .map_err(|e| CliError(e.to_string()))?;
+    if input.len() as u64 > MAX_BIND_INPUT {
+        return Err(CliError("shape bind request exceeds 1 MiB".into()));
+    }
+    Ok(input)
+}
+
+fn bind(path: &str, json_output: bool) -> Result<String, CliError> {
+    let request: ShapeBindRequest = serde_json::from_str(&bind_input(path)?)
+        .map_err(|e| CliError(format!("invalid shape bind request: {e}")))?;
+    let reading = bind_shape(&request).map_err(|e| CliError(e.to_string()))?;
+    if json_output {
+        serde_json::to_string_pretty(&reading).map_err(CliError::from)
+    } else {
+        Ok(format!(
+            "{} · {} round {}\n{} generation site(s); no members or relations created.",
+            reading.shape_ref,
+            reading.grain,
+            reading.binding.whole_ref,
+            reading.generation_sites.len()
+        ))
+    }
+}
 
 fn coordinate(value: QlCoordinate) -> Value {
     json!({"position":value.position.value(),"face":value.face.as_str()})
@@ -12,14 +55,13 @@ fn coordinate(value: QlCoordinate) -> Value {
 
 pub fn command(args: &[String], json_output: bool) -> Result<String, CliError> {
     let [operation, reference] = args else {
-        return Err(CliError(
-            "usage: ql shape presentation <exact-shape-ref> [--json]".into(),
-        ));
+        return Err(CliError(USAGE.into()));
     };
+    if operation == "bind" {
+        return bind(reference, json_output);
+    }
     if operation != "presentation" {
-        return Err(CliError(
-            "usage: ql shape presentation <exact-shape-ref> [--json]".into(),
-        ));
+        return Err(CliError(USAGE.into()));
     }
     let reading = shape_presentation(reference).ok_or_else(|| {
         CliError(
