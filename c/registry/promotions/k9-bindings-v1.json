@@ -893,6 +893,21 @@
    "kind": "computational"
   },
   {
+   "path": "crates/ql-mef/src/m3_binding.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#3-2",
+    "#3-3-2"
+   ],
+   "rationale": "Binding's engine (DLW manual §22.3 The Binding skin): over the cell ql_core::generate makes of a hexagram under a matrix (the map's M3-3-2 pairing) it reports LightBox's one-loop running coupling and Cornell energy (EpiLogos/LightBox src/qcd/physics.ts, ported as it stands) and the string's stretch as the charge between the cell's two codons in the asked register (M3-2's four charges), one unit to LightBox's meson rest length; and the M3 receipt's operation behind the last motion. Binding's own physics: it claims no measured constant and moves no M3 state.",
+   "tests": [
+    "crates/ql-mef/tests/m3_binding.rs",
+    "crates/ql-cli/tests/m3_binding_cli.rs"
+   ],
+   "kind": "computational"
+  },
+  {
    "path": "crates/ql-cli/src/context_frame_reading.rs",
    "stratum": "rust",
    "disposition": "infrastructural",

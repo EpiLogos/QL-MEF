@@ -35,6 +35,7 @@ pub mod m2_engine;
 pub mod m2_hours;
 pub mod m2_sky;
 pub mod m2_vimarsha;
+pub mod m3_binding;
 pub mod m3_engine;
 pub mod m3_inscription;
 pub mod m3_source;
