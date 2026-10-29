@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "psv-independent-verification-of-the-taonta-2026-10-07",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:psv-300",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791374272,
+  "subject": "PS-V independent verification of the Ta-Onta procedural stage (#300) landed as QL-MEF PR #322, squash-merged at 975a90d",
+  "result": "Delivered crates/ql-mef/tests/psv_independent.rs: 11 contract-derived discriminating cases (A02 reorder/rename/re-entry; A04 host readback vs independent recomputation across two fresh hosts; A05 stale cursor / repeated request_id / foreign subject refused by cause with before/after digests; A07 regeneration revises only its own contributions + retire retains authored value; A10 canonical admission order, per-binding budgets, passage non-re-entry, exhaustion stops only the binding; determinism byte-identical across two fresh hosts; eleven negative mutations refused by name; plus host A08). 5/5 in-process and 6/6 against the freshly built real ql-field-worker; findings NONE; sustained-selector membership, subscription resync and the live acceptance walk named-untestable at this lane scope and recorded on #300. Gates green: fmt, clippy, verify core, verify invariants; CI all-pass on #322. Crash-recovery note: the lane resumed after a machine crash — seat re-attached as already-attached with work intact in the tree; origin/main (#316-#321) merged cleanly (the surviving instrument-session files were byte-identical to landed #321 content and the refreshed k8-census fixture sha matched main); the surviving harness proved complete against the commission and needed no new cases, only execution and landing. Seat env-3/ql-mef released by this lane.",
+  "status": "resolved"
+}

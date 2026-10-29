@@ -1,0 +1,17 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "135-m1m3-drive-the-live-expression-2026-09-27",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-opus-5.5",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790539001,
+  "subject": "#135 M1–M3 drive the live Expression: K² played torus landed on branches (QL-MEF#251, O:I#545 draft)",
+  "result": "QL feat/m123-engine-binding (PR 251): K² provider (native M1 torus body; 8 Vimarśā voices as surface modes; M1 tick retunes+reshapes via new explicit K8 replace-shapes), ql kernel k2-binding composer with dated sky, ql-sky companion, host ops m1-advance/replace-event/influence/receive-personal, Nara reception binding (docs/kernel-rebuild/K2-EXPRESSION-BINDING.md, posted to #201), worker I/O fix (~2x), M ledger cached. Real-worker tests k8_reshape/k2_instrument/k2_nara_reception pass on Mac and Omarchy. O:I feat/m123-expression-instrument (PR 545 draft): companions in catalogue/oi update/oi where, kernel compose op, OI_BIN pinned for Finder-launched app (fixes ~25 kernel oi callers), Live instrument surface in Studio (Epi world default). Browser trace passes on installed QL cut incl. disconnected negative. Managed install on Mac done (oi 1e400188, ql e29e3a3 with 4 companions, adopted catalogue from branch; backup of 17 Sep catalogue in session scratchpad). REMAINING: desktop bundle install needs owner OK (app running); speaker/human walk; QL PR merge then bump surfaces.json QL revision and mark O:I PR ready; open owner questions: sky->condition rule, material policy, cadence, odd-m seam, centre contribution rule (#201).",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-27",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30"
+  ]
+}

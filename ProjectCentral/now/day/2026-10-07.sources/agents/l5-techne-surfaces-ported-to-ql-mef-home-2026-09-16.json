@@ -1,0 +1,11 @@
+{
+ "schema": "central.project-now.handoff/v1",
+ "id": "l5-techne-surfaces-ported-to-ql-mef-home-2026-09-16",
+ "provenance": "agent-authored-bounded-return",
+ "actor": "zcode-session-2026-09-16-l5-techne-execution",
+ "kind": "handoff",
+ "recorded_at_unix_seconds": 1789591727,
+ "subject": "L5 Techne surfaces ported into QL-MEF (adapters/techne/surfaces) on the TB0 base",
+ "result": "Owner direction: the instrument surfaces refine next to the L5/Vak canon, not scattered across repos. Ported the seven apertures verbatim from O-I techne/convergence (8685da40+ec3100c1) into adapters/techne/surfaces/cradle on techne/tb0-surfaces-port (based on TB0 2c704dc, PR #224 base): project/canvas/timeline/journey/place/palace M0'-M5' + expressions conjugate 3:3. Host closure copies ride along; kernel types/transport are banner-marked port bindings; design-system techne slice vendored. 130/130 tests + strict tsc green standalone; root contract checks unchanged (cargo test -p ql-adapters, scripts/techne-gates.py). Sync law in adapters/techne/surfaces/README.md: refine here, port back through TB0 fan-out #213-#219; contract changes only through #212. Branch NOT pushed.",
+ "status": "active"
+}

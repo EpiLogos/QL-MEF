@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "ql-291-qd1qd4-merged-to-main-2026-10-07",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode:qd1-recovery-20261007",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791382100,
+  "subject": "QL #291 QD1+QD4 MERGED to main; seat released clean",
+  "result": "PR #323 squash-merged at 2026-10-07T14:07Z after all five CI gates green (changes, core-rust, native-c, repository-invariants, ql-mef-rust). QL-MEF main now carries the four native agent contracts, projection/admission, ql agent-event CLI, the Pi QL package (adapters/pi/ql-agent), nine agent python instruments with seven green suites, 60 reviewed K9 modules and the regenerated census receipt. env-1 ql-mef seat released to free at origin/main (workcellenv1qlmef-seat-released-to-free-at-2026-10-07); scratch swept. Named remaining: publisher cut carries merged main into the installed ql binary (agent-event still exit 2 until then); QD5 election not claimed (G-series 4/9, 5/9, 3/9); training stays behind its gates.",
+  "status": "active"
+}

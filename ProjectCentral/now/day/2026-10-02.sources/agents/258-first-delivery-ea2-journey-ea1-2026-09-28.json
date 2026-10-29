@@ -1,0 +1,17 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "258-first-delivery-ea2-journey-ea1-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-opus-5.5-ql258",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790607439,
+  "subject": "#258 first delivery: EA2 journey + EA1 lived context at source level, EA0 team proposed, EA0-EA5 commissioned",
+  "result": "Seat ep258-journey/ql-mef (isolated, branch programme/ea-first-journey-20260928, draft PR #261). Done: nara.journey.* and nara.lived-context.compose (16 deterministic tests, invariants gate passes locally incl. new k9 dispositions #3/#4-2 and #4); cross-process ql run over two Days; six M-domain AgentProfiles + epi-logos-domain-team AgentSet proposed (generated-proposal/unrecognised); Factory run run:01M3MA68600YZYJETC82RJVDE8 commissioned in QL .factory state (7 units not-started). Open: CI on #261; O:I host consumption handed to the env-3 Nara lane (O-I NOW handoff); EA0 AIKit/Actuation composition of the new agents and native Bimba ContextSource; EA4 M5-2/3/4 data bindings + Logos Methodology; EA5 team work; independent replay. Findings on #258 comment 5872541213 (Thoth Knight vs kernel KING register; Bimba provider absence; knowledge-route gaps). Retire the seat with `seat release ep258-journey ql-mef --retire` after #261 lands.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01"
+  ]
+}

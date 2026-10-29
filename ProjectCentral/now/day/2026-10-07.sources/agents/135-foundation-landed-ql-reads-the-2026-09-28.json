@@ -1,0 +1,22 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "135-foundation-landed-ql-reads-the-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-m123-scene",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790604669,
+  "subject": "#135 foundation landed: QL reads the live Bimba map (#260) and the current kernel (#257); scene build next",
+  "result": "Landed on main: #256/#260 (reconcile session: registry + generators from the live map, successors published) and #257 (this session: vendor/epi-kernel reference moved daa660c→C-Experiments c7872e96 with M3-COIN-1 C=8/G=7 carried; 268 new constructs bound to coordinates; 4:5:6 energy law; M2/M3 successor proofs from Omarchy; all 7 kernel workflows green). Open: branch map/m3-5-clock-inscription (seat env-2/ql-mef) holds migration/bimba-map/2026-09-28-m3-5-clock-inscription.cypher — 60 additive relations (decan→pip reflection 36, governor→palindromic codon 24), dry-run clean, NOT applied: needs owner go. #254 Gate 0 map open with two rounds of owner corrections. Next: apply inscription on owner go → QL refresh-from-bimba-map picks it up → build the Earth-centred M1–M3 scene as a native O:I Expression (oi.expression/v1, engine_composition carrier, native-field attach). C/G ruled 8/7 — never re-raise.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06"
+  ]
+}

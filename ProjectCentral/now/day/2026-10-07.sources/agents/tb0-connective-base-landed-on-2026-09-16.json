@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "tb0-connective-base-landed-on-2026-09-16",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode-session-2026-09-16-tb0-connective-base",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1789583745,
+  "subject": "TB0 connective base landed on techne/tb0-connective-base, PR #224",
+  "result": "Executed issue #212 end to end. Reconciled local main (unpushed T0 work) with origin/main (dual-reading lock #209); branch techne/tb0-connective-base head 2c704dc. ql.techne/v1 extended additively: relation standing/temporal qualification, place relation type + uncertainty, attempt/return refs, warranted m_coordinate_ref/return_ref, application_cuts disclosure, situated-Agency role floor (guardian/anima/aletheia/techne with role law), DisclosureSession dual-reading state + cross_cut, RC transport alias mapping. Rich fixture fixtures/techne/tb0-connective-base-v1.json drives all lanes. 18/18 ql-adapters tests; workspace green except pre-existing darwin m1_engine link failure (fix/darwin-m1-linker lane); invariants gate green after registering techne.rs census disposition; techne-gates G-TB0 added, G2/G7 live. Fan-out pin TB0-1 posted on #212; PR #224 awaiting CI/review. O-I TS mirror must adopt TB0-1 (child-lane requirement).",
+  "status": "active"
+}

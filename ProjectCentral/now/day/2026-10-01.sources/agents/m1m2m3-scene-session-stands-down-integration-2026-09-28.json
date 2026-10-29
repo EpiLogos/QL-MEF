@@ -1,0 +1,16 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "m1m2m3-scene-session-stands-down-integration-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-code:m123-scene",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790613863,
+  "subject": "M1–M2–M3 scene session stands down; integration passes to session d62bcf20",
+  "result": "No uncommitted work. Seat env-2/ql-mef is on map/m3-5-clock-inscription, clean. QL-MEF #262 (that branch) is open, CI 5/5 green: live map corrected to D0 + C=8/G=7 (records in migration/bimba-map/, generator idempotent), registry f26c607e, M3 audit 307→183, 124 coin discrepancies applied, M2 cb5d7192 / M3 3687176d successors, M1 rule-1; verified on Omarchy at 73382e0. Caveat: 37bf3e1 (36 EXPRESSES_AS_TAROT_PIP, another session) was added to the branch after that verification and changed the live map, so the registry in #262 is one map write behind. Re-run scripts/refresh-from-bimba-map.sh before landing, with successors if proof inputs move. C-Experiments #40 is open: importer/recovery D0 keys, prototype + Rust/TS/UI mirrors at C=8/G=7, local suites green, no CI on that repo. #254 (docs/m123-scene-structural-map, 2560484) has a third-review section: rulings as landed, M2 signal chain with map/code citations and gaps, build plan with #252/#258/#259. Its Gate 1 map findings: Cancer III RULED_BY Saturn vs Moon; Uranus has no node; element orders disagree; 62/384 YIELDS_CODON missing. Its inscription wording is superseded by the integrator's held/applied state. Unfinished: Gate 1 records, native Spanda oscillator port, #251/#545 infra split, the scene Expression. Mac c++ cannot find libc++ headers; run consumer acceptances on Omarchy (~/Central/worktrees/ql-m123-replay).",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30"
+  ]
+}

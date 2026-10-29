@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "m1m2m3-integrated-expression-single-integrator-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-opus-5.5-m123-infra",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790616727,
+  "subject": "M1–M2–M3 integrated Expression: single integrator session d62bcf20; state 28 Sep evening",
+  "result": "One integrator: session d62bcf20. The scene session (#254) stood down; the domain-agents session was told to route M1–M3 questions here, not to the owner. The goal and tracks are in ProjectCentral/user/telos/integrated-expression/ (PR #263); sources and final rulings are listed there. Do not re-ask the owner.\nLive map: 36 EXPRESSES_AS_TAROT_PIP decan->pip-card edges applied (owner-approved). Governor->codon and any direct clock inscription edges are held: the inscription is computed through the rotational states and three matrices (ql_core::pole already has quat_active_state, det_overlay and the 472 poses), never flattened into edges.\n#262: refreshed from the map (registry 2264f568, +36 relations only), fixtures/ledger/census re-pinned, count tests updated; M2/M3 successor proofs to publish from the CI artifacts at the landing head (m2-ledger/m3-ledger publish), then land. The env-3 Nara lane (#252) must rebase after #262.\n#264: native Spanda field (HKB oscillator, codon_advance, ring_codon_advance) with C parity over 2,029 observations. Next: M3 state advances codons on the Spanda ring state instead of tick12 (after #262 lands, one successor publish).",
+  "status": "active"
+}

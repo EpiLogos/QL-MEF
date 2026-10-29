@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "qlmef-312-integration-lane-opened-env3qlmef-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode:tarot-score-312",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791296440,
+  "subject": "QL-MEF #312 integration lane opened (env-3/ql-mef, agent/ql-mef-20261006-1508)",
+  "result": "Integrating parent for the first-class Tarot transcription feature under #312/#296. Seat env-3/ql-mef joined free (branch cut from origin/main defb349); existing lanes untouched: codex:ta-onta-stage-296 keeps env-1/ql-mef (chore/target-gitignore dirty work), expression-enrichment keeps env-1/o-i, ui-coherence keeps env-3/o-i, essay lane keeps env-2/o-i. Two bounded implementers dispatched in this worktree on disjoint files: (A) ql-core pole/phase.rs — source-qualified phase bridge publication (quat_codon_state physical 45-deg register vs quat_active_state argument register vs ring LUT vs M3Clock 30-deg ticks; D5 + matrix §11 + open ledger gate0-m1:tick-degree-law cited; no behaviour change); (B) ql-mef tarot_score.rs — ql.tarot-score/v1 deterministic entity/event score composed from existing owners only (identity natal placements + qualified sky snapshot -> m3_inscription seed_at chains -> TarotBridge exact cover -> det_overlay/quat_active_state pose -> M3Clock basis), no quaternion preimage (M3-C31 stays open), computed scores never draw from the Nara deck. Disk floor noted: seat guard recorded 11.9GB free vs soft 20; builds share the pooled target tree; tending deferred while builds run.",
+  "status": "active"
+}

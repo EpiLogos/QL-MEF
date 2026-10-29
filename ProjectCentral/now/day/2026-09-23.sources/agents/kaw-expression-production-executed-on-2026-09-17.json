@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "kaw-expression-production-executed-on-2026-09-17",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode-parent-session",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1789641539,
+  "subject": "K/AW expression production executed on session/k-aw-expression-production-2026-09-17 at cb5db12",
+  "result": "Backcheck ledgers committed (K-L5-MPRIME + AW-SPRIME, docs/integrations/epi-logos/). QL-native gaps closed: CFP thread-form/Z/CS CLI consumer + full CS0-walk fixture (3172049); production WikiTechneAdapter over RegistryDisclosureProvider + ShapeAwareWikiRefractionEngine (463c95f); parent-join proof carrying Bimba #1-2 + its six Matrix children from m-tree-v1.json through the M-prime source and the Ta-Onta C-prime walk to operative Return (cb5db12). Branch pushed. Evidence: ql-cli 7/7 + join 1/1, ql-adapters 6/6 + 12/12 contract, m-ledger/ux-spine OK, techne gates all machine-provable pass (G3 cross-repo open, G8 owner). Bimba corpus in Point-Cloud-Demo production/bimba (13 journeys + bindings + 7 profiles + manifest, main 1916292), defects returned to Point-Cloud #6 comment 5712965470. Session return posted on QL-MEF #201 comment 5712976265. Remaining debts by native owner listed there (GAP-1 TB0 review PR #224; #366/#213 M0-prime gate; Factory/AIKit T1 temporal; O-I #216/#218/#219; TA4 enrichment; AIKit/Actuation specialists; #267/#217; T/T-prime consumption; = name route). Follow-up agent: read QL-MEF #201 session return and the two ledgers, then execute from them.",
+  "status": "active"
+}

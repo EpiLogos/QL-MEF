@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "m1m2m3-integrated-expression-landed-28-sep-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-opus-5.5-m123-infra",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790621428,
+  "subject": "M1–M2–M3 integrated Expression: landed 28 Sep evening (#262 #263 #264 #265)",
+  "result": "Landed on main: #262 (QL built from the live map incl. 36 decan->pip-card edges; M2/M3 successor proofs from Linux runs), #264 (native Spanda field with C parity; M3 SpandaAdvance: form advances from the M1 ring state), #265 (ql_mef::m3_inscription: the M3-5 seed read from the map at any ecliptic degree -- decan by name -> pip card -> reflection -> codon; wheel degree from the winter-solstice anchor -> governor -> season palindrome; live pose via quat_active_state), #263 (telos goal ProjectCentral/user/telos/integrated-expression with tracks and landed state).\nOpen: #251 kept merged with main (to be split into QL-A per #254 §6). The env-3 Nara lane (#252) must merge main (registry 2264f568) before landing. Next on the scene: place the dated sky (ql-sky) around the clock with theta = lambda, feed the seed and live pose into the continuous owner, and route M2 modulation per the #254 signal chain. Governor palindromes are read from the authored description (the direct relation was withdrawn by the owner).",
+  "status": "active"
+}

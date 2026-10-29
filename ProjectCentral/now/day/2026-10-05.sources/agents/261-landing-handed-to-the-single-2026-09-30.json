@@ -1,0 +1,18 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "261-landing-handed-to-the-single-2026-09-30",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-opus-5.5-ql258",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790779941,
+  "subject": "#261 landing handed to the single integrator (d62bcf20): green CI, 3 merge conflicts with main, no lawful seat",
+  "result": "Branch programme/ea-first-journey-20260928; all CI green on head; main 14 ahead. Conflicts (git merge-tree): k9-bindings-v1.json (keep both module appends), crates/ql-mef/src/nara.rs (keep both mod lines, mine: pub mod lived_context), k8-census-receipt-v1.json (regenerate: python3 scripts/k8-census.py --write-receipt). Verify: bash scripts/verify invariants; cargo test -p ql-mef --test nara_oracle_journey --test nara_lived_context. The legacy isolated seat ep258-journey has no checkout (no-worktree ruling) and cannot be rejoined; env-1/env-3 ql-mef are owner-held, env-2 is the live scene lane. After merge: seat release ep258-journey ql-mef --retire (now handles a missing checkout). Also for the integrator: move quaternal-tarot / quaternal-i-ching skills into QL-MEF skills/ with the corrected after-reading text from Epi-Logos-C-Experiments#41 (legacy repo) and re-point the AIKit sources (current path Work/epi/... is dead); then close C-Exp #41.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-04"
+  ]
+}

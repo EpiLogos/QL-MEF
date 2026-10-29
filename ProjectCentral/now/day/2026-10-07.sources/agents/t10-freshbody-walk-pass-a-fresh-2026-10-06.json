@@ -1,0 +1,14 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "t10-freshbody-walk-pass-a-fresh-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode:tarot-score-312",
+  "kind": "note",
+  "recorded_at_unix_seconds": 1791313035,
+  "subject": "T10 fresh-body walk PASS: a fresh Mahamaya body performed the ordinary selected-subject task natively",
+  "result": "A fresh agent body resolving agent/mahamaya (Central profile r2, 4 assigned skills, faculty #3 with the two new operations) was given only the ordinary task — the admitted basis at a path, resolve the Tarot score natively, explain it, then consume the retained result in a second occasion. It discovered ql epi-agent invoke itself, invoked mahamaya.tarot-score.resolve (ql.tarot-score/v1) and mahamaya.phase-bridge.read (ql.pole.phase-bridge/v1) on the candidate binary (agent/ql-mef-20261006-1508 b49b993), and returned a grounded reading: 20 computed tokens (no draw; origin computed throughout), primary natal/Sun = #minor:15 codon 20 TTA hexagram 20 pose 5/7 at Aries Decan 1, FourCharge [24,-6,6,12], clock tick 3 / layer 0 / covers 0. VERIFIED against my own independent invocation: identical basis_revision sha256:3d122f1f... (cross-process determinism), identical token/pose/clock facts. The body added its own computed-not-asserted checks (byte-identical re-run, anchor-longitude match, wheel-degree law, decan-card uniqueness including the Sun/Neptune shared-decan repeat), reported faithful absences (boundary_functions empty, manifestation_ref null), flagged the open gate0-m1:tick-degree-law question unprompted, and stated the retained result's later use: basis_revision-pinned re-resolution, token_ref handles for score-state, phase placement. This satisfies #312 T10 native/agent predicate; the installed-app walk with the human on the same token remains the named open boundary. Walk artifacts: /tmp/maha-tarot-result.json and /tmp/maha-pb-result.json (scratch).",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-10-06"
+  ]
+}

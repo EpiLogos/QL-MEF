@@ -1,0 +1,17 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "135-correction-k-semantics-superseded-real-2026-09-27",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-opus-5.5",
+  "kind": "learning",
+  "recorded_at_unix_seconds": 1790542098,
+  "subject": "#135 correction: K² semantics superseded; real task is the structurally built live 1-2-3 scene",
+  "result": "Owner found the K² meaning layer (QL-MEF#251, O:I#545) built from engine entry points, not the Bimba graph + C kernel (same failure as an earlier session). Infrastructure stands (companions, K8 replace-shapes, worker I/O, compose, OI_BIN Dock fix, causal/negative tests). Both PRs are draft. Diagnosis + fixes: QL-MEF#253 (AGENTS.md one-system orientation + docs/kernel-rebuild/M123-GROUNDING-AUDIT-2026-09-27.md). #201 binding corrected (centres = #2-5-0/1-1..7, reception = M2 routing). Fresh-session brief posted on #135 (comment 5859694349): build the M3-5 codon-hexagram clock from degree nodes, 16+2 aperture lenses as filters (zodiac = lens 9), real ephemeris planets around it, M2-5 routing incl. its sounding, M1 K² lattice/orientation/sheets; Gate 0 structural map reviewed by owner before code; Gate 1 reconcile C tables to graph law. Supersedes handoff 135-m1m3-drive-the-live-expression-2026-09-27.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-27",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30"
+  ]
+}

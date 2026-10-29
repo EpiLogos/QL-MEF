@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "qlmef-296-acceptance-walk-tarotscore-lane-2026-10-07",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:acceptance-walk",
+  "kind": "note",
+  "recorded_at_unix_seconds": 1791392439,
+  "subject": "QL-MEF #296 acceptance walk: tarot-score lane work preserved before primary checkout returned to main",
+  "result": "The primary checkout (Work/Quaternal-Logic) was standing on agent/ql-mef-20261006-1508 @ b49b993 (tarot-score field-host operations, QL-MEF #312 TS2-native/TS3-agent) with staged+unstaged work in the tree. For the #296 fresh install the primary checkout is restored to main @ ba4c5cf per the standing owner ruling. The lane work is preserved in three places: (1) uncommitted tracked changes stashed in this repo stash list as \"acceptance-walk-296: preserve primary-checkout uncommitted state...\"; (2) full patches (vs main, staged, unstaged) at Work/Quaternal-Logic/gates/acceptance-walk-296/lane-preservation/ (machine-local, info/excluded); (3) the lane branch origin (origin/agent/ql-mef-20261006-1508) is 10 commits ahead of the local lane checkout incl. corrected-classifier work (87e9bc7, corrected all-axis active-state reader) - the returning lane should pull its own branch and reapply from the stash/patches. Nothing was discarded.",
+  "status": "active"
+}

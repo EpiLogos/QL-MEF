@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "psg-slice-2-of-qlmef-299-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:psg-299-s2",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791326012,
+  "subject": "PS-G slice 2 of QL-MEF #299 landed: the retained sample body and the fold sequence",
+  "result": "PR #319 squash-merged to main at b411d41a5b69ef4c4bfb816928c0cd6d23a25eb7; kernel-k8-continuous on main green. Two native owners: form_samples (ql.psg-form-samples/v1, P5 4.1) — stable per-point sample IDs from prep ref + allocation indices, square-domain rest (u,v,w) with layer identity and declared coverage, explicit normalised/stage-unit/metre conversion, content-hash cache key over exactly the declared preparation (progress/cursor/camera never invalidate), glyph-mask occupancy as a declared determination (mask_ref + coverages cited, rasterisation stays O:I), explicit SampleMapping remap on genuine topology change; form_sequence (ql.psg-form-sequence/v1 + ql.psg-fold-progress/v1, P5 4.2) — hold/transition/easing over the stage display-clock axes and exact LiftInput cursor law, endpoints compiled through the form-recipe cast-law core so standing telemetry IS the routed M3Operation, codon resolves at quanta only (no form mid-transition; exact rational crease path with analytic 1/2 and 5/32 fixtures), seek proven pure, interruption recorded with exact standing. Specimen extended: recipe/sequence telemetry identity, boundary applies on real M3State (7 to ATC), body survives every cursor. Gates: lib 300, pasu 9, psg 8, E2E 9/9 incl CastCreases replay-identical-body, verify core/native/invariants, CI green after converging with #315 (census receipt regenerated over the merged tree, +37 constructs). Remaining in #299 named on the ticket: stage-host sequence bindings, rasterisation/reseed instrumentation, O:I sampler half over this law, #288 paired body tests, glyph coverage A03/A10-A13/A16. Owner calls: none blocked; matrix 3 and 5 read this slice, 7 explicitly unread (no charge arithmetic in scope). Seat env-3/ql-mef released.",
+  "status": "resolved"
+}

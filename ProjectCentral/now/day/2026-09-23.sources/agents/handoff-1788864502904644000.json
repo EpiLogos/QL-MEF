@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "handoff-1788864502904644000",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex-ql-matrix-migration",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1788864502,
+  "subject": "QL multi-matrix migration completeness audit finished",
+  "result": "SUPERSEDES handoff-1788863875157278000. Final clean branch agent/ql-multi-matrix-profile at 5f430c6ca2dce7ae02ed7f6b9d315639230f81c5. Full origin/main filename/schema audit found two omitted first-class families: M1-M4 deep coordinate matrices and three relational fields. Registry now covers 6 families/30 carriers. Recovered the three previously untracked ql-capability-matrix/1 relational manifests and their canonicalized CSV companions. Filename discovery rule requires every capability+matrix, relational+matrix, or relational-field under ProjectCentral/user and docs to be registered or explicitly excluded with reason; only field index, source trace, and protocol are excluded as governance/support. Recovered standard product-ground pyz with split blocking carrier-integrity + advisory drift workflow; reconciled CLI source hash and newly landed matheme.derive/matheme.shadow commands, product-ground errors now zero (12/12 commands). Added thin Central reusable branch-hygiene caller with contents:write, issues:write, pull-requests:read. Validators: registry, all four ql-capability-matrix/1 carriers, product-ground, ql-cli tests/live commands, and O:I collation all pass. Branch not pushed.",
+  "status": "waiting"
+}

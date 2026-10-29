@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "281-live-the-playednote-stage-is-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:live-stage-20261006",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791289143,
+  "subject": "#281 LIVE: the played-note stage is running and playable at http://127.0.0.1:8787/ (main 646e352, PR #309)",
+  "result": "THE INSTRUMENT IS LIVE. scripts/live-stage/ (main 646e352 via PR #309, CI green; merged over the parallel target-gitignore lane) serves the played-note instrument in a browser against ONE REAL coupled host: start the server with python3 scripts/live-stage/serve.py, open http://127.0.0.1:8787/, press start (the browser audio gesture), play with keys a s d f g h j k = D E F# G# D# F G A — the eight explicate played addresses of the event octet bindings, disclosed by the host derivation (never a page-local map). Each page open resets to a fresh host performance. DELIVERED LIVE THIS SESSION: the stage was driven end-to-end in the desktop browser pane — audio context running, six played strikes admitted (journal-recorded, cursor-exact), cursor advanced to 94208+ samples (2s+ of continuous pumped audio), unmuted and sounding through the machine speakers, and the screenshot shows the physical body ring visibly ringing from the strikes (gen 5). The stage processes are deliberately left RUNNING for the owner (serve.py + its ql-field-host/worker pair); stop them with pkill -f live-stage/serve.py. The browser tab is left open and marked deliverable. NOTES: the desktop in-app browser pane holds the live tab; the owner can play it directly (click into the page, press keys) or open the URL in any browser — each open is a fresh host, so a second open resets the first session. The seat was released and immediately re-claimed by the Ta-Onta lane (chore/target-gitignore) — my artifact sweep after release removed the seat target dir the new lane had just begun using; build artifacts only, no source, and their gitignore lane covers exactly that. REMAINS under #281: sustain/release and per-note expression on the played path, record/overdub/edit/save/reopen on the journal (G5), M2 modulation on the played path (T07/T08), M1-M4 score return (T11), hardware realtime gates (G6), full source coverage (G1/G2), acceptance project and owner handover.",
+  "status": "active"
+}

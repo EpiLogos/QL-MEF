@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "psg-slice-3-landed-qlmef-299-2026-10-07",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:psg-299-s3",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791330532,
+  "subject": "PS-G slice 3 landed (QL-MEF #299, PR #320, merge c172d3ef): the stage-host fold journey and the form instrument",
+  "result": "Landed on QL-MEF main at c172d3eff682b0082173d811b1c2c13d9af2c111 after green CI and a watched kernel-k8-continuous run. (1) Stage-host sequence effect binding ql.psg-fold-stage-effect/v1 in ql-mef form_sequence.rs: the fold law compiles into the host own typed changes (boundary form through the recipe owner compile core, display axis to the exact cursor, no form named or issued mid-transition, forms already bound never re-issued). (2) The driven journey in tests/psg_form_recipe.rs: fixture manifestation -> recipe -> sequence -> host evaluate -> real M3State; body moves 7 -> ATC exactly at the boundary cast telemetry, one determinant total; instrument proves 1 rasterisation / 0 reseeds / 6 reads with the resident identity digest byte-stable. (3) The form instrument ql.psg-form-instrument/v1 (new form_instrument.rs): rasterisation/cache-hit/reseed/progress counters wired to dependency-correct cache keys; reseed enforced (refused without genuine topology change, mapping derived not taken on faith); observed resident geometry (identity digest, occupancy, rest extent) disclosed separately from commanded crease state per P5 4.2 - the contract the O:I sampler half consumes. (4) Stage host seam closed in scene_field.rs: instrument.replace rebases the event M3 request to the applied M3 state (the m1-advance path own law) - observed form is the applied form; real-worker E2E driven journey proves the worker readback moving 7 -> ATC at exact cast telemetry. Gates: fmt/clippy clean; lib 309 + pasu 9 + psg 9; E2E 10/10; verify core/native/invariants green. Remaining in #299: O:I sampler half (separate repo), joined #288 paired body tests, glyph coverage A03/A10-A13/A16, the #312 quaternion/clock derivation. Owner calls: none blocked; the observed-form seam fix is the one judgement call, required by the journey proof and following the m1-advance law.",
+  "status": "resolved"
+}
