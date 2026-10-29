@@ -24,6 +24,23 @@ pub struct BirthPlace {
     pub source_ref: String,
 }
 
+/// The person's saved place: where the Sky counts their hours when its Observer is
+/// Private (DLW manual §22.1, "yours when it is Private"; #254 D12, the hour
+/// ruler uses "Nara's location"). Its shape is the place QL's sky provider counts
+/// a day at (`ql.sky-day-request/v1` `place`, `providers/sky/hours.py`), so the
+/// hours take it as it is kept. A place the person keeps, never a birth input:
+/// the natal request carries the birth alone.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ObserverPlace {
+    pub reference: String,
+    pub label: String,
+    pub latitude_degrees: f64,
+    pub longitude_degrees: f64,
+    pub altitude_metres: f64,
+    pub timezone: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum TimePrecision {
@@ -73,6 +90,9 @@ pub struct IdentityProfile {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub composition_policy: Option<super::identity_composition::CompositionPolicy>,
     pub birth: BirthData,
+    /// Where the person's own hours are counted; absent, they keep none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub observer_place: Option<ObserverPlace>,
     pub jungian: Option<IdentityReport>,
     pub gene_keys: Option<IdentityReport>,
     pub human_design: Option<IdentityReport>,
@@ -212,6 +232,34 @@ impl BirthData {
     }
 }
 
+impl ObserverPlace {
+    /// Validated as the birthplace is (bounded text, latitude and longitude in
+    /// range), with the provider's own label and altitude bounds; the provider
+    /// resolves the IANA timezone when it counts a day.
+    pub fn validate(&self) -> Result<(), String> {
+        text(&self.reference, "saved place reference")?;
+        text(&self.label, "saved place label")?;
+        require(
+            self.label.chars().count() <= 256,
+            "saved place label must contain at most 256 characters",
+        )?;
+        text(&self.timezone, "saved place IANA timezone")?;
+        require(
+            self.latitude_degrees.is_finite() && (-90.0..=90.0).contains(&self.latitude_degrees),
+            "invalid saved place latitude",
+        )?;
+        require(
+            self.longitude_degrees.is_finite()
+                && (-180.0..=180.0).contains(&self.longitude_degrees),
+            "invalid saved place longitude",
+        )?;
+        require(
+            self.altitude_metres.is_finite() && (-500.0..=10_000.0).contains(&self.altitude_metres),
+            "saved place altitude must be -500..10000 metres",
+        )
+    }
+}
+
 impl IdentityReport {
     fn validate(&self) -> Result<(), String> {
         self.source.validate()?;
@@ -257,6 +305,9 @@ impl IdentityProfile {
         text(&self.nara_ref, "Nara reference")?;
         text(&self.name, "name")?;
         self.birth.validate()?;
+        if let Some(place) = &self.observer_place {
+            place.validate()?;
+        }
         if let Some(policy) = &self.encoding_policy {
             policy.validate()?;
         }

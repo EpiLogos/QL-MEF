@@ -30,6 +30,7 @@ fn profile() -> IdentityProfile {
                 source_ref: "self-report:birthplace".into(),
             }),
         },
+        observer_place: None,
         jungian: None,
         gene_keys: None,
         human_design: None,
@@ -46,6 +47,55 @@ fn intake_text_obeys_native_provider_bounds_before_saving() {
     assert!(value.validate().is_err());
     value.birth.place.as_mut().unwrap().source_ref = "地".repeat(512);
     assert!(value.validate().is_ok());
+}
+
+/// The person's saved place (O-I #745; DLW manual §22.1, "yours when it is Private"; #254 D12, "Nara's location"): where the Sky
+/// counts their hours, in the shape QL's sky provider counts a day at (`ql.sky-day-request/v1` place), validated like the birthplace.
+#[test]
+fn a_saved_place_is_where_the_person_s_private_hours_are_counted() {
+    let unplaced = profile().revision().unwrap();
+    let hastings = json!({"reference":"geonames:2647356","label":"Hastings","latitude_degrees":50.85,
+        "longitude_degrees":0.57,"altitude_metres":10.0,"timezone":"Europe/London"});
+    let mut value = serde_json::to_value(profile()).unwrap();
+    assert!(
+        value.get("observer_place").is_none(),
+        "a profile without a saved place keeps its form"
+    );
+    value["observer_place"] = hastings.clone();
+    let placed: IdentityProfile = serde_json::from_value(value.clone()).unwrap();
+    assert!(placed.validate().is_ok());
+    assert_eq!(
+        serde_json::to_value(&placed).unwrap()["observer_place"],
+        hastings
+    );
+    assert_ne!(
+        placed.revision().unwrap(),
+        unplaced,
+        "a saved place is a new revision of the same identity"
+    );
+    for (field, wrong) in [
+        ("latitude_degrees", json!(90.5)),
+        ("longitude_degrees", json!(-180.5)),
+        ("altitude_metres", json!(10_000.5)),
+        ("altitude_metres", json!(-501.0)),
+        ("label", json!("")),
+        ("label", json!("x".repeat(257))),
+        ("reference", json!("x".repeat(513))),
+        ("timezone", json!("Europe/\nLondon")),
+    ] {
+        let mut wrong_place = value.clone();
+        wrong_place["observer_place"][field] = wrong.clone();
+        let parsed: IdentityProfile = serde_json::from_value(wrong_place).unwrap();
+        assert!(parsed.validate().is_err(), "{field}: {wrong}");
+    }
+    let mut unknown = value.clone();
+    unknown["observer_place"]["elevation"] = json!(3);
+    assert!(serde_json::from_value::<IdentityProfile>(unknown).is_err());
+    // The natal request carries the birth alone: a saved place never moves the birth chart's input.
+    assert_eq!(
+        placed.natal_request().unwrap()["birth"],
+        profile().natal_request().unwrap()["birth"]
+    );
 }
 
 fn report(route: ReportRoute, data: Value) -> IdentityReport {
