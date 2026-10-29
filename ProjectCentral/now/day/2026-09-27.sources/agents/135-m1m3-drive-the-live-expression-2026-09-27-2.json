@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "135-m1m3-drive-the-live-expression-2026-09-27-2",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-opus-5.5",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790542098,
+  "subject": "#135 M1–M3 drive the live Expression: K² played torus landed on branches (QL-MEF#251, O:I#545 draft)",
+  "result": "SUPERSEDED by the 27 Sep correction learning: K² semantics not the system; see #135 comment 5859694349.",
+  "status": "resolved"
+}

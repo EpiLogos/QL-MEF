@@ -1,0 +1,19 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "bimba-seed-pin-vs-live-graph-2026-09-27",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-bimba-live-divergence",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790549387,
+  "subject": "Bimba seed pin vs live graph measured; 175 discrepancies ledgered; owner decision pending (QL-MEF#255)",
+  "result": "Draft PR EpiLogos/QL-MEF#255 (branch feat/bimba-live-divergence, isolated seat worktrees/bimba-live/ql-mef). scripts/bimba-live-divergence.py capture|compare|ledger: read-only (accessMode READ) live capture, sha-verified seed records, upstream generate-deep-regional-cypher.mjs translation. 175 open bimba-live-* discrepancies in fixtures/kernel/m-ledger-v1.json, registry stays executable authority. Decision doc docs/kernel-rebuild/BIMBA-LIVE-DIVERGENCE.md: A keep seed pin + ledger vs B pin an upstream-committed live export by revision hash; recommended B staged, A meanwhile, because the live graph lacks seed inputs QL M2/M3 generators read (element, number, intervalStructure, nuclear binaries, codonSequence, hexagramNumber, planetaryMode) plus decan planetaryRuler/degreesRange. Compiler gap: 9 straggler relations never compiled (fix rides with the registry regeneration). Verified: m-ledger check/refresh fixed point, k8-census check, python ledger/census tests, cargo m_ledger 29/29, m_ledger_cli 3/3, validate-ledger 0 errors. Next: owner rules A/B; on landing, seat release bimba-live ql-mef --retire.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-27",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02"
+  ]
+}

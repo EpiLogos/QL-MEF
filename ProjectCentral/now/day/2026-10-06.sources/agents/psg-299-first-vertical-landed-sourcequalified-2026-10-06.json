@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "psg-299-first-vertical-landed-sourcequalified-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:psg-299",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791319325,
+  "subject": "PS-G #299 first vertical landed: source-qualified form-recipe join (PR #318, main f55a82b6)",
+  "result": "form_recipe.rs (ql.psg-form-recipe/v1) joins the M3 form law to the landed PS-E manifestation owner: declared fold-motif (kernel cast law -> CastCreases) or bounded six-bit address (SelectForm) for a formation occurrence, compiled to the exact M3Operations StageChange::Form routes, source basis carried; refusals by name where the locus qualifies no formation layer (c_1_ absent) or the address leaves 0..64; no invented lookup (matrix section 8 open seam named, not closed). Specimen E2E green: PS-E fixture -> recipe -> stage evaluate -> M3State receipt, form 7 -> ATC(6) at exact cast telemetry; real-worker ta_onta_stage 9/9; core/native/invariants + CI green; k9-bindings entry added, census receipt refreshed. Remaining in #299: retained rest samples/IDs, glyph-mask/sheet carriers, depth/layer identity, sequence interpolation/seek/interruption, scene/sequence effect bindings, rasterization instrumentation, #288 paired body tests, A03/A10-A13/A16 coverage; sampler-side crease work is O:I PS-G half.",
+  "status": "resolved"
+}

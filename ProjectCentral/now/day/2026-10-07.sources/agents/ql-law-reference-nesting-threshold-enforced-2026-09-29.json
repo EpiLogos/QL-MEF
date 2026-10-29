@@ -1,0 +1,21 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "ql-law-reference-nesting-threshold-enforced-2026-09-29",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-opus-5.5-ql-law",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790682398,
+  "subject": "QL law reference + nesting threshold enforced (QL-MEF #269); map correction dry-run awaits owner OK",
+  "result": "skills/ql-law/SKILL.md is the one-page settled-law index (linked from AGENTS.md Read-this-first and telos integrated-expression goal). scripts/coordinate-grammar.py check (in scripts/verify invariants) enforces the nesting threshold: 248 current map defects recorded as 19 k2-grammar-nesting-threshold ledger groups (242 respellings, 6 relationless M4-0..5 stubs duplicating M4.0..5). migration/bimba-map/2026-09-29-nesting-threshold.cypher dry-run OK (rolled back); APPLY NEEDS OWNER OK. # -> M registry migration planned in docs/kernel-rebuild/M-SPELLING-MIGRATION.md as one refresh after the map correction. Integrator lane lane/m123-engine-infra also edits m-ledger-v1.json: second to land reruns coordinate-grammar.py record + k8-census.py --write-receipt. Law finding: lens canon is 16+2 (owner ruling 2026-09-07), M3prime-SPEC 16+1 and C=7/G=8 superseded. Machine disk was full (ENOSPC) during this session; test_m_ledger and m2/m3 ledger checks left to CI. Seat bimba-live/ql-mef stays claimed until #269 lands.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06"
+  ]
+}

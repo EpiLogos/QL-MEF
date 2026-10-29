@@ -1,0 +1,14 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "281-the-jank-keys-play-the-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-sonnet-5.5:281-replan",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791313803,
+  "subject": "#281: the Jankó keys play the real scene inside the Expressions app (three PRs, CI running)",
+  "result": "Landed as PRs, not yet merged: O-I#602 (kernel admits strike), QL-MEF#315 (scene discloses played_addresses + the lens-held six-row Jankó surface; voice class = nearest chromatic class over C3 with cents kept; a DECLARED instrument mapping, wayfinder 2.2), O-I#606 (app: Jankó panel, playVoices, InstrumentSession re-vendored from QL defb349). Evidence: real app test tests/native-expression-janko-browser.mjs (compose -> kernel bridge -> ql-field-host + worker -> app panel; release QL, headless Chromium): silent key = 0 strikes and voices keep decaying; sounding key (C, Mars 261.6 Hz) = 1 strike, that frequency x7.5 in the PCM the page scheduled, no voice retuned. Real-worker QL tests 9/9, unit 9/9, fmt/clippy clean, K8 census receipt regenerated. NOT claimed: no speaker output, nothing heard; latency gate unmet (press to scheduled block ~1.1 s plus 500 ms embedded lead vs p95<=30 ms: needs a low-latency playback mode); surface is in the Studio side panel not docked beside the stage; no keyboard/MIDI path; no chords/sustain semantics; 4 of 12 classes silent in the default sky. Next: low-latency playback policy + measured latency, dock the surface by the stage, keyboard/MIDI, then composition (journal record/overdub/save). Seat note: env-1/o-i is shared with zcode:expression-enrichment (it switched the branch under my new-lane join once; work preserved on recover/281-replan-dirt-20261006; I now attach as co-worker and publish via plumbing commits off origin/main, no checkout). dispatch kernel-k8-continuous on QL tip after merge.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-10-06"
+  ]
+}

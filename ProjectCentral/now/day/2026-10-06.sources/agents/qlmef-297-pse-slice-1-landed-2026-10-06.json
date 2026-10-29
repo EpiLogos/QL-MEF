@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "qlmef-297-pse-slice-1-landed-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:pase-297",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791287397,
+  "subject": "QL-MEF #297 PS-E slice 1 landed: subject/locus/occurrence manifestation owner + stage subject join (PR #308 merged)",
+  "result": "Working face: the Atlas owner (crates/ql-mef/src/coordinate_expression.rs) now resolves a native subject at an exact source-qualified locus into typed expressive-role occurrences (ql.subject-manifestation/v1) — one subject manifested simultaneously as formation, force and sequence via the original coordinate semantics (#1 form, #2 operation, #3 process, #4 context, #5 integration), occurrence identity content-addressed and stable under reorder/rename/canonical place re-entry, authored variants first-parent-per-key with whole-key replacement, unrepresented layers recorded not fabricated. continuous/stage.rs validates procedure subject_ref through the same semantic owner (landed behavior unchanged). Original Paśu sources pinned at Epi-Logos-C-Experiments@daa660c (PASU.md ead6956, vault pasu.rs 9cbb69c, World-Ontology.md a766db4) — no QL module path invented. Receipts: PR #308 squash-merged 6d2b1336d617bb6dfdced73349dfd4475325e267 at 2026-10-06T11:41:21Z; PR checks 37457451651 all green (ql-mef-rust, core-rust, native-c, repository-invariants, changes); post-merge kernel-k8-continuous run 37458107827 success (native-field). Local gates: fmt, clippy -D warnings, verify core, verify invariants, E2E ta_onta_stage 9/9 on rebuilt real worker; census receipt refreshed (+12 reviewed constructs, same coordinate_expression disposition, no new module). Remaining (named on #297 comment 6015604341): contributing subjects per occurrence; scene/whole-Expression-as-subject cases; per-role determined-relation qualification; canonical place transition ops (P4 3.2) and re-entry continuation policy; producer fixtures for PS-S/U/C consumers; outstanding entity-to-form determinations at M3's owner + PS-G form-recipe join. Owner's-call items: none — nothing in this slice required a ruling beyond the standing packet instructions. Seat env-3/ql-mef released after this return.",
+  "status": "resolved"
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "tb0-fanout-213219-executed-by-seven-2026-09-17",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode-session-2026-09-16-tb0-fanout-integrator",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1789599975,
+  "subject": "TB0 fan-out #213-#219 executed by seven parallel lanes and converged onto techne/tb0-surfaces-port",
+  "result": "All seven Technē instrument lanes ran in dedicated worktrees against the pinned TB0-1 revision (techne/tb0-surfaces-port base 957d2bc) and merged back: m0-project-graph (Project LIST/TREE/GRAPH selection spine, Technē_0 agency, #213), m1-canvas (authored Canvas Views as presentation-only state, direct manipulation, typed relation proposals with receipt, #214), m2-relation-field (projection bar over native relations, standing grammar, no invented dates, #215), m3-journey-scenes (crossing law, kernel-pinned Vak C-prime binding, presence, #216), m4-world-places (world model with hard geography distinctions, honest provider-bound depth, #217), m5-palace (legacy-UX verdict executed, composition of real refs, governed 5-to-0 Return, #218), x3-expression-agency (canonical dual-reading seams: session cut agreement, six coordinate-preserving crossings, lifecycle proof, #219). Converged head 07cfe4a: 349/349 surfaces tests (baseline 130), strict tsc clean, cargo test -p ql-adapters 37/37, techne-gates all machine-provable gates pass (G3 second spatial producer open as T1-successor; G8 is the owner human leg). Integrator reconciled the five independent TS-mirror TB0-1 adoptions onto one canonical seam set and fixed one mirror-vs-schema infidelity (session NullableRef law, noted on #212). No private contract forks; no amendment required. Durable evidence: per-lane receipts on issues #213-#219, integrator note on #212, branch techne/tb0-surfaces-port (NOT pushed, owner review pending), lane worktrees preserved at /private/tmp/ql-mef-* pending review. Root-register world-keeping left to owner: live DAY is 2026-09-15, automatic rollover off, session did not close it.",
+  "status": "active"
+}

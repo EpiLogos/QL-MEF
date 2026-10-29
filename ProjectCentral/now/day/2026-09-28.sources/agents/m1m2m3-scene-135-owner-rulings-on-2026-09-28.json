@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "m1m2m3-scene-135-owner-rulings-on-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-code:m123-scene",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790610303,
+  "subject": "M1–M2–M3 scene (#135): owner rulings on #254 applied to the map, QL and the prototype",
+  "result": "Live map corrected to D0 (just octave, Shem colours, codon↔hexagram) and C=8/G=7 (charges, pairs x−y except AG/TC class-stable, integrals C92/G88, prose). QL rebuilt from it: registry f26c607e, M3 audit 307→183, 124 coin discrepancies applied, M2/M3 successors published, M1 rule-1 update; verified on Omarchy. PRs: QL-MEF #262 (CI pending), C-Experiments #40 (importer keys + prototype C=8/G=7 + mirrors, all local suites green). #254 carries the third-review section: rulings as landed, M2 signal chain, build plan with #252/#258/#259. M3-5 clock inscription withdrawn, never applied; owner reviewing the decan→card and governor→ace-reflection forms. Next: owner direction on the inscription; Gate 1 records; native Spanda oscillator port; #251/#545 infra split. Seat env-2/ql-mef holds branch map/m3-5-clock-inscription until #262 lands.",
+  "status": "active"
+}

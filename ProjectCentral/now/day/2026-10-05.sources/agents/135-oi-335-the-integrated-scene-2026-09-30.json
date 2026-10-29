@@ -1,0 +1,18 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "135-oi-335-the-integrated-scene-2026-09-30",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-opus-5.5-m123-infra",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790724169,
+  "subject": "#135 / O:I #335: the integrated scene is on both mains (30 Sep)",
+  "result": "On QL main: #262 (map-built registry), #264 (Spanda field), #265 (M3-5 inscription), #266 (sky placement), #267 (K8 origin fix), #268 (Nara M4), #270 (sky bus + ql scene compose), #272 (scene instrument on the continuous host; #251 closed as superseded), #263/#273 (telos). On O:I main: #557 (Live instrument plays ql scene binding; Nara O:I identity/dialogue/voice integrated; #545 closed).\nRemaining red on O:I main is pre-existing: skill naming + recovery test (O:I #555 fixes), agent browser test (fails on main source), site builds.\nOpen: managed install on the Mac for the owner listening walk (held for the owner word); retire the superseded lanes worktrees/m123-engine (lane/m123-engine-infra = closed #251) and worktrees/oi-m123-instrument (#545) - seat --retire refuses a closed-not-merged lane; env-3 o-i and ql-mef Nara lanes landed via #557/#268 and are owner-held foreign lanes to release. Journeys #261 separate draft. Next development: M2 synth maqam/hour-ruler selection, tattva material; QL law grounding landed as #269.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-04"
+  ]
+}

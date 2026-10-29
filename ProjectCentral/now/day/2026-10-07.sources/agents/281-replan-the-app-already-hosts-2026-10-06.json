@@ -1,0 +1,14 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "281-replan-the-app-already-hosts-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "claude-sonnet-5.5:281-replan",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791308268,
+  "subject": "#281 re-plan: the app already hosts the scene; the played strike is refused by the O-I kernel allowlist",
+  "result": "Orientation only, no code changed. (1) The O-I Expressions app (desktop/cradle/expressions-app/field-studies-journeys: nativeField.ts, native-field/controller.ts) already opens ql scene binding natively (dated sky, nine voices on the M1 torus) — Moves 1+2 belong in that app, not a separate page. (2) Gap A: O-I kernel kernel/src/native_expression.rs EXCHANGE_OPERATIONS (line ~970) has no strike; a hand-driven bridge run (compose, inspect, strike mode_ref scene:planet/#2-5-0/1) returns unsupported native host request on strike. (3) Gap B: the app vendors InstrumentSession pinned at QL 7a02d87 (before #304: no strike, no journal); it must be re-vendored byte-identically from QL main. (4) Gap C: no key-to-voice routing exists for the scene (played_addresses covers only the coupled ring octet slots); a declared instrument mapping is needed per wayfinder 2.2, proposed: a key sounds the voices whose own sounding class matches. (5) Evidence: on debug QL builds compose took 40 s and inspect 11 s; tests/native-expression-scene-browser.mjs fails at admission with a native acknowledgement timeout on both fresh and installed binaries (not diagnosed further). (6) No sound recorded, none heard. Constraints: disk 9.8 GB free; all three o-i seats and all three ql-mef seats are held by active lanes with uncommitted work, so no edit was started.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-10-06"
+  ]
+}

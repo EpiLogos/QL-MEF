@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "ql-291-pr-323-ci-invariants-2026-10-07",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "zcode:qd1-recovery-20261007",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791381152,
+  "subject": "QL #291 PR #323: CI invariants repaired, QD4 Pi package landed, ai-kit seam verified closed",
+  "result": "Second leg. (1) CI repository-invariants failed on unregistered constructs; fixed by registering the QD1 surface in k9-bindings with the lane own ql-decision-k9-module-additions dispositions (3 rust modules cross-coordinate M+#0..#5, 5 infrastructural python instruments), restoring the seven agent python test suites (all green), regenerating the census receipt natively. (2) Landed adapters/pi/ql-agent Pi package from the ql.pi-tool-source/v1 vendor record plus body-evidence and receipt-metrics instruments; 60 reviewed K9 modules. (3) Verified the ai-kit tool-contribution seam is CLOSED upstream: ai-kit main carries 7/11 qd4-v4 successor files byte-identical (#436/#490/#496) - the publisher cut happened; no adoption needed. (4) Merged PS-U #321 + PS-V #322 into the branch, reconciled census receipt across merged inventory, local gate 760/0/38. CI pending on 92f103c (queue backlogged); merge + env-1 seat release on green. Named: installed ql gap (publisher cut); QD5 election correctly not claimed.",
+  "status": "active"
+}

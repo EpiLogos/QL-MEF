@@ -1,0 +1,18 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "135-gate-0-m1m3-scene-structural-2026-09-27",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-m123-scene-64953f",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790546544,
+  "subject": "#135 Gate 0: M1–M3 scene structural map awaiting owner rulings (QL-MEF #254)",
+  "result": "Gate 0 map is in QL-MEF PR #254 (docs/kernel-rebuild/M123-SCENE-STRUCTURAL-MAP.md + m123-scene-map/). No engine code. Next: owner rules D1–D30; then QL-A/O:I-A infra split (infra-split.md), Gate 1 ledger entries + fixes (§5), QL-B/O:I-B scene owners, §7 verification. Seat env-2/ql-mef claimed on docs/m123-scene-structural-map; release after landing. Live-graph vs pin seam handed to the reconcile session (decan planetaryRuler/degreesRange lost live).",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-27",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01"
+  ]
+}

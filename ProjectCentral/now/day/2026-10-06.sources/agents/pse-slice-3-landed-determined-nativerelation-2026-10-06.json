@@ -1,0 +1,11 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "pse-slice-3-landed-determined-nativerelation-2026-10-06",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "codex:pase-297-s3",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1791315535,
+  "subject": "PS-E slice 3 landed — determined native-relation qualification + producer fixtures (QL-MEF #297, PR #316)",
+  "result": "PR #316 squash-merged to main at 5db77d917b10608d776fe58f77870971fa66272b (2026-10-06T19:30:39Z). PR checks all green: ql-mef-rust, core-rust, native-c, repository-invariants, changes — run 37515400197. Post-merge kernel-k8-continuous.yml dispatch run 37519533396 concluded success (native-field job success). Landed: determined native-relation qualification in coordinate_expression.rs (DeterminedRelation/RelationQualification; refused-by-name when the locus lacks the relation; payload pin + source revision recorded and identity-bearing; re-enters through recorded place transitions) and producer fixtures fixtures/kernel/subject-manifestation-fixtures-v1.json (ql.pse-manifestation-fixtures/v1; four consumer cases for PS-S/U/C) with typed loader + integration test. Census +18 reviewed constructs (2934->2952), verify invariants clean on committed tree. Local gates: lib 281 passed, pasu_manifestation 9 passed, fmt, clippy -D warnings, verify core. Slice comment: https://github.com/EpiLogos/QL-MEF/issues/297#issuecomment-6024050635. Remaining on #297: recovery of outstanding entity-to-form determinations at M3 owner + PS-G form-recipe join; #312 Tarot/entity transcription continues PS-E. CRASH RECOVERY: lane resumed after machine crash mid-verify; survived work (source, tests, fixtures, census receipt) verified complete as found by diff review against HEAD, then compiled and passed with zero additions — crash cost was re-run gates + landing mechanics only. Seat env-3/ql-mef released; branch feat/pase-manifestation-3-20261006 landed.",
+  "status": "resolved"
+}

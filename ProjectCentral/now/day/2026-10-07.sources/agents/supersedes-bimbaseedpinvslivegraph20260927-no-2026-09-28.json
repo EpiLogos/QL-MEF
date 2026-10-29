@@ -1,0 +1,22 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "supersedes-bimbaseedpinvslivegraph20260927-no-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-bimba-live-divergence",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790558290,
+  "subject": "Supersedes bimba-seed-pin-vs-live-graph-2026-09-27: no pin decision; QL must be ported to the Bimba map",
+  "result": "Owner correction 2026-09-28: the Bimba map (Neo4j graph) is the authority; the 2026-09-27 divergence framing was wrong and PR EpiLogos/QL-MEF#255 is closed (seat bimba-live/ql-mef released; branch feat/bimba-live-divergence kept on origin only for reference). Root cause: QL registry (generate-m-tree.py / compile-epi-bimba-map*.py -> fixtures/kernel/m-tree-v1.json -> c/src/m_tree_data.inc) and M2/M3 generators (m2-correspondences, m2-catalogue, m2-field-report, m3-domain, m3-source-parity, m3-observation-parity) read July pre-migration dataset exports at Epi-Logos-C-Experiments daa660c (camelCase keys, # coordinates). The map holds the same facts under M coordinates, c_N_* keys and relations (e.g. decan ruler = RULED_BY, 47 under M2-3; date range = c_2_date_range). Work: port the compiler and generators to read the map (fed from a graph export or the daily backup, recorded by hash for CI), then update hardcoded counts (1876/21083/24831) and revision refs. Not a decision for the owner.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06"
+  ]
+}

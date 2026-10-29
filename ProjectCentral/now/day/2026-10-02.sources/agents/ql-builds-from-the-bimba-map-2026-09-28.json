@@ -1,0 +1,17 @@
+{
+  "schema": "central.project-now.handoff/v1",
+  "id": "ql-builds-from-the-bimba-map-2026-09-28",
+  "provenance": "agent-authored-bounded-return",
+  "actor": "agent:claude-ql-bimba-map",
+  "kind": "handoff",
+  "recorded_at_unix_seconds": 1790602945,
+  "subject": "QL builds from the Bimba map: #256 and #260 merged",
+  "result": "Landed on main 2026-09-28. #256: M2 linked readings follow the maps typed relations (decan RULED_BY, Shem planet/decan, maqam tonic/dominant, tattva) with via; retained C index columns were wrong for most rows. #260: registry generated from a read-only map read (scripts/bimba_map.py, generate-m-tree.py --from-map), m2-correspondences/m2-field-report/m3-source-parity/m3-domain/m3-observation-parity read map keys, no workflow checks out daa660c for registry or M2/M3, scripts/refresh-from-bimba-map.sh rebuilds everything, ledger re-pinned to the map registry, M1/M2/M3 successor proofs published from Linux CI acceptance (m2-ledger.py publish, m3-ledger.py publish). docs/kernel-rebuild/BIMBA-MAP-SOURCE.md is the reference. Remaining, owned elsewhere or owner-facing: #257 (C kernel reference move, #135 lane) rebases on #260; VAK language map, AW0 original-law check and the historical K0 ground check still read the July seed; the map carries no maqam scale spelling, planetaryMode, chakral element literal, King Wen number, hexagram binaries or backbone codon/hexagram (codon arrives with the #135 EMBODIES_PALINDROMIC_CODON migration once the owner applies it); the 27 owner-ratified K8 coordinates under #2-0 exist in QL but not yet in the map. Seat bimba-live/ql-mef released and its worktree removed.",
+  "status": "carried",
+  "carried_from_days": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01"
+  ]
+}
