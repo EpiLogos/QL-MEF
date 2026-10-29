@@ -28,6 +28,10 @@ const RESOURCES: &[(&str, &str)] = &[
         include_str!("../../../providers/sky/kerykeion_snapshot.py"),
     ),
     (
+        "providers/sky/hours.py",
+        include_str!("../../../providers/sky/hours.py"),
+    ),
+    (
         "providers/sky/requirements.txt",
         include_str!("../../../providers/sky/requirements.txt"),
     ),
@@ -588,6 +592,26 @@ fn transit(
     ))
 }
 
+/// The planets of the day and of the hour at a place (`ql.sky-day-request/v1` in, `ql.sky-hours/v1`
+/// out): the embedded day provider states the sunrise, sunset and next sunrise there, and M2
+/// counts the rulers from them by the map's order (`ql_mef::m2_hours`).
+fn hours(request: &Value) -> Result<Value, CliError> {
+    if request["schema"] != "ql.sky-day-request/v1" {
+        return Err(error(
+            "unsupported day request: the hours take a ql.sky-day-request/v1",
+        ));
+    }
+    let natal_script = resources()?;
+    let script = natal_script
+        .parent()
+        .and_then(|p| p.parent())
+        .ok_or_else(|| error("invalid sky resource layout"))?
+        .join("sky/hours.py");
+    let day = calculate_provider(request, script, &["-"])
+        .map_err(|CliError(e)| error(format!("the day at the place: {e}")))?;
+    ql_mef::m2_hours::hours(&day).map_err(error)
+}
+
 #[derive(serde::Deserialize)]
 #[serde(deny_unknown_fields)]
 struct PersonalCurrentRequest {
@@ -610,17 +634,18 @@ struct PersonalRecomposeRequest {
 
 pub fn command(args: &[String]) -> Result<String, CliError> {
     if args.len() == 1 && args[0] == "capabilities" {
-        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate","coordinate-content","coordinate-bundle","source-inventory"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","sky_snapshot_purposes":["requested","retained-occasion"],"sky_admission_schema":"ql.sky-admission/v1","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
+        return serde_json::to_string_pretty(&json!({"schema":"ql.nara-identity-capabilities/v1","operations":["inspect","calculate","transit","hours","personal-current","personal-recompose","presence-consent"],"coordinate_operations":["coordinate","coordinate-content","coordinate-bundle","source-inventory"],"dialogue_operations":["context","delegate","enrichment","receive"],"dialogue_registry":"native-current-m-registry","dialogue_persistence_owner":"host","profile_schema":"ql.nara-identity-profile/v1","persistence_owner":"central","natal_provider":"Kerykeion","sky_snapshot_purposes":["requested","retained-occasion"],"sky_admission_schema":"ql.sky-admission/v1","hours_request_schema":"ql.sky-day-request/v1","hours_schema":"ql.sky-hours/v1","provider_python":"uv-managed Python 3.13 with embedded providers/sky/requirements.txt; QL_NARA_PYTHON diagnostic override","provider_uv":"QL_NARA_UV, PATH, or ~/.local/bin/uv","input":"JSON profile on stdin or file","identity_offices":["birthdate-name","natal-chart","jungian-assessment","gene-keys","human-design","archetypal-quintessence"],"automatic_agent_or_model_invocation":false})).map_err(error);
     }
     let [operation, path] = args else {
         return Err(error(
-            "usage: ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|coordinate-content|coordinate-bundle|source-inventory|context|delegate|enrichment|receive> <request.json|-> [--json]",
+            "usage: ql nara <inspect|calculate|transit|hours|personal-current|personal-recompose|presence-consent|coordinate|coordinate-content|coordinate-bundle|source-inventory|context|delegate|enrichment|receive> <request.json|-> [--json]",
         ));
     };
     if ![
         "inspect",
         "calculate",
         "transit",
+        "hours",
         "personal-current",
         "personal-recompose",
         "presence-consent",
@@ -699,6 +724,10 @@ pub fn command(args: &[String]) -> Result<String, CliError> {
             current["sky_admission"] = admission.clone();
         }
         return serde_json::to_string_pretty(&current).map_err(error);
+    }
+    if operation == "hours" {
+        let request: Value = serde_json::from_slice(&bytes).map_err(error)?;
+        return serde_json::to_string_pretty(&hours(&request)?).map_err(error);
     }
     if operation == "transit" {
         let request: Value = serde_json::from_slice(&bytes).map_err(error)?;

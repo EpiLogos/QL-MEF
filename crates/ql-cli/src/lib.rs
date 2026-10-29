@@ -359,14 +359,14 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
 fn help() -> String {
     format!(
         "Quaternal Logic {} — the semantic kernel: derivation, coverage, and the\nregistry/lens/frame reads built on it. Domain distinctions are preserved;\nthe groups below say who each is for.\n\n\
-Kernel derivation and coverage (everyday for a QL specialist):\n  ql kernel m1 <request.json> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n                                    current deterministic operators: conjugate-address, complement-address, classify-four-plus-two\n  ql matheme derive [--json]\n                                    the definitional 0-layer derivation; the kernel coordinates remain the governing 1\n  ql matheme shadow [--json]\n\n\
+Kernel derivation and coverage (everyday for a QL specialist):\n  ql kernel m1 <request.json> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n                                    current deterministic operators: conjugate-address, complement-address, classify-four-plus-two\n  ql kernel body-constants [--json]\n                                    M2's proposed body constants by element fibre: Strike, Q factor, Agitation and Boundary strength, with the map's tattvas\n  ql matheme derive [--json]\n                                    the definitional 0-layer derivation; the kernel coordinates remain the governing 1\n  ql matheme shadow [--json]\n\n\
 Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql context-frame read <request.json|-> [--json]\n                                    the External Context Frame reading of a supplied sixfold mapping and structural probe (descriptive evidence only)\n  ql context-frame team-space [--json]\n                                    the Anima and Aletheia team space: frame rows, M depth, Vāk-block path and decision instruments (read-only; calls no model)\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n  ql wiki living-plan <request.json|-> [--json]\n                                    the Living Wiki refraction plan: the 5 -> 0 -> 1 entry aperture, then the positions asked for within the budget (orientation only; reads no wiki)\n  ql wiki refract <request.json|-> [--json]\n                                    one Wiki refraction request: the caller's target read through the lenses and sublenses it names, in the provider mode it asks (reads no wiki)\n\n\
 Integrated scene (the dated sky on the clock, voiced):\n  ql scene compose <request.json|-> [--json]\n  ql scene binding <request.json|-> [--json]\n  ql scene world <request.json|-> [--json]\n                                    the dated sky placed on the clock as a world reading\n                                    the continuous-field host binding the Live instrument opens\n  ql scene render <binding-request.json|-> --worker <path> --seconds N --out take.wav [--json]\n                                    the played scene rendered offline through the native host to WAV\n\n\
 Ta-Onta procedural stage (the live scene's procedural owner; one command, one host exchange):\n  ql stage state [--config <binding-request.json|->] [--worker <path>] [--instance <ref>] [--json]\n                                    the stage's scoped disclosure: live slots, their owners and the bindings\n  ql stage evaluate <procedure.json|-> [--config <path|->] [--worker <path>] [--json]\n                                    evaluate one versioned procedure; prints its receipt and the acknowledged field\n  ql stage bind <procedure.json|-> [--max-evaluations N] [--config <path|->] [--worker <path>] [--json]\n                                    bind a determinant-triggered procedure to the live flow within an evaluation budget\n  ql stage unbind <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    remove a binding; the answer names its final standing\n  ql stage retire <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    release one procedure's contributions; retained material stays as the authored state\n                                    the worker is named with --worker <path> or QL_FIELD_WORKER; an example\n                                    procedure lives at fixtures/kernel/stage-procedure-example-v1.json\n\n\
 Music (controller projections of the accepted musical object):\n  ql music janko window [--columns N] [--first-column C] [--lens 0..=11] [--json]\n                                    the six-row surface over one column period\n  ql music janko key --row 0..=5 --column C [--lens 0..=11] [--json]\n                                    one key's sounding class, kernel coordinate and fifths overlay\n  ql music janko touch-points --pitch 0..=11 [--json]\n                                    the three repeated touch-points of one sounding note\n\
   ql music modes [--json]\n\
                                     the kernel's mode catalogue: lens/CF modes per anchor basis, maqam source scales in quarter-tones with family ratios, and the scales the kernel does not serve\n\n\
-Nara personal field (contextual):\n  ql nara capabilities [--json]\n  ql nara <inspect|calculate|transit|personal-current|personal-recompose|presence-consent|coordinate|coordinate-content|coordinate-bundle|source-inventory|context|delegate|enrichment|receive> <request.json|-> [--json]\n\n\
+Nara personal field (contextual):\n  ql nara capabilities [--json]\n  ql nara <inspect|calculate|transit|hours|personal-current|personal-recompose|presence-consent|coordinate|coordinate-content|coordinate-bundle|source-inventory|context|delegate|enrichment|receive> <request.json|-> [--json]\n\n\
 Specialised constitution and invocation (contextual; not the generic Agent creator):\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n\n\
 Agent event reading (supplied events; deterministic completion before optional decisions):\n  ql agent-event project <request.json|-> [--json]\n  ql agent-event frame <request.json|-> [--json]\n  ql agent-event harmonic <request.json|-> [--json]\n  ql agent-event validate <request.json|-> [--json]\n\n\
 Service negotiation (operator negotiation, contextual supplied operations):\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n                                    provider-backed operations disclose their current negotiated availability\n\n\
@@ -399,6 +399,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "matheme.derive",
             "matheme.shadow",
             "kernel.apply",
+            "kernel.body-constants",
             "mef.lenses",
             "context-frame.list",
             "context-frame.read",
@@ -431,6 +432,7 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
             "nara.enrichment",
             "nara.receive",
             "nara.transit",
+            "nara.hours",
             "nara.personal-current",
             "nara.personal-recompose",
             "nara.presence-consent",
@@ -624,6 +626,13 @@ fn kernel_command(args: &[String], json: bool) -> Result<String, CliError> {
             ql_mef::m1_engine::engine_json(&input).map_err(CliError)
         }
         Some("coverage" | "ledger" | "validate-ledger") => m_ledger::command(args, json),
+        Some("body-constants") => {
+            if args.len() != 1 {
+                return Err(CliError("usage: ql kernel body-constants [--json]".into()));
+            }
+            serde_json::to_string_pretty(&ql_mef::m2_body::reading().map_err(CliError)?)
+                .map_err(CliError::from)
+        }
         Some("capabilities") => {
             let view = kernel_view();
             if json {
