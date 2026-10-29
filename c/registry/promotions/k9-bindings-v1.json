@@ -947,6 +947,47 @@
     "crates/ql-cli/tests/wiki_refract.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/m2_hours.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2-5",
+    "#2-4"
+   ],
+   "rationale": "The planets of the day and of the hour at a place (DLW manual §22.1; #254 D12): from one provider-stated day (sunrise before the instant, sunset, next sunrise, the place's civil weekday of that sunrise) it counts twelve day and twelve night hours and reads the rulers by the map's #2-5 c_2_chaldean_order_verified, each name the c_1_name of an M2-5 planet, the week anchored where PLANETARY_RESONANCE timingOptimal anchors it (the Sun's day is Sunday). The maqamat bound to the hour's planet are the existing m2-correspondences TONIC_/DOMINANT_PLANETARY_RESONANCE rules carried as they stand. No astronomy, maqam choice or sounding claim.",
+   "tests": [
+    "crates/ql-mef/tests/m2_hours.rs",
+    "crates/ql-cli/tests/sky_hours_native.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/m2_body.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#2-2-2-5"
+   ],
+   "rationale": "M2's proposed body constants by element fibre (DLW manual §21.2 Torus, §20.14 Resonance: Strike, Q factor, Agitation, Boundary strength), the manual's starting values held as a declared, tunable table (#254 D30; QL-MEF #135: no source table fixes them), each fibre with the tattvas the map gives it through m2-correspondences material_fibre and the tattvas that carry none. A reading for Body source Tattva; it changes no scene material.",
+   "tests": [
+    "crates/ql-mef/tests/m2_hours.rs",
+    "crates/ql-cli/tests/sky_hours_native.rs"
+   ],
+   "kind": "structural-index"
+  },
+  {
+   "path": "providers/sky/hours.py",
+   "stratum": "python",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "The day at a place for the hour rulers: the qualified Swiss Ephemeris engine's Sun rise and set (upper limb, standard refraction) around one instant at a declared or private place, with the place's civil weekday of the sunrise and a digest. It states astronomy only; it invents no ruler, order, place or meaning, and refuses a circumpolar day.",
+   "tests": [
+    "providers/sky/test_hours.py",
+    "crates/ql-cli/tests/sky_hours_native.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }
