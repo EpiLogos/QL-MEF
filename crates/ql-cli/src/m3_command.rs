@@ -51,6 +51,32 @@ pub(crate) fn command(args: &[String]) -> Result<String, CliError> {
     replay(&input)
 }
 
+/// Binding's engine (`ql kernel m3-binding <request.json|->`): a read of the
+/// cell a matrix makes of a hexagram, with Binding's own physics over it.
+pub(crate) fn binding(args: &[String]) -> Result<String, CliError> {
+    if args.len() != 1 {
+        return Err(CliError(
+            "usage: ql kernel m3-binding <request.json|-> --json".into(),
+        ));
+    }
+    let reader: Box<dyn Read> = if args[0] == "-" {
+        Box::new(std::io::stdin())
+    } else {
+        Box::new(std::fs::File::open(&args[0]).map_err(|e| CliError(e.to_string()))?)
+    };
+    let mut input = String::new();
+    reader
+        .take(MAX_INPUT + 1)
+        .read_to_string(&mut input)
+        .map_err(|e| CliError(e.to_string()))?;
+    if input.len() as u64 > MAX_INPUT {
+        return Err(CliError("Binding request exceeds 1 MiB".into()));
+    }
+    let request: serde_json::Value = serde_json::from_str(&input).map_err(CliError::from)?;
+    let reading = ql_mef::m3_binding::binding_reading(&request).map_err(CliError)?;
+    serde_json::to_string_pretty(&reading).map_err(CliError::from)
+}
+
 pub(crate) fn replay(input: &str) -> Result<String, CliError> {
     let input: Input = serde_json::from_str(input).map_err(CliError::from)?;
     if input.commands.len() > 256 {
