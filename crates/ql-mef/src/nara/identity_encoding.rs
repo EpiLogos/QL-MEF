@@ -624,6 +624,7 @@ mod tests {
                 fold: None,
                 place: None,
             },
+            observer_place: None,
             jungian: None,
             gene_keys: None,
             human_design: None,
