@@ -643,6 +643,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ql-codec"
+version = "0.1.0"
+dependencies = [
+ "ql-core",
+ "ql-mef",
+]
+
+[[package]]
 name = "ql-core"
 version = "0.1.0"
 
