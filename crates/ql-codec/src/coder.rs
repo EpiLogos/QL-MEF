@@ -139,8 +139,14 @@ impl Freq {
         self.counts.is_empty()
     }
 
-    fn cum(&self, symbol: usize) -> u32 {
-        self.counts[..symbol].iter().sum()
+    /// The model's current probability of `symbol`.
+    pub fn p(&self, symbol: usize) -> f64 {
+        f64::from(self.counts[symbol]) / f64::from(self.total)
+    }
+
+    /// Learn one observation of `symbol` without coding it.
+    pub fn observe(&mut self, symbol: usize) {
+        self.update(symbol);
     }
 
     fn update(&mut self, symbol: usize) {
@@ -166,26 +172,32 @@ impl Io<'_> {
     /// Code `value` (ignored on decode) under `model`, update it, and return
     /// the symbol actually coded.
     pub fn symbol(&mut self, model: &mut Freq, value: usize) -> usize {
-        let symbol = match self {
+        let symbol = self.code(&model.counts, model.total, value);
+        model.update(symbol);
+        symbol
+    }
+
+    /// Code `value` (ignored on decode) under fixed counts, every one ≥ 1.
+    pub fn code(&mut self, counts: &[u32], total: u32, value: usize) -> usize {
+        match self {
             Io::Encode(encoder) => {
-                assert!(value < model.len(), "symbol {value} outside its model");
-                encoder.encode(model.cum(value), model.counts[value], model.total);
+                assert!(value < counts.len(), "symbol {value} outside its model");
+                let cum = counts[..value].iter().sum();
+                encoder.encode(cum, counts[value], total);
                 value
             }
             Io::Decode(decoder) => {
-                let target = decoder.target(model.total);
+                let target = decoder.target(total);
                 let mut cum = 0;
                 let mut symbol = 0;
-                while cum + model.counts[symbol] <= target {
-                    cum += model.counts[symbol];
+                while cum + counts[symbol] <= target {
+                    cum += counts[symbol];
                     symbol += 1;
                 }
-                decoder.consume(cum, model.counts[symbol]);
+                decoder.consume(cum, counts[symbol]);
                 symbol
             }
-        };
-        model.update(symbol);
-        symbol
+        }
     }
 
     pub const fn encoding(&self) -> bool {

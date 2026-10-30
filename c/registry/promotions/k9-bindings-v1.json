@@ -1081,6 +1081,21 @@
     "crates/ql-codec/tests/roundtrip.rs"
    ],
    "kind": "structural-index"
+  },
+  {
+   "path": "crates/ql-codec/src/predict.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#3",
+    "#3-3-2"
+   ],
+   "rationale": "QLC waves 2-4: the QLC codecs as full-distribution predictors (generation law, cell state, Context-Frame cut, kernel-operator grammar) in a fixed-share mixture with order-k models; match models exact and up to the kernel's group action (twelve lens transpositions, XOR line masks); and pitch contexts tied across the twelve lens rotations or the six whole-tone rotations that keep the P / P′ helix face. Every law is called from ql-core / ql-mef; every mixture is lossless and round-trip tested.",
+   "tests": [
+    "crates/ql-codec/tests/roundtrip.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }

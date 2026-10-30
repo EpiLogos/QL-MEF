@@ -64,7 +64,7 @@ impl Codec for PairContext {
 /// negative, positive, negative … codons of generation cells.
 pub struct GenerationLaw {
     /// `[matrix][positive]` → the negatives the kernel yields.
-    candidates: Vec<Vec<Vec<u16>>>,
+    pub(crate) candidates: Vec<Vec<Vec<u16>>>,
 }
 
 impl Default for GenerationLaw {
@@ -83,9 +83,9 @@ impl Default for GenerationLaw {
 }
 
 impl GenerationLaw {
-    const ESCAPE: usize = 6;
+    pub(crate) const ESCAPE: usize = 6;
 
-    fn ordered(&self, matrix: usize, positive: u16) -> Vec<u16> {
+    pub(crate) fn ordered(&self, matrix: usize, positive: u16) -> Vec<u16> {
         let mut list = Vec::with_capacity(6);
         for m in std::iter::once(matrix).chain((0..3).filter(|m| *m != matrix)) {
             for negative in &self.candidates[m][usize::from(positive)] {
@@ -156,7 +156,7 @@ impl Codec for GenerationLaw {
 /// both codons follow from `ql_core::generate`. A pair that is no cell is
 /// coded as two literal codons.
 pub struct CellState {
-    hexagrams: HashMap<(usize, u16, u16), u8>,
+    pub(crate) hexagrams: HashMap<(usize, u16, u16), u8>,
 }
 
 impl Default for CellState {
@@ -179,7 +179,7 @@ impl Default for CellState {
 }
 
 impl CellState {
-    const BREAK: usize = 3;
+    pub(crate) const BREAK: usize = 3;
 }
 
 impl Codec for CellState {
@@ -358,11 +358,11 @@ pub fn lens_scales() -> [[u8; 7]; 12] {
 /// MEF rotation law); untied keeps one per lens.
 pub struct FrameTied {
     pub tied: bool,
-    scales: [[u8; 7]; 12],
+    pub(crate) scales: [[u8; 7]; 12],
 }
 
 impl FrameTied {
-    const WINDOW: usize = 6;
+    pub(crate) const WINDOW: usize = 6;
     const ESCAPE: usize = 7;
 
     pub fn new(tied: bool) -> Self {
@@ -372,7 +372,7 @@ impl FrameTied {
         }
     }
 
-    fn best_lens(&self, recent: &[u16], current: usize) -> usize {
+    pub(crate) fn best_lens(&self, recent: &[u16], current: usize) -> usize {
         let fit = |lens: usize| {
             recent
                 .iter()

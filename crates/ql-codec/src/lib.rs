@@ -1,4 +1,4 @@
-//! QL codec experiments (QLC-1..3) over the QLC-0 fold tax.
+//! QL codec experiments (QLC-1..4) over the QLC-0 fold tax.
 //!
 //! Every codec here is lossless and deterministic: it is one walk over a
 //! symbol stream through the shared range coder ([`coder::Io`]), run forward
@@ -16,11 +16,20 @@
 //!   operator that carries its predecessor to it (line change, complement,
 //!   matrix action, nuclear), with an escape to the line mask.
 //!
+//! Wave 2 ([`predict::Mixed`]) carries every codec as a predictor inside a
+//! fixed-share mixture with the order-k models, so a QL prior costs little
+//! where its law fails. Wave 3 ([`predict::MatchModel`]) matches earlier
+//! trajectories exactly or up to the kernel's group action (lens
+//! transposition, XOR line mask). Wave 4 ([`predict::HelixTied`]) ties pitch
+//! contexts across all twelve lens rotations, across only the six whole-tone
+//! rotations that keep a pitch on its P / P′ helix, or not at all.
+//!
 //! Baselines: adaptive order-k context models on the same symbols, and zstd /
 //! xz on the same bytes. `qlc` (src/bin) runs the sweep and writes
-//! `results/qlc-wave1.tsv`.
+//! `results/qlc-sweep.tsv`.
 pub mod codecs;
 pub mod coder;
+pub mod predict;
 pub mod source;
 
 use coder::{Decoder, Encoder, Io};

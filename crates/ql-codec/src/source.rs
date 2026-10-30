@@ -280,3 +280,43 @@ pub fn text_sextets(text: &[u8]) -> Stream {
         units: text.len(),
     }
 }
+
+/// The MIDI keys of one Ableton clip (`.alc`, already gunzipped) in time
+/// order, simultaneous notes lowest first.
+pub fn clip_keys(xml: &str) -> Vec<u8> {
+    let mut notes: Vec<(f64, u8)> = Vec::new();
+    for track in xml.split("<KeyTrack ").skip(1) {
+        let track = track.split("</KeyTrack>").next().unwrap_or("");
+        let Some(key) = attribute(track.split("<MidiKey ").nth(1).unwrap_or(""), "Value") else {
+            continue;
+        };
+        let Ok(key) = key.parse::<u8>() else {
+            continue;
+        };
+        for event in track.split("<MidiNoteEvent ").skip(1) {
+            if let Some(time) = attribute(event, "Time").and_then(|t| t.parse::<f64>().ok()) {
+                notes.push((time, key));
+            }
+        }
+    }
+    notes.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)));
+    notes.into_iter().map(|(_, key)| key).collect()
+}
+
+fn attribute<'a>(text: &'a str, name: &str) -> Option<&'a str> {
+    let start = text.find(&format!("{name}=\""))? + name.len() + 2;
+    let end = text[start..].find('"')? + start;
+    Some(&text[start..end])
+}
+
+/// Real melodies: the pitch classes of a run of clips, one after another.
+pub fn clip_pitches(name: &str, keys: &[u8]) -> Stream {
+    Stream {
+        name: name.into(),
+        kind: Kind::Pitches,
+        alphabet: 12,
+        eps: 0.0,
+        symbols: keys.iter().map(|k| u16::from(k % 12)).collect(),
+        units: keys.len(),
+    }
+}

@@ -119,3 +119,123 @@ fn a_prior_is_known_to_the_decoder_without_being_sent() {
     };
     assert!(encoder.finish().len() < 16);
 }
+
+mod mixtures {
+    use ql_codec::predict::{
+        CellStateP, Factory, FrameTiedP, GenerationLawP, HelixTied, Invariance, MatchModel, Mixed,
+        OperatorGrammarP, order_factories,
+    };
+    use ql_codec::source;
+
+    use super::round_trip;
+
+    fn mixed(alphabet: usize, extra: Vec<Factory>) -> Mixed {
+        let mut factories = order_factories(alphabet);
+        factories.extend(extra);
+        Mixed {
+            name: "test-mix".into(),
+            alphabet,
+            factories,
+        }
+    }
+
+    #[test]
+    fn every_mixture_round_trips_every_stream_kind() {
+        for eps in [0.0, 0.5] {
+            let pairs = source::generation_pairs(300, eps);
+            round_trip(
+                &mixed(
+                    64,
+                    vec![
+                        Box::new(GenerationLawP::boxed),
+                        Box::new(CellStateP::boxed),
+                        Box::new(|| MatchModel::boxed(Invariance::Exact)),
+                    ],
+                ),
+                &pairs.symbols,
+            );
+            let walk = source::operator_walk(600, eps);
+            round_trip(
+                &mixed(
+                    64,
+                    vec![
+                        Box::new(OperatorGrammarP::boxed),
+                        Box::new(|| MatchModel::boxed(Invariance::LineMask)),
+                    ],
+                ),
+                &walk.symbols,
+            );
+            let melody = source::modal_melody(600, eps);
+            round_trip(
+                &mixed(
+                    12,
+                    vec![
+                        Box::new(|| FrameTiedP::boxed(true)),
+                        Box::new(|| MatchModel::boxed(Invariance::Transposition)),
+                        Box::new(|| HelixTied::boxed(2, 6)),
+                        Box::new(|| HelixTied::boxed(1, 12)),
+                    ],
+                ),
+                &melody.symbols,
+            );
+        }
+        round_trip(&mixed(64, vec![]), &[]);
+        round_trip(&mixed(12, vec![]), &[3]);
+    }
+
+    #[test]
+    fn a_transposed_repeat_is_cheap_only_to_the_invariant_match() {
+        let phrase: Vec<u16> = (0..64).map(|i| ((i * 7 + i / 5) % 12) as u16).collect();
+        let mut stream = phrase.clone();
+        for shift in 1..12 {
+            stream.extend(phrase.iter().map(|p| (p + shift) % 12));
+        }
+        let exact = round_trip(
+            &mixed(12, vec![Box::new(|| MatchModel::boxed(Invariance::Exact))]),
+            &stream,
+        );
+        let invariant = round_trip(
+            &mixed(
+                12,
+                vec![Box::new(|| MatchModel::boxed(Invariance::Transposition))],
+            ),
+            &stream,
+        );
+        assert!(
+            invariant * 2 < exact,
+            "invariant {invariant} vs exact {exact}"
+        );
+    }
+
+    #[test]
+    fn helix_tying_keeps_the_face_and_full_tying_drops_it() {
+        // A whole-tone run on the direct helix, then the same run a semitone up
+        // (the conjugate helix): an order-1 interval context sees one pattern.
+        let run: Vec<u16> = (0..600).map(|i| ((i % 6) * 2) as u16).collect();
+        let mut stream = run.clone();
+        stream.extend(run.iter().map(|p| p + 1));
+        let untied = round_trip(
+            &mixed(12, vec![Box::new(|| HelixTied::boxed(1, 1))]),
+            &stream,
+        );
+        let full = round_trip(
+            &mixed(12, vec![Box::new(|| HelixTied::boxed(1, 12))]),
+            &stream,
+        );
+        assert!(full < untied, "full tying {full} vs untied {untied}");
+    }
+
+    #[test]
+    fn the_mixture_stays_near_the_best_component_on_noise() {
+        let noise = source::operator_walk(20_000, 1.0);
+        let plain = round_trip(&mixed(64, vec![]), &noise.symbols);
+        let carrying = round_trip(
+            &mixed(64, vec![Box::new(OperatorGrammarP::boxed)]),
+            &noise.symbols,
+        );
+        assert!(
+            carrying as f64 <= plain as f64 * 1.01,
+            "{carrying} vs {plain}"
+        );
+    }
+}
