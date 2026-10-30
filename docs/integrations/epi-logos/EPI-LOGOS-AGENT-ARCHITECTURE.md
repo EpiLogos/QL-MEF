@@ -192,3 +192,55 @@ Current callable standing is intentionally discriminating:
 The constitution read keeps **#0/1 distinct from #0**, and preserves **M4/M4′ = Nara, M5/M5′ = Epii, S4′ = Anima, S5′ = Aletheia**. Canonical graph mutation, training and promotion are false in the returned contracts.
 
 Cloud tests exercise the constitution, full-source Anuttara join, TDA computation, Nara unknown/confidence law and wrong-position refusal. These are implementation/conformance evidence, not a live Jev/EBM/model result or human acceptance. Joined provider, protected-source egress and fresh-participant transfer remain acceptance episodes under #201/#220/#65.
+
+## 13. The T-level loop: NOW thought compressed into #0's self-improvement — 2026-10-30
+
+**Standing:** owner-stated intent and specification, 30 October 2026. It serves the telos track `two-machine-development/self-improvement-pipeline` and the Return leg of #201. Nothing here is runtime, model-effect or human acceptance.
+
+### 13.1 Intent
+
+Close the existing 4/5/0 loop with the machinery already present; build no second agent. During any NOW, the acting body (#0/1) writes short working thought at the twelve T/T′ levels. QL classifies that thought and compresses its sequence. What does not compress — the honest remainder — is the task-log output that Anuttara's #0 self-improvement consumes.
+
+Done when one real NOW, worked by an inhabited agent:
+
+1. produces typed T/T′ thought;
+2. has QL read and compress that thought into a T′ distillation carrying bits and unresolved items;
+3. has #0 take up the output as a verifier question or a candidate constraint;
+4. is followed by a later NOW that visibly uses the result.
+
+Out of scope: graph or canon writes, automatic promotion, model training, new stores or sessions, UI.
+
+### 13.2 The loop, by position and owner
+
+| Step | Position | What happens | Owner |
+|---|---|---|---|
+| Body | #0/1 | An agent occupies `central:position:control:root:{nara,epii,anuttara}` through `aikit inhabit`. QL tools reach the body through the QL agent skill and `ql epi-agent invoke`. | AIKit, Actuation |
+| Think | #4 Nara / S4′ Anima | The agent appends only useful thought with `central.now.thoughts.append`, each fixture declaring its reading `T0`–`T5` or `T0-prime`–`T5-prime` (§3 of [Vāk, Oikonomia and Knowledge Return](../../kernel-rebuild/VAK-OIKONOMIA-KNOWLEDGE-RETURN.md)). | Central (the `T/` carrier) |
+| Classify | #5 Epii | The declared reading is checked against typed classification (Kev through `aikit decide`; Jev where enabled) and against the compression evidence. Where they diverge, the item goes to review, never resolved silently. | QL standing; AIKit models |
+| Compress | QL, at the T level, within the NOW | The sequence of readings is coded under QL's laws: the Day passage T0→T5, the Night passage T0′→T5′ and the conjugate pairing Tn ↔ Tn′ (Discovery with Concealment, Pattern with Anomaly, …), against a plain model of the same sequence. The remainder is the surprising thoughts, the Day readings left without their Night partner, and declared material never consumed. | QL (the `ql-codec` instrument, extended to T sequences) |
+| Distil | #5 → T′ | `central.now.learnings.distill` writes the T′ distillation with a compression receipt: bits per thought, the remainder, and a standing per reading (`Exact`, `Partial`, `Ambiguous`, `NoReading`). | Central (the `T-prime/` carrier); QL receipt |
+| Improve | #0 Anuttara | #0 consumes the task-log output. Remainder items become verifier questions or candidate constraints; confirmed readings become Jev/EBM training pairs. Nothing promotes without Recognition. | QL #0 faculty |
+| Return | S5′ Aletheia / #5 Epii | `logos.return` carries the T/C/T′/C′ envelope. Only a later NOW's use counts as learning. | QL, Aletheia |
+
+Compression is the classifier read the other way: a reading is worth the bits it saves on the material it reads, and what it cannot save is what is new or unresolved. The receipt therefore says what the `compress-thought-artifacts` discipline asks a carry-forward to say — what cohered, what remains open — as a measurement rather than a summary. The QLC-0 fold tax (`ql_core::fold_tax`) is the same quantity at the kernel's own folds.
+
+### 13.3 What exists and what is missing (read 30 October 2026)
+
+Present: the twelve readings and the `T/` and `T-prime/` carriers on every NOW clearing; the root Positions for Nara, Epii and Anuttara; `aikit inhabit --model … -- <harness>`; Kev decisions; `vak_thought_consumption` over Factory thought receipts; `logos.return`; the `ql-codec` lossless codecs, mixture and match models (#364).
+
+Missing:
+
+- **No thought is written.** Every root NOW clearing's `T/` was empty at reading.
+- **No T-level codec.** `ql-codec` codes kernel and music streams, not T/T′ sequences.
+- **#0 cannot yet raise questions or hold constraints.** Its callable faculty is `anuttara.read` and Ananda only: no verifier questions, no constraint registry, no consumption of a task-log output.
+- **QL reads consumed thought only through Factory receipts**, not from a NOW's own `T/` carrier.
+
+### 13.4 Tests
+
+Real-model turns run on **Haiku through the Claude Code harness**: `aikit inhabit --position central:position:control:root:epii --model <haiku> -- claude --model haiku`, and likewise for Nara and Anuttara. The GLM account has no subscription this month. The Prime/epi-chat body stays the reference composition and is not exercised now.
+
+1. The inhabited agent writes typed T/T′ during a small real NOW.
+2. The declared reading, the Kev classification and the compression reading agree, or their disagreement reaches review.
+3. The QL code of the thought sequence uses fewer bits than the plain model, and the remainder matches what the person calls unresolved.
+4. #0 records a question or candidate constraint from that output.
+5. A later NOW uses it.
