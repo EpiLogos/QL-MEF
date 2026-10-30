@@ -1003,6 +1003,21 @@
     "crates/ql-cli/tests/sky_hours_native.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-core/src/fold_tax.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#2",
+    "#3",
+    "#3-3-2"
+   ],
+   "rationale": "QLC-0 fold tax: measures H(source | image) for the kernel's own many-to-one maps — the three recorded M2→M3 epogdoon descriptions (det_shadow, Transduction18to16, apply_epogdoon_compression), quat_from_codon, the recorded amino table, nuclear_hexagram and the M3-3-2 generation cell's conjugate codon — under the uniform law and the generation law's own 384-slot yield, and carries each map as an exact image-plus-rank code. It calls the kernel homes, restates none, and claims no compression of arbitrary data.",
+   "tests": [
+    "crates/ql-core/tests/fold_tax.rs"
+   ],
+   "kind": "computational"
   }
  ]
 }

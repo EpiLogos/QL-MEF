@@ -8,6 +8,7 @@ mod apply;
 mod deterministic;
 mod error;
 mod face;
+mod fold_tax;
 mod form;
 mod kernel;
 pub mod m3_clock;
@@ -28,6 +29,11 @@ pub use apply::apply_operator;
 pub use deterministic::{DeterministicProvenance, DeterministicResult};
 pub use error::QlError;
 pub use face::QlFace;
+pub use fold_tax::{
+    FOLD_TAX_CONTRACT, FoldCode, FoldTax, d1_conjugacy_pairs, epogdoon_arithmetic_pairs,
+    epogdoon_det_pairs, epogdoon_fibre_pairs, fold_tax_table, fold_tax_tsv,
+    generation_yield_weights,
+};
 pub use form::{QlForm, QlFormRef};
 pub use kernel::{
     HOLOGRAPHIC_KERNEL_CONTRACT_VERSION, HOLOGRAPHIC_KERNEL_POINTER_WEB_BLOB,
