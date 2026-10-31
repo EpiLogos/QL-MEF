@@ -1,0 +1,14 @@
+corpus	pair	n	mi_bits	null_mi_bits	p	same_rate	chance_rate
+corpus-now	t-position x mef-position (joint, first)	543	0.1451	0.0345	0.0005	0.3186	0.2052
+corpus-now	t-position x mef-position (joint, every)	1216	0.0574	0.0152	0.0005	0.2722	0.2005
+corpus-now	t-position x mef-position (blind, first)	542	0.1081	0.0347	0.0005	0.2878	0.1924
+corpus-now	t-position x mef-position (blind, every)	1031	0.0614	0.0177	0.0005	0.2648	0.1904
+corpus-now	t-position x mef-position (blind, every, no L0')	981	0.0680	0.0187	0.0005	0.2691	0.1905
+corpus-now	t-position x context-frame	543	0.2435	0.0418	0.0005	0.1031	0.1268
+corpus-gold	t-position x mef-position (joint, first)	66	0.4463	0.2475	0.0050	0.2727	0.1641
+corpus-gold	t-position x mef-position (joint, every)	154	0.3008	0.1320	0.0005	0.3052	0.1712
+corpus-gold	t-position x mef-position (blind, first)	66	0.3808	0.2847	0.0780	0.2576	0.1752
+corpus-gold	t-position x mef-position (blind, every)	132	0.1985	0.1502	0.1104	0.2197	0.1709
+corpus-gold	t-position x mef-position (blind, every, no L0')	122	0.2294	0.1647	0.0670	0.2377	0.1768
+corpus-gold	t-position x context-frame	66	0.3879	0.3532	0.2849	0.2424	0.1726
+corpus-gold	gold t-position x classified t-position	66	0.7194	0.2794	0.0005	0.5303	0.2516

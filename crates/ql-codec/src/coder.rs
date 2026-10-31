@@ -166,6 +166,9 @@ impl Freq {
 pub enum Io<'a> {
     Encode(Encoder),
     Decode(Decoder<'a>),
+    /// Encode without output: each symbol's ideal cost, `log2(total/freq)`
+    /// bits under exactly the counts the encoder would use.
+    Measure(Vec<f64>),
 }
 
 impl Io<'_> {
@@ -197,10 +200,15 @@ impl Io<'_> {
                 decoder.consume(cum, counts[symbol]);
                 symbol
             }
+            Io::Measure(costs) => {
+                assert!(value < counts.len(), "symbol {value} outside its model");
+                costs.push((f64::from(total) / f64::from(counts[value])).log2());
+                value
+            }
         }
     }
 
     pub const fn encoding(&self) -> bool {
-        matches!(self, Io::Encode(_))
+        matches!(self, Io::Encode(_) | Io::Measure(_))
     }
 }
