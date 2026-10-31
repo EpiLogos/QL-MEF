@@ -24,6 +24,11 @@
 //! contexts across all twelve lens rotations, across only the six whole-tone
 //! rotations that keep a pitch on its P / P′ helix, or not at all.
 //!
+//! QLT ([`thought`]) turns the instrument on classified thought: a
+//! labelling (T level, MEF cell, context frame) is coded as a two-part code,
+//! labels then text with the label as context, against no labels and the
+//! same labels shuffled; `qlt` also tests whether T and MEF positions align.
+//!
 //! Baselines: adaptive order-k context models on the same symbols, and zstd /
 //! xz on the same bytes. `qlc` (src/bin) runs the sweep and writes
 //! `results/qlc-sweep.tsv`.
@@ -31,6 +36,7 @@ pub mod codecs;
 pub mod coder;
 pub mod predict;
 pub mod source;
+pub mod thought;
 
 use coder::{Decoder, Encoder, Io};
 

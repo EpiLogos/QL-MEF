@@ -1096,6 +1096,28 @@
     "crates/ql-codec/tests/roundtrip.rs"
    ],
    "kind": "computational"
+  },
+  {
+   "path": "crates/ql-codec/src/thought.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "QLT: a thought classification measured as a two-part code. The label stream (T level, MEF cell, context frame) is coded under its own mixture, optionally with the QL cycle predictor (position p to p+1 mod 6); the text is coded with each unit's label known at its start, under shared and label-keyed sparse contexts. Lossless and round-trip tested.",
+   "tests": [
+    "crates/ql-codec/tests/thought.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-codec/src/bin/qlt.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "The qlt runner: codes a classified thought corpus under every labelling and its shuffled control, decodes each again, and tests whether T positions and MEF reading positions align beyond permutation chance; writes crates/ql-codec/results/qlt-thoughts.tsv and qlt-alignment.tsv.",
+   "tests": [
+    "crates/ql-codec/tests/thought.rs"
+   ],
+   "kind": "structural-index"
   }
  ]
 }

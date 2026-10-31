@@ -46,48 +46,85 @@ pub struct Mixed {
     pub factories: Vec<Factory>,
 }
 
+/// One fixed-share mixture over fresh predictors: the shared step of every
+/// mixed walk. [`Mixture::counts`] states the quantised distribution of the
+/// next symbol, [`Mixture::learn`] moves the weights and teaches every
+/// predictor the symbol actually coded.
+pub struct Mixture {
+    alphabet: usize,
+    predictors: Vec<Box<dyn Predictor>>,
+    weights: Vec<f64>,
+    dists: Vec<Vec<f64>>,
+    counts: Vec<u32>,
+}
+
+impl Mixture {
+    pub fn new(factories: &[Factory], alphabet: usize) -> Self {
+        let predictors: Vec<Box<dyn Predictor>> = factories.iter().map(|f| f()).collect();
+        let m = predictors.len();
+        Self {
+            alphabet,
+            predictors,
+            weights: vec![1.0 / m as f64; m],
+            dists: vec![vec![0.0; alphabet]; m],
+            counts: vec![0; alphabet],
+        }
+    }
+
+    pub fn counts(&mut self, history: &[u16]) -> (&[u32], u32) {
+        for (predictor, dist) in self.predictors.iter_mut().zip(&mut self.dists) {
+            dist.iter_mut().for_each(|p| *p = 0.0);
+            predictor.predict(history, dist);
+            let sum: f64 = dist.iter().sum();
+            if sum > 0.0 {
+                dist.iter_mut().for_each(|p| *p /= sum);
+            } else {
+                dist.iter_mut()
+                    .for_each(|p| *p = 1.0 / self.alphabet as f64);
+            }
+        }
+        let mut total = 0u32;
+        for (s, count) in self.counts.iter_mut().enumerate() {
+            let p: f64 = self
+                .weights
+                .iter()
+                .zip(&self.dists)
+                .map(|(w, d)| w * d[s])
+                .sum();
+            *count = 1 + (p * SCALE) as u32;
+            total += *count;
+        }
+        (&self.counts, total)
+    }
+
+    pub fn learn(&mut self, history: &[u16], symbol: u16) {
+        let m = self.predictors.len();
+        let mut norm = 0.0;
+        for (w, d) in self.weights.iter_mut().zip(&self.dists) {
+            *w *= d[usize::from(symbol)].max(1e-12);
+            norm += *w;
+        }
+        for w in &mut self.weights {
+            *w = (1.0 - SHARE) * *w / norm + SHARE / m as f64;
+        }
+        for predictor in &mut self.predictors {
+            predictor.update(history, symbol);
+        }
+    }
+}
+
 impl Codec for Mixed {
     fn name(&self) -> String {
         self.name.clone()
     }
 
     fn walk(&self, io: &mut Io, input: Option<&[u16]>, n: usize) -> Vec<u16> {
-        let mut predictors: Vec<Box<dyn Predictor>> = self.factories.iter().map(|f| f()).collect();
-        let m = predictors.len();
-        let mut weights = vec![1.0 / m as f64; m];
-        let mut dists = vec![vec![0.0; self.alphabet]; m];
-        let mut counts = vec![0u32; self.alphabet];
+        let mut mixture = Mixture::new(&self.factories, self.alphabet);
         let mut out: Vec<u16> = Vec::with_capacity(n);
         for t in 0..n {
-            for (predictor, dist) in predictors.iter_mut().zip(&mut dists) {
-                dist.iter_mut().for_each(|p| *p = 0.0);
-                predictor.predict(&out, dist);
-                let sum: f64 = dist.iter().sum();
-                if sum > 0.0 {
-                    dist.iter_mut().for_each(|p| *p /= sum);
-                } else {
-                    dist.iter_mut()
-                        .for_each(|p| *p = 1.0 / self.alphabet as f64);
-                }
-            }
-            let mut total = 0u32;
-            for (s, count) in counts.iter_mut().enumerate() {
-                let p: f64 = weights.iter().zip(&dists).map(|(w, d)| w * d[s]).sum();
-                *count = 1 + (p * SCALE) as u32;
-                total += *count;
-            }
-            let symbol = io.code(&counts, total, at(input, t)) as u16;
-            let mut norm = 0.0;
-            for (w, d) in weights.iter_mut().zip(&dists) {
-                *w *= d[usize::from(symbol)].max(1e-12);
-                norm += *w;
-            }
-            for w in &mut weights {
-                *w = (1.0 - SHARE) * *w / norm + SHARE / m as f64;
-            }
-            for predictor in &mut predictors {
-                predictor.update(&out, symbol);
-            }
+            let (counts, total) = mixture.counts(&out);
+            let symbol = io.code(counts, total, at(input, t)) as u16;
+            mixture.learn(&out, symbol);
             out.push(symbol);
         }
         out

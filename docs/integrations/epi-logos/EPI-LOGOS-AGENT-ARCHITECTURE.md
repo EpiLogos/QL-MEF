@@ -231,7 +231,7 @@ Present: the twelve readings and the `T/` and `T-prime/` carriers on every NOW c
 Missing:
 
 - **No thought is written.** Every root NOW clearing's `T/` was empty at reading.
-- **No T-level codec.** `ql-codec` codes kernel and music streams, not T/T′ sequences.
+- ~~No T-level codec.~~ Present since 31 October: `ql_codec::thought` and the `qlt` runner (§13.5).
 - **#0 cannot yet raise questions or hold constraints.** Its callable faculty is `anuttara.read` and Ananda only: no verifier questions, no constraint registry, no consumption of a task-log output.
 - **QL reads consumed thought only through Factory receipts**, not from a NOW's own `T/` carrier.
 
@@ -244,3 +244,21 @@ Real-model turns run on **Haiku through the Claude Code harness**: `aikit inhabi
 3. The QL code of the thought sequence uses fewer bits than the plain model, and the remainder matches what the person calls unresolved.
 4. #0 records a question or candidate constraint from that output.
 5. A later NOW uses it.
+
+### 13.5 First measurement — 31 October 2026
+
+**Corpus.** 543 units of agent thought from 40 real Claude Code NOWs (the agent's own narration, in order), and 66 vault thoughts filed under T folders (`Questions` … `Insight`) as a gold set. Nothing in the root `T/` carriers was usable: they held no typed thought.
+
+**Classifier.** Haiku through Claude Code, inside one Epii tenure (`aikit inhabit … --position …:epii`), answering QL's own label sets: the T level (which is the L4′ Scientific lens, whose six sublenses are Prompts, Traces, Challenges, Patterns, Discovery and Insight), up to three MEF cells `L<n>.<position>` from `ql mef lenses`, and one context frame from `ql agent-event project`. A second, blind pass never saw the T levels and named each sublens from a shuffled list instead of numbering it. Both passes cost $0.63.
+
+**Measure.** `qlt` (`crates/ql-codec`) codes each labelling as a two-part code, labels then text with the label as context, decodes it again, and compares it with no labels and with the same labels shuffled. Results: `crates/ql-codec/results/qlt-thoughts.tsv` and `qlt-alignment.tsv`.
+
+Findings:
+
+1. **The position is a shared axis.** A thought's T position and the position of its blind MEF reading coincide 28.8% of the time against 19.2% chance (542 thoughts, p < 0.001 over 2000 permutations), and separately within each of L0, L1, L2 and L3: T2 Challenge with How and with Efficient cause, T1 Trace with IS, T5 Insight with Satisfaction/Perishing. L0′, whose sublens names are numerals and would leak position, shows none. Two independently read QL classifications agree on the sixfold position.
+2. **The readings are grounded but small.** Every labelling codes the text better than its shuffled self: 230 to 440 bits on the NOW corpus. As a share of what the labels cost, the MEF lens is the most grounded (35%) and the T level the least (13%). No labelling pays for itself as a compression context on 437 KB; class-keyed models split the data too thinly.
+3. **Narration has no T sequence.** Within a NOW, the labels cost the same in their real order as shuffled, and the QL cycle Tn → Tn+1 predicts nothing. Test 3 of §13.4 fails on narration. The sequence law has to be tested on thought written at the levels on purpose (test 1), not inferred from running commentary.
+4. **The gold folders are filings.** Haiku matches them 35 of 66 times, no better than always answering Discovery, although the relation is above chance (MI p < 0.001).
+
+So in the loop of §13.2, compression earns its place at **Classify**: Epii's check of a declared reading is a grounding measurement, read per lens. It does not yet earn it at **Compress**, as a smaller log, because the structure there was not found.
+
