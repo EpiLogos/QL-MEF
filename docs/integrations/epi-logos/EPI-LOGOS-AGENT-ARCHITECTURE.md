@@ -262,3 +262,109 @@ Findings:
 
 So in the loop of §13.2, compression earns its place at **Classify**: Epii's check of a declared reading is a grounding measurement, read per lens. It does not yet earn it at **Compress**, as a smaller log, because the structure there was not found.
 
+
+## 14. Epii reads and compresses the conversation as constellations, in the Epi-Prime body — 1 November 2026
+
+**Standing:** owner-stated intent and build specification, 1 November 2026. It builds §13's Classify and Compress steps in the kernel's own terms, and for this build it replaces §13.4's "the Prime body is not exercised now". Nothing here is runtime, model-effect or human acceptance.
+
+### 14.1 Intent
+
+The owner: QL is a classifier and a compressor. T thought and MEF-lens readings are classification systems built on and for QL. Build that into the Epi-Prime agent. Prove it live in `face-rig-chat`, where the Prime-QL body already talks through the face rig with Piper speech. Once it is refined, port it into the DLW as the Agent's answer face (O:I DLW §19.4): a persistent device with its widget.
+
+It is done when the owner talks to Epii through the face and:
+
+- every turn carries a kernel reading: constellation, relation fields and harmonic frame;
+- Epii carries the conversation forward as recognised wholes rather than as transcript, and reopens one when the talk returns to it;
+- the tests in §14.5 hold.
+
+Out of scope: canon or graph writes, training, new stores, and any rework of speech or the face.
+
+### 14.2 The foundation: what the kernel already defines
+
+The first measurement (§13.5) classified single thoughts by sublens name and coded their bytes. None of the kernel's structure took part. A check on the same labels on 1 November found that only "same local position" carries signal (z +6.3). The absolute rotation `(lens + local) mod 6`, the conjugate moves and the pitch intervals all sit at chance.
+
+QL classifies **wholes**, and compresses by **recognising** them. The L5 offices ([QL-VAK-KERNEL-RECONCILIATION.md](../../QL-VAK-KERNEL-RECONCILIATION.md)) already carry what Epii uses:
+
+| Office | What Epii uses | Existing owner |
+|---|---|---|
+| L5.1 Root | a participation is a position and face (#0–#5, direct or conjugate); the T levels are the L4′ sublenses | `QlCoordinate`, `QlFamily::T`, `LensId::L4Prime` |
+| L5.2 Harmonics | the active Context Frame sets the whole's frame pitch; each part's interval is read against it; a reframe changes the intervals, not the parts | `vak_composition::read`, `cf_diatonic_cut`, `directed_pitch_delta` |
+| L5.3 Geometry | the constellation and its grain (2, 123, 450, 1234, 4+1, 6, 7–12); the 3×3 field of A/B/C pairs, each opening to D1/D2/D3; recognition 2→1 and 3→1 (with 1234 as superset); 18 = 6 + 6′ + relational 6 → 3 → 1, the basis always retained and reopenable | `StructuralConstellation`, `ConstellationGrain`, `classify_relation_pair`, `RelationField`, `QlShapeCompression`, `EighteenFoldGeometry`, `ql shape presentation` ([CANONICAL-CONSTELLATION-RESOLUTION.md](../../geometry/CANONICAL-CONSTELLATION-RESOLUTION.md)) |
+| L5.4 MEF | the lens and sublens a part reads through; rotation; the three lens squares; conjugate twin and Möbius partner | `SublensRef`, `MefRotation`, `MefSquare` |
+| L5.5 Techne | a determination returned to an explicit ground and offered as a new whole | `determine`, `return_result`, `offer_as_whole`, `CPrimeContext` |
+| L5.0 Syntax | the Vāk expression a reading is bound to, when there is one | `FullVakBinding` |
+
+### 14.3 The reading, turn by turn
+
+1. **Participation.** Each utterance, the person's and Epii's, receives a declared reading through the kernel's heads (`ql_project_event`, `ql_decide`), never as free text. The reading gives:
+   - the T position and face;
+   - the MEF cell it reads through;
+   - the active Context Frame.
+2. **Whole.** The turn is a whole whose members are its participations, and so is the conversation. The kernel names the grain.
+3. **Relation.** Epii declares which earlier participation a new one is set against, composed as row × column. The kernel classifies the pair: family, pair index, direction and D degree. Pairs on the same vertices, such as A1 and C2 on (2,3), stay distinct because the declaration says which.
+4. **Frame.** `read` gives the frame pitch, the parts' intervals and their phases (pitch × 30°). `reframe` records any change of Context Frame as a transition.
+5. **Recognition (compression).** Recognition happens at two scales:
+   - when a 2- or 3-fold is disclosed, Epii may recognise it as one 0/1;
+   - when the direct six, the conjugate six and their relational six are all present, it goes 18 → 3 → 1.
+
+   The recognised whole keeps its basis, derivation and operator. `offer_as_whole` makes it addressable.
+6. **Carry.** For later turns, Epii's context is the recognised wholes plus the unrecognised remainder, not the transcript. When the talk returns to a whole, Epii reopens it (member focus). The remainder is §13's honest remainder.
+7. **Return.** `logos.return` carries the T/C/T′/C′ envelope as it does now.
+
+### 14.4 Build, by owner
+
+**QL-MEF**
+
+- **(a)** Give Epii (#5) the composition as native operations in `epi_agent.rs`. `vak.compose` takes the existing `ql.vak-composition/v1` envelope, with no new schema.
+  - Add the missing envelope steps: `recognise` (2→1, 3→1 through `QlShapeCompression`, and 18→3 through `EighteenFoldGeometry`) and `reopen`.
+  - Today the `whole` step always presents `QlShape::Constellation(grain)` (`crates/ql-cli/src/vak_composition.rs`). Compression exists in `ql-core` and `ShapeBinding`, but the envelope cannot reach it.
+- **(b)** `compose` reports the kernel's classification of each declared pair: `classify_relation_pair` and its D degree.
+- **(c)** `ql-codec` gains kernel-relation predictors for the mixture:
+  - D1 opposition;
+  - transform, require and complete;
+  - A/B/C partner;
+  - interval in the parent frame;
+  - Context-Frame nesting.
+
+  The receipt reports each relation's weight. This is Epii's grounding check from §13.5 finding 2, now saying which kernel relation the conversation uses.
+
+**Epi-Prime**
+
+- **(d)** Re-pin the vendored `ql-agent-reading` and the installation to the QL revision that carries (a)–(c). `ql_invoke` at #5 then reaches them. Seal the manifest; there is no upstream Prime patch.
+- **(e)** Add the Epii practice to the extension's guidance: each turn, declare participations, relations and recognitions through the tools.
+
+**face-rig-chat**
+
+- **(f)** Each turn's kernel receipts reach the browser beside the face:
+  - the constellation on the sixfold ring (`ql shape presentation`, zero at the top);
+  - the declared A/B/C lines and their D degree;
+  - the frame pitch and intervals on the same ring;
+  - recognised wholes as closed 0/1 marks that open to their basis.
+- **(g)** Speech, alignment, the face and K-E-V affect stay exactly as they are.
+- **(h)** The owner can mark a reading wrong. The correction is recorded as a Return and carried into the next turn.
+- **(i)** The model is Haiku:
+  - Prime supports the Anthropic subscription login and the Haiku models.
+  - The installed Prime default is `zai/glm-5.3-flash`, whose subscription has lapsed.
+  - The app's session override accepts OpenRouter free models only (`src/prime-runner.mjs`). It must also admit the Anthropic provider.
+  - Prime's Anthropic login is a single owner step.
+
+**O:I (the port, after the owner accepts §14.5 in face-rig-chat)**
+
+- **(j)** The answer's face (DLW §19.4) carries the face in its Compact, Whole, Full and Widget views.
+  - The reading becomes a page of the Agent device: the ring, the fields and the recognised wholes.
+  - The widget's light ring shows it working.
+  - It persists across modes, as the Agent already does. The DLW text changes at the port, not before.
+
+### 14.5 Tests
+
+These run in face-rig-chat on Haiku.
+
+1. **Receipts.** Every turn yields kernel receipts: whole, grain, relation classifications and framed reading. Nothing is free-text labelling.
+2. **Blind recovery.** A fresh Haiku Epii given only the transcript recovers the declared constellations (grain and fields). It must do so better than a same-shape random constellation, over permutations.
+3. **Kernel relations carry.** In the dialogue, D1 opposition, transform, require and complete, and the A/B/C partners each occur more often than chance. The coder's per-relation weights show which do.
+4. **Compression in QL's terms.**
+   - A fresh Epii holding only the carried wholes and the remainder answers questions about the conversation as well as one holding the transcript.
+   - The receipt reports the carried size against the transcript's size.
+   - Every recognised whole reopens to its exact basis.
+5. **The owner's eye.** The owner talks with it live, and the readings they mark wrong are counted. Face and voice are judged live, with audio, not from stills.
+6. **Port gate.** The owner accepts 1–5, and the DLW port (j) begins.
