@@ -3,8 +3,11 @@
 use ql_codec::coder::Io;
 use ql_codec::predict::Mixed;
 use ql_codec::source::Rng;
-use ql_codec::thought::{ThoughtText, label_factories, label_stream};
+use ql_codec::thought::{
+    ThoughtText, kernel_relation_factories, label_factories, label_stream, mean_weights,
+};
 use ql_codec::{Codec, compress, decompress};
+use ql_core::{QlCoordinate, QlFace, QlPosition};
 
 fn measure(codec: &dyn Codec, symbols: &[u16]) -> f64 {
     let mut io = Io::Measure(Vec::new());
@@ -110,4 +113,51 @@ fn the_ql_cycle_codes_a_cyclic_thought_sequence_cheaper() {
     let cycle = codec(Some(positions));
     assert_eq!(decompress(&cycle, &compress(&cycle, &stream)), stream);
     assert!(measure(&cycle, &stream) < measure(&plain, &stream));
+}
+
+#[test]
+fn the_kernel_relation_a_sequence_follows_earns_the_weight_and_the_bits() {
+    // Twelve T labels: index 2p is Tp, 2p+1 is Tp'. Each Day reading is
+    // followed by its Night partner (D1), the next Day reading at random.
+    let coordinates: Vec<Option<QlCoordinate>> = (0..12u8)
+        .map(|i| {
+            let face = if i % 2 == 0 {
+                QlFace::Direct
+            } else {
+                QlFace::Conjugate
+            };
+            Some(QlCoordinate::new(QlPosition::new(i / 2).unwrap(), face))
+        })
+        .collect();
+    let mut rng = Rng::new(11);
+    let nows: Vec<Vec<u16>> = (0..40)
+        .map(|_| {
+            (0..5)
+                .flat_map(|_| {
+                    let p = (rng.next_u64() % 6) as u16;
+                    [2 * p, 2 * p + 1]
+                })
+                .collect()
+        })
+        .collect();
+    let stream = label_stream(&nows, 12);
+    let kernel = Mixed {
+        name: "kernel".into(),
+        alphabet: 13,
+        factories: kernel_relation_factories(12, &coordinates),
+    };
+    let plain = Mixed {
+        name: "plain".into(),
+        alphabet: 13,
+        factories: label_factories(12, None),
+    };
+    assert_eq!(decompress(&kernel, &compress(&kernel, &stream)), stream);
+    assert!(measure(&kernel, &stream) < measure(&plain, &stream));
+    let weights = mean_weights(&kernel_relation_factories(12, &coordinates), 13, &stream);
+    let (best, _) = weights
+        .iter()
+        .skip(3) // the three plain orders
+        .max_by(|a, b| a.1.total_cmp(&b.1))
+        .unwrap();
+    assert_eq!(best, "cross.same-position");
 }

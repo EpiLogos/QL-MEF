@@ -1,6 +1,7 @@
 use crate::{
-    Codon64, ConstellationGrain, FoldMotif, PairInstance, QlCoordinate, QlFace, QlPosition,
-    RelationFamily, RelationField, WHOLE_ANCHOR_SYMBOL,
+    Codon64, ConstellationGrain, FoldMotif, FourPlusTwoClass, OperatorValue, PairInstance,
+    QlAddress, QlCoordinate, QlFace, QlOperator, QlPosition, RelationFamily, RelationField,
+    StructuralConstellation, WHOLE_ANCHOR_SYMBOL, apply_operator,
 };
 
 pub const QL_SHAPE_CONTRACT_VERSION: &str = "1.0.0";
@@ -155,6 +156,246 @@ impl QlShapeCompression {
 
     pub fn derivation_ref(self) -> String {
         format!("{}:from:{}", self.operator_ref, self.disclosed.shape_ref())
+    }
+}
+
+/// The operator family of recognition beyond the direct `2 -> 1` / `3 -> 1`.
+pub const RECOGNITION_OPERATOR_PREFIX: &str = "ql:shape:1.1.0:recognition";
+
+/// How a sixfold is recognised as its `0/1`. Each is one of QL's own readings
+/// of six, and the reading taken is retained, not collapsed: two routes over
+/// the same positions stay distinct, as A1 and C2 do.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum SixfoldRoute {
+    /// `1234 | 05`, divided by the kernel's `classify-four-plus-two`: the
+    /// explicate four by `3 + 1`, the implicate pair `5 -> 0`, then `2 -> 1`.
+    FourPlusTwo,
+    /// `123 | 450`: the two triads, each `3 -> 1`, then `2 -> 1`.
+    ThreePlusThree,
+    /// The three pairs of one relation family, each `2 -> 1`, then `3 -> 1`.
+    Pairs(RelationFamily),
+}
+
+impl SixfoldRoute {
+    pub const ALL: [Self; 5] = [
+        Self::FourPlusTwo,
+        Self::ThreePlusThree,
+        Self::Pairs(RelationFamily::A),
+        Self::Pairs(RelationFamily::B),
+        Self::Pairs(RelationFamily::C),
+    ];
+
+    pub const fn code(self) -> &'static str {
+        match self {
+            Self::FourPlusTwo => "4+2",
+            Self::ThreePlusThree => "3+3",
+            Self::Pairs(RelationFamily::A) => "pairs-A",
+            Self::Pairs(RelationFamily::B) => "pairs-B",
+            Self::Pairs(RelationFamily::C) => "pairs-C",
+        }
+    }
+
+    pub fn parse(code: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|route| route.code() == code)
+    }
+
+    /// The parts this reading divides the six positions into.
+    pub fn parts(self) -> Vec<Vec<u8>> {
+        match self {
+            Self::FourPlusTwo => {
+                let class = |p: u8| {
+                    let address = QlAddress::sixfold(p, QlFace::Direct, 0)
+                        .expect("positions 0..5 address the sixfold");
+                    apply_operator(QlOperator::ClassifyFourPlusTwo, address).value
+                };
+                let explicate = OperatorValue::FourPlusTwo(FourPlusTwoClass::Explicate);
+                let (four, two): (Vec<u8>, Vec<u8>) = (0..6).partition(|p| class(*p) == explicate);
+                // The implicate pair is read as the return `5 -> 0`.
+                vec![four, two.into_iter().rev().collect()]
+            }
+            Self::ThreePlusThree => vec![vec![1, 2, 3], vec![4, 5, 0]],
+            Self::Pairs(family) => family.pairs().iter().map(|(a, b)| vec![*a, *b]).collect(),
+        }
+    }
+}
+
+/// The route by which a whole reaches its `0/1`, read from its grain.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum RecognitionRoute {
+    /// A two-fold `2 -> 1`, or the triads `123` / `450` `3 -> 1`.
+    Direct,
+    /// `1234`: the triad `123` and its recognised fourth.
+    ThreePlusOne,
+    /// `01234` / `12345`: the four (`3 + 1`) with its ground `0` or its
+    /// synthesis `5`, then `2 -> 1`.
+    FourPlusOne { with: u8 },
+    /// The sixfold by one of its readings.
+    Sixfold(SixfoldRoute),
+    /// Seven to eleven: the sixfold by its reading, with the night readings
+    /// present carried open as their `n <-> n'` pairs until the six complete.
+    SixfoldOpen { route: SixfoldRoute, open: Vec<u8> },
+    /// All twelve: the sixfold, its conjugate and their coming together (the
+    /// six `n <-> n'` pairings, itself a sixfold), each `6 -> 1` by the
+    /// reading, then `18 -> 3 -> 1`.
+    Eighteen(SixfoldRoute),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RecognitionError {
+    /// The anchor is already the one-fold `0/1`.
+    AlreadyWhole,
+    /// Not one of QL's wholes: its recognisable parts are recognised as their
+    /// own wholes and the rest stays open.
+    NotAWhole(ConstellationGrain),
+    /// A reading of six was given for a whole that has no sixfold.
+    RouteWithoutSixfold(ConstellationGrain),
+}
+
+impl core::fmt::Display for RecognitionError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::AlreadyWhole => f.write_str("the anchor is already the one-fold 0/1"),
+            Self::NotAWhole(grain) => write!(
+                f,
+                "{} is not one of QL's wholes; recognise its parts as their own wholes",
+                grain.as_str()
+            ),
+            Self::RouteWithoutSixfold(grain) => {
+                write!(f, "a reading of six was given for {}", grain.as_str())
+            }
+        }
+    }
+}
+
+/// QL's recognition (`3:1`, `4+2`, `18 -> 3 -> 1`) of one disclosed
+/// constellation: the whole presents as the one-fold `0/1` and keeps its
+/// basis; the route says how it was reached and names its parts.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Recognition {
+    pub disclosed: QlShape,
+    pub route: RecognitionRoute,
+}
+
+impl Recognition {
+    /// The recognition of `form`. `route` chooses the reading of six where
+    /// the whole has a sixfold; without one it is `4 + 2`, the backbone.
+    pub fn of(
+        form: &StructuralConstellation,
+        route: Option<SixfoldRoute>,
+    ) -> Result<Self, RecognitionError> {
+        let grain = form.grain();
+        let six = route.unwrap_or(SixfoldRoute::FourPlusTwo);
+        let without_route = |r: RecognitionRoute| match route {
+            Some(_) => Err(RecognitionError::RouteWithoutSixfold(grain)),
+            None => Ok(r),
+        };
+        let route = match grain {
+            ConstellationGrain::AnchorOnly => return Err(RecognitionError::AlreadyWhole),
+            ConstellationGrain::TwoFold
+            | ConstellationGrain::ThreeFold123
+            | ConstellationGrain::ThreeFold450 => without_route(RecognitionRoute::Direct)?,
+            ConstellationGrain::FourFold1234 => without_route(RecognitionRoute::ThreePlusOne)?,
+            ConstellationGrain::FourPlusOneGround => {
+                without_route(RecognitionRoute::FourPlusOne { with: 0 })?
+            }
+            ConstellationGrain::FourPlusOneSynthesis => {
+                without_route(RecognitionRoute::FourPlusOne { with: 5 })?
+            }
+            ConstellationGrain::SixFold => RecognitionRoute::Sixfold(six),
+            ConstellationGrain::PartialConjugate7
+            | ConstellationGrain::PartialConjugate8
+            | ConstellationGrain::PartialConjugate9
+            | ConstellationGrain::PartialConjugate10
+            | ConstellationGrain::PartialConjugate11 => RecognitionRoute::SixfoldOpen {
+                route: six,
+                open: form.conjugate_positions(),
+            },
+            ConstellationGrain::TwelveFold => RecognitionRoute::Eighteen(six),
+            other @ ConstellationGrain::Other { .. } => {
+                return Err(RecognitionError::NotAWhole(other));
+            }
+        };
+        let disclosed = match route {
+            RecognitionRoute::Eighteen(_) => QlShape::EighteenFold,
+            _ => QlShape::Constellation(grain),
+        };
+        Ok(Self { disclosed, route })
+    }
+
+    /// The recognition a presented binding's operator names for `form`, if
+    /// that operator is lawful for it.
+    pub fn from_operator(form: &StructuralConstellation, operator_ref: &str) -> Option<Self> {
+        let routes = core::iter::once(None).chain(SixfoldRoute::ALL.into_iter().map(Some));
+        routes
+            .filter_map(|route| Self::of(form, route).ok())
+            .find(|recognition| recognition.operator_ref() == operator_ref)
+    }
+
+    pub const fn presented(&self) -> QlShape {
+        QlShape::onefold()
+    }
+
+    fn direct(&self) -> Option<QlShapeCompression> {
+        match self.route {
+            RecognitionRoute::Direct => QlShapeCompression::to_onefold(self.disclosed),
+            _ => None,
+        }
+    }
+
+    pub fn operator_ref(&self) -> String {
+        if let Some(direct) = self.direct() {
+            return direct.operator_ref.into();
+        }
+        let p = RECOGNITION_OPERATOR_PREFIX;
+        match &self.route {
+            RecognitionRoute::Direct => unreachable!("direct routes are two- or three-fold"),
+            RecognitionRoute::ThreePlusOne => format!("{p}:3+1"),
+            RecognitionRoute::FourPlusOne { .. } => format!("{p}:4+1"),
+            RecognitionRoute::Sixfold(route) => format!("{p}:6:{}", route.code()),
+            RecognitionRoute::SixfoldOpen { route, .. } => {
+                format!("{p}:6:{}:open-D1", route.code())
+            }
+            RecognitionRoute::Eighteen(route) => format!("{p}:18:{}", route.code()),
+        }
+    }
+
+    /// The route with its parts named, from the disclosed shape to `0/1`.
+    pub fn derivation_ref(&self) -> String {
+        if let Some(direct) = self.direct() {
+            return direct.derivation_ref();
+        }
+        let list = |positions: &[u8]| {
+            let joined: Vec<String> = positions.iter().map(u8::to_string).collect();
+            format!("[{}]", joined.join(","))
+        };
+        let parts = |route: SixfoldRoute| {
+            route
+                .parts()
+                .iter()
+                .map(|part| list(part))
+                .collect::<Vec<_>>()
+                .join("+")
+        };
+        let from = format!(
+            "{}:from:{}",
+            self.operator_ref(),
+            self.disclosed.shape_ref()
+        );
+        match &self.route {
+            RecognitionRoute::Direct => unreachable!("direct routes are two- or three-fold"),
+            RecognitionRoute::ThreePlusOne => format!("{from}:parts:[1,2,3]+recognised-fourth"),
+            RecognitionRoute::FourPlusOne { with } => {
+                format!("{from}:parts:[1,2,3,4]+[{with}]")
+            }
+            RecognitionRoute::Sixfold(route) => format!("{from}:parts:{}", parts(*route)),
+            RecognitionRoute::SixfoldOpen { route, open } => {
+                format!("{from}:parts:{}:open-D1:{}", parts(*route), list(open))
+            }
+            RecognitionRoute::Eighteen(route) => format!(
+                "{from}:{EIGHTEEN_TO_THREE_OPERATOR_REF}:sixfolds:direct+conjugate+relational:each:{}",
+                parts(*route)
+            ),
+        }
     }
 }
 

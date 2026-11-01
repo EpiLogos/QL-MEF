@@ -162,6 +162,7 @@ fn invoke(path: &str) -> R<Value> {
                 serde_json::from_value(input.clone()).map_err(error)?;
             epi_agent::logos_return(request).map_err(error)?
         }
+        "vak.compose" => crate::vak_composition::execute_request(input)?,
         _ => unreachable!(),
     };
 
@@ -324,6 +325,45 @@ mod tests {
         assert!(error.contains("requires steps"), "{error}");
         let _ = std::fs::remove_file(path);
         let _ = root;
+    }
+
+    #[test]
+    fn epii_composes_recognises_and_reopens_through_its_documented_input() {
+        let dir = tempfile_dir();
+        let input = epi_agent::operation_inputs(5)["vak.compose"]["input"].clone();
+        let path = dir.1.with_extension("epii.json");
+        std::fs::write(
+            &path,
+            json!({"schema":EPI_AGENT_INVOCATION_VERSION,"position":"#5","operation":"vak.compose","input":input})
+                .to_string(),
+        )
+        .unwrap();
+        let receipt = invoke(path.to_str().unwrap()).unwrap();
+        let results = &receipt["result"]["results"];
+        assert_eq!(
+            results[1]["result"]["binding"]["shapeRef"],
+            "ql:shape:1.0.0:constellation:anchor-only"
+        );
+        assert!(
+            results[3]["result"]["binding"]["operatorRef"]
+                .as_str()
+                .unwrap()
+                .ends_with(":6:4+2")
+        );
+        assert_eq!(results[4]["result"]["address"]["kind"], "anchor");
+        assert_eq!(
+            results[5]["result"]["binding"],
+            results[0]["result"]["binding"]
+        );
+        assert_eq!(
+            results[0]["result"]["binding"]["relations"][0]["kernel"]["relations"],
+            json!(["ql.kernel.pair.B/v1"])
+        );
+        let refused = json!({"schema":EPI_AGENT_INVOCATION_VERSION,"position":"#4","operation":"vak.compose","input":{}});
+        std::fs::write(&path, refused.to_string()).unwrap();
+        let error = invoke(path.to_str().unwrap()).unwrap_err().to_string();
+        assert!(error.contains("not admitted for faculty #4"), "{error}");
+        let _ = std::fs::remove_file(path);
     }
 
     fn tempfile_dir() -> (std::path::PathBuf, std::path::PathBuf) {

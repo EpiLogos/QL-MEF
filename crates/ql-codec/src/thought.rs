@@ -15,6 +15,8 @@
 //! distribution, no relation to the text.
 use std::collections::HashMap;
 
+use ql_core::{KernelRelationId, QlCoordinate, classify_coordinate_pair};
+
 use crate::coder::Io;
 use crate::predict::{Factory, Invariance, MatchModel, Mixture, Predictor};
 use crate::{Codec, at};
@@ -223,5 +225,120 @@ pub fn label_stream(nows: &[Vec<u16>], classes: usize) -> Vec<u16> {
     let boundary = u16::try_from(classes).expect("classes fit u16");
     nows.iter()
         .flat_map(|labels| std::iter::once(boundary).chain(labels.iter().copied()))
+        .collect()
+}
+
+/// The kernel relations a thought can bear to the one before it, each tried as
+/// its own label predictor (see [`KernelRelation`]).
+pub const KERNEL_RELATIONS: [KernelRelationId; 10] = [
+    KernelRelationId::PositionIdentity,
+    KernelRelationId::CrossSamePosition,
+    KernelRelationId::CrossTransform,
+    KernelRelationId::CrossRequire,
+    KernelRelationId::CrossComplete,
+    KernelRelationId::PairA,
+    KernelRelationId::PairB,
+    KernelRelationId::PairC,
+    KernelRelationId::MirrorComplement,
+    KernelRelationId::PositionSuccessor,
+];
+
+/// One kernel relation as a label predictor: after a label at coordinate `c`,
+/// mass goes to every label whose coordinate bears `relation` from `c`
+/// ([`classify_coordinate_pair`]). Labels without a coordinate, boundaries
+/// included, keep only the floor. Mixed with the plain orders, the weight each
+/// relation earns says which kernel relation the sequence actually follows.
+pub struct KernelRelation {
+    relation: KernelRelationId,
+    coordinates: Vec<Option<QlCoordinate>>,
+}
+
+impl KernelRelation {
+    pub fn boxed(
+        relation: KernelRelationId,
+        coordinates: Vec<Option<QlCoordinate>>,
+    ) -> Box<dyn Predictor> {
+        Box::new(Self {
+            relation,
+            coordinates,
+        })
+    }
+}
+
+impl Predictor for KernelRelation {
+    fn name(&self) -> String {
+        let id = self.relation.as_str();
+        id.strip_prefix("ql.kernel.")
+            .and_then(|id| id.strip_suffix("/v1"))
+            .unwrap_or(id)
+            .to_owned()
+    }
+
+    fn predict(&mut self, history: &[u16], dist: &mut [f64]) {
+        dist.iter_mut().for_each(|p| *p = 1.0 / 64.0);
+        let previous = history
+            .last()
+            .and_then(|label| self.coordinates.get(usize::from(*label)).copied().flatten());
+        if let Some(previous) = previous {
+            for (next, p) in self.coordinates.iter().zip(dist.iter_mut()) {
+                if next.is_some_and(|next| {
+                    classify_coordinate_pair(previous, next)
+                        .relations
+                        .contains(&self.relation)
+                }) {
+                    *p += 1.0;
+                }
+            }
+        }
+    }
+
+    fn update(&mut self, _history: &[u16], _actual: u16) {}
+}
+
+/// The label mixture with the kernel's relations: adaptive orders 0..=2 and
+/// one [`KernelRelation`] per entry of [`KERNEL_RELATIONS`] that some pair of
+/// the labels' coordinates can bear (a direct-only label set has no cross
+/// relations to try).
+pub fn kernel_relation_factories(
+    classes: usize,
+    coordinates: &[Option<QlCoordinate>],
+) -> Vec<Factory> {
+    let mut factories = label_factories(classes, None);
+    let present: Vec<QlCoordinate> = coordinates.iter().flatten().copied().collect();
+    let realisable = |relation: &KernelRelationId| {
+        present.iter().any(|a| {
+            present.iter().any(|b| {
+                classify_coordinate_pair(*a, *b)
+                    .relations
+                    .contains(relation)
+            })
+        })
+    };
+    for relation in KERNEL_RELATIONS.into_iter().filter(realisable) {
+        let coordinates = coordinates.to_vec();
+        factories.push(Box::new(move || {
+            KernelRelation::boxed(relation, coordinates.clone())
+        }));
+    }
+    factories
+}
+
+/// Each predictor's mixing weight averaged over the walk of `stream`.
+pub fn mean_weights(factories: &[Factory], alphabet: usize, stream: &[u16]) -> Vec<(String, f64)> {
+    let mut mixture = Mixture::new(factories, alphabet);
+    let mut sums = vec![0.0; factories.len()];
+    for t in 0..stream.len() {
+        mixture.counts(&stream[..t]);
+        mixture.learn(&stream[..t], stream[t]);
+        for (sum, w) in sums.iter_mut().zip(mixture.weights()) {
+            *sum += w;
+        }
+    }
+    let steps = stream.len().max(1) as f64;
+    mixture
+        .names()
+        .into_iter()
+        .zip(sums)
+        .map(|(name, sum)| (name, sum / steps))
         .collect()
 }

@@ -34,6 +34,7 @@ core() {
   cargo run -q -p ql-cli --locked -- --version
   cargo run -q -p ql-cli --locked -- capabilities --json >/dev/null
   cargo run -q -p ql-cli --locked -- verify --json >/dev/null
+  python3 scripts/ql-agent-provenance.py --check
 }
 
 native() {

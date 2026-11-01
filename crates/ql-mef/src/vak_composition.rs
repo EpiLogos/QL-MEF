@@ -11,9 +11,9 @@ use crate::{
 };
 use ql_core::{
     AnchorReturn, CallerProvenance, GroundKind, KernelRelationId, QlCoordinate, QlFace, QlFamily,
-    QlPosition, QlShape, QlShapeAddress, QlShapeCompression,
-    RELATION_FIELD_COMPOSITION_OPERATOR_REF, RelationFieldComposition, RelationFieldDerivation,
-    ShapeBinding, StructuralConstellation, StructuralParticipation, VakFamily,
+    QlPosition, QlShape, QlShapeAddress, RELATION_FIELD_COMPOSITION_OPERATOR_REF, Recognition,
+    RelationFieldComposition, RelationFieldDerivation, ShapeBinding, SixfoldRoute,
+    StructuralConstellation, StructuralParticipation, VakFamily,
 };
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -25,6 +25,8 @@ pub use production::{MAX_SHAPE_REF_BYTES, ProductionLineage};
 
 pub const CONTRACT: &str = "ql.vak-composition/v1";
 pub const MAX_DEPTH: usize = 64;
+/// The disclosure that undoes a recognition, keeping the act in the lineage.
+pub const REOPEN_OPERATOR_REF: &str = "ql.vak-composition/v1:reopen-recognised-whole";
 pub const MAX_OBJECTS: usize = 4096;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -591,6 +593,105 @@ impl VakComposition {
         Ok(())
     }
 
+    /// Recognition: a new immutable use presenting a local whole as the one-fold
+    /// `0/1` by QL's recognition of its grain ([`Recognition`]): `2 -> 1`,
+    /// `3 -> 1`, `3 + 1`, `4 + 1`, the sixfold by a reading of six (`4 + 2`
+    /// unless `route` names `3 + 3` or a family's pairs), seven to eleven with
+    /// their night readings carried open, and all twelve by `18 -> 3 -> 1`.
+    /// Members, basis refs and relations stay in the binding, so `reopen` and
+    /// member focus disclose them again; the act is retained as a transition
+    /// under the recognition's operator.
+    pub fn recognise(
+        &mut self,
+        from: &str,
+        into: &str,
+        route: Option<SixfoldRoute>,
+        basis: Basis,
+    ) -> Result<()> {
+        self.vacant(into)?;
+        basis.validate()?;
+        let mut whole = self.whole(from)?.clone();
+        let WholeBody::Local(form) = &whole.body else {
+            return Err(err("recognition takes a local constellation"));
+        };
+        require(
+            matching_compression(&whole.binding, form).is_none(),
+            "whole is already presented as its recognised 0/1",
+        )?;
+        let recognition = Recognition::of(form, route).map_err(|e| err(format!("{from}: {e}")))?;
+        require(
+            whole.transitions.len() < MAX_DEPTH,
+            "contextual transition bound exceeded",
+        )?;
+        let operator = recognition.operator_ref();
+        whole.binding.shape_ref = recognition.presented().shape_ref();
+        whole.binding.derivation_ref = Some(recognition.derivation_ref());
+        whole.binding.operator_ref = Some(operator.clone());
+        self.transition(whole, from, into, &operator, basis);
+        Ok(())
+    }
+
+    /// The inverse of `recognise`: a new use disclosing the retained basis. A
+    /// whole recognised here returns to the exact binding it was recognised
+    /// from; one bound already compressed discloses its constellation grain.
+    pub fn reopen(&mut self, from: &str, into: &str, basis: Basis) -> Result<()> {
+        self.vacant(into)?;
+        basis.validate()?;
+        let mut whole = self.whole(from)?.clone();
+        let WholeBody::Local(form) = &whole.body else {
+            return Err(err("reopening takes a local constellation"));
+        };
+        let compression = matching_compression(&whole.binding, form)
+            .ok_or_else(|| err(format!("{from}: whole is not a recognised 0/1")))?;
+        let recognised_from = whole
+            .transitions
+            .iter()
+            .rev()
+            .find(|t| t.operation == compression.operator_ref())
+            .and_then(|t| self.wholes.get(&t.from_ref))
+            .filter(|w| matches!(&w.body, WholeBody::Local(f) if f == form))
+            .map(|w| w.binding.clone());
+        whole.binding = match recognised_from {
+            Some(binding) => binding,
+            None => {
+                let mut binding = whole.binding.clone();
+                binding.shape_ref = QlShape::Constellation(form.grain()).shape_ref();
+                binding.derivation_ref = None;
+                binding.operator_ref = None;
+                binding
+            }
+        };
+        require(
+            whole.transitions.len() < MAX_DEPTH,
+            "contextual transition bound exceeded",
+        )?;
+        self.transition(whole, from, into, REOPEN_OPERATOR_REF, basis);
+        Ok(())
+    }
+
+    fn transition(
+        &mut self,
+        mut whole: Whole,
+        from: &str,
+        into: &str,
+        operation: &str,
+        basis: Basis,
+    ) {
+        whole.transitions.push(Transition {
+            from_ref: from.into(),
+            operation: operation.into(),
+            from: whole.frame,
+            into: whole.frame,
+            basis: basis.clone(),
+        });
+        whole.use_ref = into.into();
+        whole.producing_refs.push(from.into());
+        whole.basis.push(basis);
+        whole.member_focus = None;
+        whole.selected_member = None;
+        self.wholes.insert(into.into(), whole);
+    }
+
     /// Deterministic address traversal through an actual composed field.
     pub fn position(&self, start: &str, path: &[Axis]) -> Result<&Whole> {
         require(path.len() <= MAX_DEPTH, "position path bound exceeded")?;
@@ -1041,14 +1142,11 @@ fn validate_binding(b: &ShapeBinding) -> Result<()> {
 fn matching_compression(
     binding: &ShapeBinding,
     form: &StructuralConstellation,
-) -> Option<QlShapeCompression> {
-    let disclosed = QlShape::Constellation(form.grain());
-    let compression = QlShapeCompression::to_onefold(disclosed)?;
-    let derivation_ref = compression.derivation_ref();
-    (binding.shape_ref == compression.presented.shape_ref()
-        && binding.operator_ref.as_deref() == Some(compression.operator_ref)
-        && binding.derivation_ref.as_deref() == Some(derivation_ref.as_str()))
-    .then_some(compression)
+) -> Option<Recognition> {
+    let recognition = Recognition::from_operator(form, binding.operator_ref.as_deref()?)?;
+    (binding.shape_ref == recognition.presented().shape_ref()
+        && binding.derivation_ref.as_deref() == Some(recognition.derivation_ref().as_str()))
+    .then_some(recognition)
 }
 
 fn binding_shape_matches_form(binding: &ShapeBinding, form: &StructuralConstellation) -> bool {
