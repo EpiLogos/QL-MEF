@@ -97,6 +97,16 @@ impl Mixture {
         (&self.counts, total)
     }
 
+    /// The predictors' names, in mixing order.
+    pub fn names(&self) -> Vec<String> {
+        self.predictors.iter().map(|p| p.name()).collect()
+    }
+
+    /// The current mixing weights, in the same order as [`Self::names`].
+    pub fn weights(&self) -> &[f64] {
+        &self.weights
+    }
+
     pub fn learn(&mut self, history: &[u16], symbol: u16) {
         let m = self.predictors.len();
         let mut norm = 0.0;

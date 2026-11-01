@@ -398,6 +398,16 @@ pub fn execute_request(request: &Value) -> R<Value> {
                         .map_err(error)?;
                     Ok(whole_view(graph.whole(text(s, "into")?).map_err(error)?))
                 }
+                "recognise" | "reopen" => {
+                    let (from, into, basis) =
+                        (text(s, "from")?, text(s, "into")?, parse_basis(&s["basis"])?);
+                    if operation == "recognise" {
+                        graph.recognise(from, into, basis).map_err(error)?;
+                    } else {
+                        graph.reopen(from, into, basis).map_err(error)?;
+                    }
+                    Ok(whole_view(graph.whole(into).map_err(error)?))
+                }
                 "read" => Ok(read_view(
                     &graph
                         .read(text(s, "useRef")?, text(s, "lens")?.parse().map_err(error)?)
@@ -682,9 +692,16 @@ fn frame_view(f: ActiveFrame) -> Value {
 }
 fn binding_view(b: &ShapeBinding) -> Value {
     json!({"subjectRef":b.subject_ref,"shapeRef":b.shape_ref,"wholeRef":b.whole_ref,"basisRefs":b.basis_refs,
-    "members":b.members.iter().map(member_view).collect::<Vec<_>>(),"relations":b.relation_bindings.iter().map(|r|json!({"row":coord_view(r.address.row),"column":coord_view(r.address.column),"relationRef":r.relation_ref,"evidence":r.evidence_refs})).collect::<Vec<_>>(),
+    "members":b.members.iter().map(member_view).collect::<Vec<_>>(),"relations":b.relation_bindings.iter().map(|r|json!({"row":coord_view(r.address.row),"column":coord_view(r.address.column),"relationRef":r.relation_ref,"evidence":r.evidence_refs,"kernel":pair_view(r.address.row,r.address.column)})).collect::<Vec<_>>(),
     "derivationRef":b.derivation_ref,"operatorRef":b.operator_ref,"returnRefs":b.return_refs,
     "provenance":{"caller":b.provenance.caller_ref,"source":b.provenance.source_ref,"standing":b.provenance.standing_ref}})
+}
+/// The kernel's own reading of a declared pair: every contract relation and
+/// every A/B/C field its positions belong to.
+fn pair_view(row: QlCoordinate, column: QlCoordinate) -> Value {
+    let reading = classify_coordinate_pair(row, column);
+    json!({"relations":reading.relations.iter().map(|r|r.as_str()).collect::<Vec<_>>(),
+    "fields":reading.families.iter().map(|m|json!({"family":m.family.as_str(),"pairIndex":m.pair_index,"reversed":m.reversed})).collect::<Vec<_>>()})
 }
 fn derivation_view(d: &RelationFieldDerivation) -> Value {
     json!({"sourceWholeRefs":d.source_whole_refs,"sourceShapeRefs":d.source_shape_refs,
@@ -714,7 +731,17 @@ fn address_view(a: &SelectedAddress) -> Value {
     }
 }
 fn read_view(r: &FramedReading) -> Value {
-    json!({"useRef":r.use_ref,"binding":binding_view(&r.binding),"frame":frame_view(r.frame),"address":address_view(&r.address),
+    let pair = match &r.address {
+        SelectedAddress::Relation { row, column, .. } => match (row.as_ref(), column.as_ref()) {
+            (
+                SelectedAddress::Member { member: a, .. },
+                SelectedAddress::Member { member: b, .. },
+            ) => pair_view(a.coordinate, b.coordinate),
+            _ => Value::Null,
+        },
+        _ => Value::Null,
+    };
+    json!({"useRef":r.use_ref,"pairKernel":pair,"binding":binding_view(&r.binding),"frame":frame_view(r.frame),"address":address_view(&r.address),
     "language":r.language.as_ref().map(language_view),"memberFocus":r.member_focus.as_ref().map(|f|json!({"coordinate":coord_view(f.coordinate),"positions":match f.positions{PositionBasis::Local=>"local",PositionBasis::Absolute=>"absolute"},"basis":basis_view(&f.basis)})),"harmonicPitch":r.harmonic_pitch,"framePitch":r.frame_pitch,"focusInterval":r.focus_interval,"childIntervals":r.child_intervals,"geometry":{"shapeRef":r.geometry.shape_ref,"absolutePosition":r.geometry.absolute_position.value(),
         "framePhaseDegrees":r.geometry.frame_phase_degrees,"childPhaseDegrees":r.geometry.child_phase_degrees,"viewingLens":r.geometry.viewing_lens.to_string(),
         "viewingLocalPosition":r.geometry.viewing_rotation.local_position().value(),"viewingAbsolutePosition":r.geometry.viewing_rotation.absolute_position().value()},

@@ -93,7 +93,9 @@ pub use pole::{
     generate, generation_cells, trigram_pair,
 };
 pub use position::QlPosition;
-pub use relation_classification::{RelationPairMatch, classify_relation_pair};
+pub use relation_classification::{
+    CoordinatePairReading, RelationPairMatch, classify_coordinate_pair, classify_relation_pair,
+};
 pub use shape::{
     COMPRESS_TO_WHOLE_OPERATOR_REF, EIGHTEEN_FOLD_SHAPE_REF, EIGHTEEN_TO_THREE_OPERATOR_REF,
     EighteenFoldGeometry, FOUR_BY_FOUR_BY_FOUR_SHAPE_REF, FourByFourByFourField, FourByFourField,

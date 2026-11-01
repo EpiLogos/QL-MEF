@@ -103,3 +103,42 @@ fn eighteenfold_is_the_three_sixfold_geometry_and_compresses_by_six_to_three() {
         EIGHTEEN_TO_THREE_OPERATOR_REF
     );
 }
+
+#[test]
+fn the_twelvefold_takes_the_eighteen_to_three_to_one_route_and_other_grains_have_none() {
+    let route = QlShapeCompression::recognising(ConstellationGrain::TwelveFold)
+        .expect("6 + 6' + relational 6 is recognised");
+    assert_eq!(route.presented, QlShape::onefold());
+    assert_eq!(route.disclosed, QlShape::EighteenFold);
+    assert_eq!(route.disclosed_fold, 18);
+    assert_eq!(route.operator_ref, THREE_TO_ONE_OPERATOR_REF);
+    let derivation = route.derivation_ref();
+    assert!(derivation.contains(EIGHTEEN_TO_THREE_OPERATOR_REF));
+    assert!(derivation.ends_with(&QlShape::EighteenFold.shape_ref()));
+    // The direct route is unchanged for the two- and three-folds.
+    assert_eq!(
+        QlShapeCompression::recognising(ConstellationGrain::ThreeFold450),
+        QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::ThreeFold450))
+    );
+    for grain in [
+        ConstellationGrain::AnchorOnly,
+        ConstellationGrain::FourFold1234,
+        ConstellationGrain::SixFold,
+        ConstellationGrain::PartialConjugate9,
+        ConstellationGrain::Other {
+            direct: 4,
+            conjugate: 0,
+        },
+    ] {
+        assert!(
+            QlShapeCompression::recognising(grain).is_none(),
+            "{grain:?}"
+        );
+    }
+    // The single-step law still refuses the twelvefold, so Wiki and other
+    // two/three-fold consumers keep their contract.
+    assert!(
+        QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::TwelveFold))
+            .is_none()
+    );
+}

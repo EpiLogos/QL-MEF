@@ -328,6 +328,17 @@ QL classifies **wholes**, and compresses by **recognising** them. The L5 offices
 
   The receipt reports each relation's weight. This is Epii's grounding check from §13.5 finding 2, now saying which kernel relation the conversation uses.
 
+**Built, 1 November 2026 (branch `epii/constellation-compose`).**
+
+- **(a)** Recognition is in place.
+  - **Kernel.** `ql-core` holds the recognition law. `QlShapeCompression::recognising(grain)` covers 2→1 and 3→1. The twelvefold takes `eighteen_to_onefold()`: the six same-position sites of a full direct and conjugate sixfold are the relational six, so 18 → 3 → 1. Its derivation names both operators.
+  - **Envelope.** `VakComposition::recognise` and `reopen` make new immutable uses. Members, basis refs and relations stay in the binding, and `reopen` restores the exact binding the whole was recognised from. The envelope has `recognise` and `reopen` steps. Grains without a law (4-fold, 4+1, 6-fold, 7–11, `Other`) are refused and stay disclosed.
+  - **Epii.** Epii (#5) has `vak.compose` over that envelope through `ql epi-agent invoke`. Its `operation_inputs` carry a worked request and the practice.
+  - **The practice:** each thought joins the open whole at its T coordinate. A whole holds each coordinate once, and a conjugate needs its direct partner present, so a thought that cannot join closes the whole and opens the next.
+- **(b)** `ql_core::classify_coordinate_pair` reads two participations against the contract's laws: identity, n ↔ n′, n ↔ (n+1)′, n ↔ (n−1)′, n ↔ (5−n)′, the mirror n → 5−n, the successor n → n+1, and A/B/C membership with direction. Overlaps are kept. Every declared relation in a whole's binding, and every relation-field read whose axes are members, carries that reading (`kernel`, `pairKernel`).
+- **(c)** `thought::KernelRelation` turns each of those relations into a label predictor. Only the relations the label set can bear are tried. `qlt` writes `results/qlt-kernel-relations.tsv`: label bits with and without the relations, and each relation's mean mixing weight, in the real order and shuffled within each NOW. The interval-in-frame and Context-Frame-nesting predictors wait for readings made through composition, which carry frames; the first corpus does not.
+  - **Baseline.** On the §13.5 narration corpus (543 thoughts, T levels with faces), no kernel relation earns weight. Each holds about 0.002 of the mixture against 0.87 for plain frequency, in order and shuffled alike, and the relations cost 7 bits over the plain code (1962.5 against 1955.5). That is the baseline a dialogue worked by Epii must beat for test 3 of §14.5.
+
 **Epi-Prime**
 
 - **(d)** Re-pin the vendored `ql-agent-reading` and the installation to the QL revision that carries (a)–(c). `ql_invoke` at #5 then reaches them. Seal the manifest; there is no upstream Prime patch.
@@ -345,8 +356,8 @@ QL classifies **wholes**, and compresses by **recognising** them. The L5 offices
 - **(i)** The model is Haiku:
   - Prime supports the Anthropic subscription login and the Haiku models.
   - The installed Prime default is `zai/glm-5.3-flash`, whose subscription has lapsed.
-  - The app's session override accepts OpenRouter free models only (`src/prime-runner.mjs`). It must also admit the Anthropic provider.
-  - Prime's Anthropic login is a single owner step.
+  - In Epi mode the app's Settings already choose the provider and model, including any provider Prime is logged into (`resolvePrimeLaunch`). Only the launch-time environment override is limited to OpenRouter free models.
+  - Prime is logged into minimax only. Logging Prime into Anthropic, or giving Settings an Anthropic key, is a single owner step; then choose a Haiku model in Settings.
 
 **O:I (the port, after the owner accepts §14.5 in face-rig-chat)**
 

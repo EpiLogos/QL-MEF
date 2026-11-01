@@ -29,8 +29,11 @@ use std::process::{Command, Stdio};
 
 use ql_codec::coder::Io;
 use ql_codec::predict::Mixed;
-use ql_codec::thought::{ThoughtText, label_factories, label_stream};
+use ql_codec::thought::{
+    ThoughtText, kernel_relation_factories, label_factories, label_stream, mean_weights,
+};
 use ql_codec::{Codec, compress, decompress};
+use ql_core::{QlCoordinate, QlFace, QlPosition};
 use serde_json::Value;
 
 struct Unit {
@@ -83,6 +86,71 @@ fn position_of(label: &str) -> Option<u8> {
         .and_then(|rest| rest.chars().next())
         .and_then(|c| c.to_digit(10))
         .and_then(|d| u8::try_from(d).ok())
+}
+
+/// The QL coordinate of a T label: `T3` direct, `T3'` conjugate.
+fn coordinate_of(label: &str) -> Option<QlCoordinate> {
+    let position = QlPosition::new(position_of(label)?).ok()?;
+    let face = if label.ends_with('\'') {
+        QlFace::Conjugate
+    } else {
+        QlFace::Direct
+    };
+    Some(QlCoordinate::new(position, face))
+}
+
+/// Which kernel relation the T sequence follows: each relation's mean mixing
+/// weight and the label bits with the relations, in the real order and with
+/// each NOW shuffled.
+fn kernel_relations(units: &[&Unit], labels: &[u16], names: &[String]) -> String {
+    let coordinates: Vec<Option<QlCoordinate>> = names.iter().map(|n| coordinate_of(n)).collect();
+    let classes = names.len();
+    let mut nows: BTreeMap<(&str, i64), u16> = BTreeMap::new();
+    for (unit, label) in units.iter().zip(labels) {
+        nows.insert((unit.now.as_str(), unit.seq), *label);
+    }
+    let mut grouped: BTreeMap<&str, Vec<u16>> = BTreeMap::new();
+    for ((now, _), label) in nows {
+        grouped.entry(now).or_default().push(label);
+    }
+    let ordered: Vec<Vec<u16>> = grouped.into_values().collect();
+    let mut seed = 0x0051_7452;
+    let shuffled: Vec<Vec<u16>> = ordered
+        .iter()
+        .map(|now| {
+            let mut now = now.clone();
+            shuffle(&mut now, &mut seed);
+            now
+        })
+        .collect();
+    let codec = || Mixed {
+        name: "labels".into(),
+        alphabet: classes + 1,
+        factories: kernel_relation_factories(classes, &coordinates),
+    };
+    let plain = Mixed {
+        name: "labels".into(),
+        alphabet: classes + 1,
+        factories: label_factories(classes, None),
+    };
+    let (real, mixed) = (
+        label_stream(&ordered, classes),
+        label_stream(&shuffled, classes),
+    );
+    let mut rows = format!(
+        "bits\tplain\t{:.1}\t{:.1}\nbits\tkernel\t{:.1}\t{:.1}\n",
+        measure(&plain, &real),
+        measure(&plain, &mixed),
+        measure(&codec(), &real),
+        measure(&codec(), &mixed)
+    );
+    let factories = kernel_relation_factories(classes, &coordinates);
+    let in_order = mean_weights(&factories, classes + 1, &real);
+    let out_of_order = mean_weights(&factories, classes + 1, &mixed);
+    for ((name, a), (_, b)) in in_order.iter().zip(&out_of_order) {
+        rows += &format!("weight\t{name}\t{a:.4}\t{b:.4}\n");
+    }
+    rows
 }
 
 const LABELLINGS: &[(&str, Labeller, bool)] = &[
@@ -376,6 +444,8 @@ fn main() {
         .filter_map(|v| Some((v["id"].as_str()?.to_owned(), v)))
         .collect();
 
+    let mut relations =
+        String::from("corpus\tlabelling\tkind\tname\tordered\tshuffled_within_now\n");
     let mut table = String::from(
         "corpus\tlabelling\tclasses\tunits\ttext_bytes\tlabel_bits\tlabel_bits_ql_cycle\t\
          label_bits_unordered\ttext_bits\ttotal_bits\tsaving_bits\tsaving_pct\tcoded_bytes\n",
@@ -467,6 +537,11 @@ fn main() {
                 names.len(),
                 &code(&units, &labels, names.len(), &names, cycle),
             );
+            if cycle && names.iter().all(|n| coordinate_of(n).is_some()) {
+                for line in kernel_relations(&units, &labels, &names).lines() {
+                    writeln!(relations, "{name}\t{labelling}\t{line}").unwrap();
+                }
+            }
             let mut shuffled = labels.clone();
             shuffle(&mut shuffled, &mut 0x0051_7451);
             row(
@@ -479,5 +554,7 @@ fn main() {
     std::fs::create_dir_all(out.parent().expect("output has a parent")).expect("results dir");
     std::fs::write(&out, table).expect("write results");
     std::fs::write(out.with_file_name("qlt-alignment.tsv"), aligned).expect("write alignment");
+    std::fs::write(out.with_file_name("qlt-kernel-relations.tsv"), relations)
+        .expect("write kernel relations");
     eprintln!("wrote {}", out.display());
 }

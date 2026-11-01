@@ -1020,6 +1020,18 @@
    "kind": "computational"
   },
   {
+   "path": "crates/ql-core/src/relation_classification.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "Content-free classification of positional and coordinate pairs against the holographic kernel contract's own relation laws: A/B/C pair membership with direction, and for two participations every contract relation they bear (n<->n', n<->(n+1)', n<->(n-1)', n<->(5-n)', the mirror n->5-n, the successor n->n+1, identity), overlaps kept. It mints no relation, family or coordinate; the Epii composition and QLT read declared pairs through it.",
+   "tests": [
+    "crates/ql-core/src/relation_classification.rs",
+    "crates/ql-cli/tests/epii_recognition.rs"
+   ],
+   "kind": "computational"
+  },
+  {
    "path": "crates/ql-codec/src/lib.rs",
    "stratum": "rust",
    "disposition": "infrastructural",
@@ -1102,7 +1114,7 @@
    "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "rationale": "QLT: a thought classification measured as a two-part code. The label stream (T level, MEF cell, context frame) is coded under its own mixture, optionally with the QL cycle predictor (position p to p+1 mod 6); the text is coded with each unit's label known at its start, under shared and label-keyed sparse contexts. Lossless and round-trip tested.",
+   "rationale": "QLT: a thought classification measured as a two-part code. The label stream (T level, MEF cell, context frame) is coded under its own mixture, optionally with the QL cycle predictor (position p to p+1 mod 6); the text is coded with each unit's label known at its start, under shared and label-keyed sparse contexts. Lossless and round-trip tested. Kernel-relation label predictors (D1, transform, require, complete, A/B/C, mirror, successor), each read through ql-core's classify_coordinate_pair, report which relation a T sequence follows by its mixing weight.",
    "tests": [
     "crates/ql-codec/tests/thought.rs"
    ],
@@ -1113,7 +1125,7 @@
    "stratum": "rust",
    "disposition": "infrastructural",
    "coordinates": [],
-   "rationale": "The qlt runner: codes a classified thought corpus under every labelling and its shuffled control, decodes each again, and tests whether T positions and MEF reading positions align beyond permutation chance; writes crates/ql-codec/results/qlt-thoughts.tsv and qlt-alignment.tsv.",
+   "rationale": "The qlt runner: codes a classified thought corpus under every labelling and its shuffled control, decodes each again, and tests whether T positions and MEF reading positions align beyond permutation chance; writes crates/ql-codec/results/qlt-thoughts.tsv, qlt-alignment.tsv and qlt-kernel-relations.tsv (label bits and per-relation weight, in order and shuffled within each NOW).",
    "tests": [
     "crates/ql-codec/tests/thought.rs"
    ],

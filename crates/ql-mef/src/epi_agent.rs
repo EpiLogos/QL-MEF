@@ -193,7 +193,7 @@ pub fn constitution() -> Value {
             {"position":"#2","name":native_faculties()[2].1,"operations":["bimba.neighborhood"],"source_owner":"QL-MEF","optional_instruments":["neo4j-cypher-apoc","neo4j-gds","learned-graph-nxt"]},
             {"position":"#3","name":native_faculties()[3].1,"operations":["representation.bind","ql-techne-reading","mahamaya.tarot-score.resolve","mahamaya.phase-bridge.read"],"source_owner":"QL-MEF/O:I","optional_instruments":["cross-modal-retrieval","learned-process-pathways"]},
             {"position":"#4","name":native_faculties()[4].1,"operations":["nara.activity.validate","nara.elemental-map","nara.personal-receive","nara.journey.open","nara.journey.apply","nara.journey.read","nara.lived-context.compose"],"source_owner":"QL-MEF","identity":"M4/M4′","s_prime":"S4′ Anima"},
-            {"position":"#5","name":native_faculties()[5].1,"operations":["logos.return"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
+            {"position":"#5","name":native_faculties()[5].1,"operations":["logos.return","vak.compose"],"source_owner":"QL-MEF","identity":"M5/M5′","s_prime":"S5′ Aletheia"}
         ],
         "source": {
             "repository": manifest.source_repository,
@@ -249,7 +249,7 @@ pub fn native_operations(position: u8) -> Result<&'static [&'static str], String
             "nara.journey.read",
             "nara.lived-context.compose",
         ]),
-        5 => Ok(&["logos.return"]),
+        5 => Ok(&["logos.return", "vak.compose"]),
         _ => Err("Epi faculty position must be 0..5".into()),
     }
 }
@@ -1359,7 +1359,41 @@ pub fn nara_lived_context(
 /// Valid example `input` objects for the operations whose inputs are typed
 /// contracts, built from the real request types so they cannot drift. A body
 /// discovering its faculty reads the shape here instead of probing by error.
+/// Epii reads a NOW as a sequence of wholes through the C′ composition. The
+/// kernel's constellation law shapes the practice: a whole holds each
+/// coordinate once, and a conjugate thought needs its direct partner in the
+/// same whole.
+fn epii_operation_inputs() -> Value {
+    let basis = json!({"caller":"agent/epii","source":"<the NOW or conversation ref>","revision":"<its revision>","standing":"PROPOSED","evidence":["<the utterance refs read>"]});
+    let frame =
+        json!({"id":"CF2","lens":"L4'","basis":"chromatic","face":"direct","positions":"local"});
+    json!({
+        "vak.compose": {
+            "input": {"contract":"ql.vak-composition/v1","steps":[
+                {"op":"whole","useRef":"turn-1","subjectRef":"<turn ref>","wholeRef":"anchor:turn-1","category":"T",
+                 "groundRef":"<NOW ref>","groundFace":"direct","frame":frame,"basis":basis,
+                 "members":[{"subjectRef":"<utterance ref>","position":1,"face":"direct"},{"subjectRef":"<utterance ref>","position":2,"face":"direct"},{"subjectRef":"<utterance ref>","position":3,"face":"direct"}],
+                 "relations":[{"row":{"position":2,"face":"direct"},"column":{"position":1,"face":"direct"},"relationRef":"epii:set-against","evidence":["<why>"]}]},
+                {"op":"recognise","from":"turn-1","into":"turn-1.0/1","basis":basis},
+                {"op":"read","useRef":"turn-1.0/1","lens":"L4'"},
+                {"op":"reopen","from":"turn-1.0/1","into":"turn-1.open","basis":basis}
+            ]},
+            "practice": [
+                "Each thought joins the open whole at its T coordinate: position 0..5, face direct for Tn, conjugate for Tn′.",
+                "A whole holds each coordinate once; a conjugate thought needs its direct partner in the same whole. A thought that cannot join closes the open whole and opens the next.",
+                "Declare in relations which earlier thought a new one is set against; each relation returns the kernel's reading of the pair (D1, transform/require/complete, A/B/C, mirror, successor).",
+                "Recognise a closed whole when its grain has a law (two-fold, 123, 450, or the twelvefold through 18 -> 3 -> 1); carry it forward as its 0/1. Wholes without a law stay disclosed as the remainder.",
+                "Reopen a recognised whole when the conversation returns to it; read gives its frame pitch, intervals and phases."
+            ],
+            "note": "The steps are the ql vak compose envelope (whole, compose, recognise, reopen, reframe, read, position, determine, return, offer, lineage). The request is evaluated in memory; persist what the result returns."
+        }
+    })
+}
+
 pub fn operation_inputs(position: u8) -> Value {
+    if position == 5 {
+        return epii_operation_inputs();
+    }
     if position != 4 {
         return json!({});
     }

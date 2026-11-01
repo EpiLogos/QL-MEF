@@ -153,8 +153,38 @@ impl QlShapeCompression {
         })
     }
 
+    /// The composite `18 -> 3 -> 1` route: the direct sixfold, the conjugate
+    /// sixfold and their relational sixfold divide by six into the threefold
+    /// `{6, relation-6, 6'}`, which the `3 -> 1` recognition presents as `0/1`.
+    pub fn eighteen_to_onefold() -> Self {
+        Self {
+            presented: QlShape::onefold(),
+            disclosed: QlShape::EighteenFold,
+            disclosed_fold: 18,
+            recognition_superset: None,
+            operator_ref: THREE_TO_ONE_OPERATOR_REF,
+        }
+    }
+
+    /// The recognition law for a disclosed constellation: a two- or three-fold
+    /// compresses directly; the twelvefold, whose six same-position sites are
+    /// the relational sixfold, takes the `18 -> 3 -> 1` route. Every other
+    /// grain has no recognition law and stays disclosed.
+    pub fn recognising(grain: ConstellationGrain) -> Option<Self> {
+        match grain {
+            ConstellationGrain::TwelveFold => Some(Self::eighteen_to_onefold()),
+            grain => Self::to_onefold(QlShape::Constellation(grain)),
+        }
+    }
+
     pub fn derivation_ref(self) -> String {
-        format!("{}:from:{}", self.operator_ref, self.disclosed.shape_ref())
+        match self.disclosed {
+            QlShape::EighteenFold => format!(
+                "{}:from:{EIGHTEEN_TO_THREE_OPERATOR_REF}:from:{EIGHTEEN_FOLD_SHAPE_REF}",
+                self.operator_ref
+            ),
+            disclosed => format!("{}:from:{}", self.operator_ref, disclosed.shape_ref()),
+        }
     }
 }
 
