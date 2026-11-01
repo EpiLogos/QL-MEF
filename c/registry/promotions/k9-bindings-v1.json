@@ -87,7 +87,7 @@
     "#2",
     "#3"
    ],
-   "rationale": "QL #204 completes the existing L5.3 Geometry/constellation morphology, with M1 retaining the formal Spanda/QL owner while the canonical Second-Spanda body consumes the already-owned M2 six-by-six and M3 three-site fold body. The module adds shape/compression carriers and projections only; it creates no new M coordinates or competing geometry ontology. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md.",
+   "rationale": "QL #204 completes the existing L5.3 Geometry/constellation morphology, with M1 retaining the formal Spanda/QL owner while the canonical Second-Spanda body consumes the already-owned M2 six-by-six and M3 three-site fold body. The module adds shape/compression carriers and projections only; it creates no new M coordinates or competing geometry ontology. Canonical architecture: docs/geometry/CANONICAL-CONSTELLATION-RESOLUTION.md. It also holds QL's compositional recognition law (Recognition, SixfoldRoute): a whole reaches its 0/1 by recognising its parts, 2->1, 3->1, 3+1, 4+1, the sixfold by 4+2 (divided by the kernel's classify-four-plus-two), 3+3 or a relation family's pairs, seven to eleven with their night readings open, and all twelve through their three sixfolds 18->3->1; the route and its parts are retained.",
    "tests": [
     "crates/ql-core/tests/geometry_constellation_resolution.rs",
     "crates/ql-mef/tests/second_spanda_geometry.rs"

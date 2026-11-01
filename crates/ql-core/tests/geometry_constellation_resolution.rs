@@ -1,7 +1,9 @@
 use ql_core::{
     COMPRESS_TO_WHOLE_OPERATOR_REF, CallerProvenance, ConstellationGrain,
-    EIGHTEEN_TO_THREE_OPERATOR_REF, EighteenFoldGeometry, FourByFourByFourField, QlShape,
-    QlShapeCompression, SecondSpandaGeometry, ShapeBinding, THREE_TO_ONE_OPERATOR_REF,
+    EIGHTEEN_TO_THREE_OPERATOR_REF, EighteenFoldGeometry, FourByFourByFourField, QlFace,
+    QlPosition, QlShape, QlShapeCompression, Recognition, RecognitionError, RecognitionRoute,
+    RelationFamily, SecondSpandaGeometry, ShapeBinding, SixfoldRoute, StructuralConstellation,
+    StructuralParticipation, THREE_TO_ONE_OPERATOR_REF,
 };
 
 #[test]
@@ -104,41 +106,142 @@ fn eighteenfold_is_the_three_sixfold_geometry_and_compresses_by_six_to_three() {
     );
 }
 
+fn constellation(direct: &[u8], conjugate: &[u8]) -> StructuralConstellation {
+    let member = |p: u8, face| {
+        StructuralParticipation::new(format!("t:{p}:{face:?}"), QlPosition::new(p).unwrap(), face)
+            .unwrap()
+    };
+    let members = direct
+        .iter()
+        .map(|p| member(*p, QlFace::Direct))
+        .chain(conjugate.iter().map(|p| member(*p, QlFace::Conjugate)))
+        .collect();
+    StructuralConstellation::new("anchor:whole", members, Vec::new()).unwrap()
+}
+
 #[test]
-fn the_twelvefold_takes_the_eighteen_to_three_to_one_route_and_other_grains_have_none() {
-    let route = QlShapeCompression::recognising(ConstellationGrain::TwelveFold)
-        .expect("6 + 6' + relational 6 is recognised");
-    assert_eq!(route.presented, QlShape::onefold());
-    assert_eq!(route.disclosed, QlShape::EighteenFold);
-    assert_eq!(route.disclosed_fold, 18);
-    assert_eq!(route.operator_ref, THREE_TO_ONE_OPERATOR_REF);
-    let derivation = route.derivation_ref();
-    assert!(derivation.contains(EIGHTEEN_TO_THREE_OPERATOR_REF));
-    assert!(derivation.ends_with(&QlShape::EighteenFold.shape_ref()));
-    // The direct route is unchanged for the two- and three-folds.
-    assert_eq!(
-        QlShapeCompression::recognising(ConstellationGrain::ThreeFold450),
-        QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::ThreeFold450))
-    );
-    for grain in [
-        ConstellationGrain::AnchorOnly,
-        ConstellationGrain::FourFold1234,
-        ConstellationGrain::SixFold,
-        ConstellationGrain::PartialConjugate9,
-        ConstellationGrain::Other {
-            direct: 4,
-            conjugate: 0,
-        },
-    ] {
-        assert!(
-            QlShapeCompression::recognising(grain).is_none(),
-            "{grain:?}"
+fn every_whole_of_ql_is_recognised_by_its_own_route() {
+    let all: Vec<u8> = (0..6).collect();
+    let cases: [(&[u8], &[u8], RecognitionRoute); 9] = [
+        (&[2, 5], &[], RecognitionRoute::Direct),
+        (&[1, 2, 3], &[], RecognitionRoute::Direct),
+        (&[4, 5, 0], &[], RecognitionRoute::Direct),
+        (&[1, 2, 3, 4], &[], RecognitionRoute::ThreePlusOne),
+        (
+            &[0, 1, 2, 3, 4],
+            &[],
+            RecognitionRoute::FourPlusOne { with: 0 },
+        ),
+        (
+            &[1, 2, 3, 4, 5],
+            &[],
+            RecognitionRoute::FourPlusOne { with: 5 },
+        ),
+        (
+            &all,
+            &[],
+            RecognitionRoute::Sixfold(SixfoldRoute::FourPlusTwo),
+        ),
+        (
+            &all,
+            &[1, 3],
+            RecognitionRoute::SixfoldOpen {
+                route: SixfoldRoute::FourPlusTwo,
+                open: vec![1, 3],
+            },
+        ),
+        (
+            &all,
+            &all,
+            RecognitionRoute::Eighteen(SixfoldRoute::FourPlusTwo),
+        ),
+    ];
+    for (direct, conjugate, route) in cases {
+        let form = constellation(direct, conjugate);
+        let recognition = Recognition::of(&form, None).unwrap();
+        assert_eq!(recognition.route, route, "{direct:?} {conjugate:?}");
+        assert_eq!(recognition.presented(), QlShape::onefold());
+        // A presented binding's operator names exactly this recognition again.
+        assert_eq!(
+            Recognition::from_operator(&form, &recognition.operator_ref()),
+            Some(recognition.clone())
         );
     }
-    // The single-step law still refuses the twelvefold, so Wiki and other
-    // two/three-fold consumers keep their contract.
-    assert!(
-        QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::TwelveFold))
-            .is_none()
+    // The direct routes keep the existing 2 -> 1 / 3 -> 1 identity Wiki uses.
+    let triad = Recognition::of(&constellation(&[1, 2, 3], &[]), None).unwrap();
+    let existing =
+        QlShapeCompression::to_onefold(QlShape::Constellation(ConstellationGrain::ThreeFold123))
+            .unwrap();
+    assert_eq!(triad.operator_ref(), THREE_TO_ONE_OPERATOR_REF);
+    assert_eq!(triad.derivation_ref(), existing.derivation_ref());
+}
+
+#[test]
+fn the_sixfold_is_four_plus_two_by_the_kernels_own_operator_and_its_readings_stay_distinct() {
+    assert_eq!(
+        SixfoldRoute::FourPlusTwo.parts(),
+        vec![vec![1, 2, 3, 4], vec![5, 0]]
     );
+    assert_eq!(
+        SixfoldRoute::ThreePlusThree.parts(),
+        vec![vec![1, 2, 3], vec![4, 5, 0]]
+    );
+    assert_eq!(
+        SixfoldRoute::Pairs(RelationFamily::B).parts(),
+        vec![vec![1, 2], vec![3, 4], vec![5, 0]]
+    );
+    let six = constellation(&[0, 1, 2, 3, 4, 5], &[]);
+    let operators: std::collections::BTreeSet<String> = SixfoldRoute::ALL
+        .into_iter()
+        .map(|route| Recognition::of(&six, Some(route)).unwrap().operator_ref())
+        .collect();
+    assert_eq!(operators.len(), 5);
+    let backbone = Recognition::of(&six, None).unwrap();
+    assert!(
+        backbone
+            .derivation_ref()
+            .ends_with(":parts:[1,2,3,4]+[5,0]")
+    );
+    for route in SixfoldRoute::ALL {
+        assert_eq!(SixfoldRoute::parse(route.code()), Some(route));
+    }
+}
+
+#[test]
+fn all_twelve_recognise_through_their_three_sixfolds_and_partial_nights_stay_open() {
+    let all = [0, 1, 2, 3, 4, 5];
+    let twelve = Recognition::of(
+        &constellation(&all, &all),
+        Some(SixfoldRoute::ThreePlusThree),
+    )
+    .unwrap();
+    assert_eq!(twelve.disclosed, QlShape::EighteenFold);
+    let derivation = twelve.derivation_ref();
+    assert!(
+        derivation.contains(EIGHTEEN_TO_THREE_OPERATOR_REF),
+        "{derivation}"
+    );
+    assert!(derivation.contains("direct+conjugate+relational"));
+    assert!(derivation.ends_with("each:[1,2,3]+[4,5,0]"));
+    let nine = Recognition::of(&constellation(&all, &[0, 2, 4]), None).unwrap();
+    assert!(nine.derivation_ref().ends_with(":open-D1:[0,2,4]"));
+}
+
+#[test]
+fn what_is_not_a_whole_is_told_to_recognise_its_parts() {
+    let partial = constellation(&[1, 2, 5], &[]);
+    let error = Recognition::of(&partial, None).unwrap_err();
+    assert!(matches!(error, RecognitionError::NotAWhole(_)));
+    assert!(error.to_string().contains("recognise its parts"));
+    assert_eq!(
+        Recognition::of(&constellation(&[], &[]), None),
+        Err(RecognitionError::AlreadyWhole)
+    );
+    assert!(matches!(
+        Recognition::of(
+            &constellation(&[1, 2, 3], &[]),
+            Some(SixfoldRoute::FourPlusTwo)
+        ),
+        Err(RecognitionError::RouteWithoutSixfold(_))
+    ));
 }

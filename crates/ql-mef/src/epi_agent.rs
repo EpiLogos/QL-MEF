@@ -1375,6 +1375,10 @@ fn epii_operation_inputs() -> Value {
                  "members":[{"subjectRef":"<utterance ref>","position":1,"face":"direct"},{"subjectRef":"<utterance ref>","position":2,"face":"direct"},{"subjectRef":"<utterance ref>","position":3,"face":"direct"}],
                  "relations":[{"row":{"position":2,"face":"direct"},"column":{"position":1,"face":"direct"},"relationRef":"epii:set-against","evidence":["<why>"]}]},
                 {"op":"recognise","from":"turn-1","into":"turn-1.0/1","basis":basis},
+                {"op":"whole","useRef":"now","subjectRef":"<NOW ref>","wholeRef":"anchor:now","category":"T",
+                 "groundRef":"<NOW ref>","groundFace":"direct","frame":frame,"basis":basis,
+                 "members":(0..6).map(|p| json!({"subjectRef":format!("<utterance ref {p}>"),"position":p,"face":"direct"})).collect::<Vec<_>>()},
+                {"op":"recognise","from":"now","into":"now.0/1","route":"4+2","basis":basis},
                 {"op":"read","useRef":"turn-1.0/1","lens":"L4'"},
                 {"op":"reopen","from":"turn-1.0/1","into":"turn-1.open","basis":basis}
             ]},
@@ -1382,7 +1386,8 @@ fn epii_operation_inputs() -> Value {
                 "Each thought joins the open whole at its T coordinate: position 0..5, face direct for Tn, conjugate for Tn′.",
                 "A whole holds each coordinate once; a conjugate thought needs its direct partner in the same whole. A thought that cannot join closes the open whole and opens the next.",
                 "Declare in relations which earlier thought a new one is set against; each relation returns the kernel's reading of the pair (D1, transform/require/complete, A/B/C, mirror, successor).",
-                "Recognise a closed whole when its grain has a law (two-fold, 123, 450, or the twelvefold through 18 -> 3 -> 1); carry it forward as its 0/1. Wholes without a law stay disclosed as the remainder.",
+                "Recognise a closed whole and carry it forward as its 0/1: two (2 -> 1), 123 or 450 (3 -> 1), 1234 (3 + 1), 01234 or 12345 (4 + 1), the sixfold by a reading of six (route 4+2 by default, or 3+3, pairs-A, pairs-B, pairs-C), seven to eleven as the sixfold with their night readings carried open, and all twelve through their three sixfolds (18 -> 3 -> 1).",
+                "A set that is none of these (say 1, 2, 5) is not a whole: recognise its parts as their own wholes (a whole step for the pair 1, 2) and carry the rest open.",
                 "Reopen a recognised whole when the conversation returns to it; read gives its frame pitch, intervals and phases."
             ],
             "note": "The steps are the ql vak compose envelope (whole, compose, recognise, reopen, reframe, read, position, determine, return, offer, lineage). The request is evaluated in memory; persist what the result returns."

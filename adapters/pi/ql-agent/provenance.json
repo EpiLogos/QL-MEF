@@ -5,9 +5,9 @@
     "schemas/ql-agent-contracts-v1.schema.json": "3290d93bf0c2e3e2acb922b8f96750d1623b30aeb08d4711f8b6956fe9e5d957",
     "crates/ql-mef/src/agent_event.rs": "35211df6d3a266d0378a5c8fa580eb6ef399e9a9dee1ef751da86bf9610285b3",
     "crates/ql-mef/src/agent_event/admission.rs": "4018fc4dc2c73db78af44ac2c0615978c996a1b9a51b19f39af635eb596089de",
-    "crates/ql-mef/src/epi_agent.rs": "c750e4becb66f3cdcd8f3e54af2c66e04215b888d16fec73ee9df6275b591f87",
+    "crates/ql-mef/src/epi_agent.rs": "d942ad03945d597827d9ed52f210c8f0f06497b423007635a05be7938e7431ca",
     "crates/ql-cli/src/agent_event_command.rs": "2f851e9982b76652e0fa7ba2996ae688c500ae3c17f89e7b7683fc8474ed1708",
-    "crates/ql-cli/src/epi_agent_command.rs": "d551de171faba25a6ce4d4420ea4c656e65831b5ee15b84e3226260f89080af1",
+    "crates/ql-cli/src/epi_agent_command.rs": "aac9bb1bebcac83050ff1279386dfc7ea7f92aaa36d7a349e04a2db9d0a8fd66",
     "docs/integrations/epi-logos/epi-m-capability-field-m0.json": "a7d0790c7597718288919d6fdd319de78833a18360c3daf8f83631dca4fe324c",
     "docs/integrations/epi-logos/epi-m-capability-field-m1.json": "5cb1559d5a916b164fa359a1fbecafb1d75b34d2f4e0336f6173b68384919c73",
     "docs/integrations/epi-logos/epi-m-capability-field-m2.json": "cd2fd9b13457407580946c8924e357b993fe3d1eac00c2539925c3b7a467ef86",
@@ -20,6 +20,6 @@
     "scripts/ql_agent_encounter.py": "183e3ee03bc4a84f20219d2232e553a1069de784fe2bf98c1da0f40d140d62c1"
   },
   "native_binary_sha256": "1a50b99ccf1884a4adbb3e3d6386854678de76d1ee899d89d629c7153977103d",
-  "kernel_digest": "sha256:83b42954bb12aeea972d6af71bb2fdd7098bfc9e5a6378e3af99df98262e3759",
+  "kernel_digest": "sha256:fff40fe3ebda4e022938022fb0e52ca5c567a38346727bbbd6a12cb97d1c3480",
   "scope": "Explicit native QL/AIKit decision and operation tools; no implicit inference or default model election"
 }

@@ -331,8 +331,20 @@ QL classifies **wholes**, and compresses by **recognising** them. The L5 offices
 **Built, 1 November 2026 (branch `epii/constellation-compose`).**
 
 - **(a)** Recognition is in place.
-  - **Kernel.** `ql-core` holds the recognition law. `QlShapeCompression::recognising(grain)` covers 2→1 and 3→1. The twelvefold takes `eighteen_to_onefold()`: the six same-position sites of a full direct and conjugate sixfold are the relational six, so 18 → 3 → 1. Its derivation names both operators.
-  - **Envelope.** `VakComposition::recognise` and `reopen` make new immutable uses. Members, basis refs and relations stay in the binding, and `reopen` restores the exact binding the whole was recognised from. The envelope has `recognise` and `reopen` steps. Grains without a law (4-fold, 4+1, 6-fold, 7–11, `Other`) are refused and stay disclosed.
+  - **Kernel.** `ql_core::Recognition` is the recognition law, and it is compositional: a whole reaches its 0/1 by recognising its parts, and the route is recorded with its parts named.
+
+    | Whole | Route |
+    |---|---|
+    | two, 123, 450 | 2 → 1, 3 → 1 (the existing operators, so Wiki's contract is unchanged) |
+    | 1234 | 3 + 1: the triad and its recognised fourth |
+    | 01234, 12345 | 4 + 1: the four with its ground 0 or its synthesis 5, then 2 → 1 |
+    | the sixfold | a reading of six (`SixfoldRoute`): 4 + 2 by default, divided by the kernel's own `classify-four-plus-two` into 1234 and the return 5 → 0; or 3 + 3 (123 \| 450); or the three pairs of A, B or C |
+    | 7–11 | the sixfold by its reading, the night readings present carried open as their n ↔ n′ pairs |
+    | all twelve | the sixfold, its conjugate and their coming together (the six n ↔ n′ pairings, itself a sixfold), each 6 → 1 by the reading, then 18 → 3 → 1 |
+
+    Two readings over the same positions stay distinct operators. A set that is none of these, such as {1, 2, 5}, is not a whole: its recognisable parts are recognised as their own wholes and the rest stays open.
+    - Correction, 1 November: the first version wired only 2 → 1 and 3 → 1, bolted 18 onto the twelvefold and refused the 4, 4 + 1 and 6 as having "no law". The owner corrected it: these are QL's foundational wholes, and the kernel already held their law.
+  - **Envelope.** `VakComposition::recognise` and `reopen` make new immutable uses. `recognise` takes an optional `route` for the reading of six. Members, basis refs and relations stay in the binding, and `reopen` restores the exact binding the whole was recognised from.
   - **Epii.** Epii (#5) has `vak.compose` over that envelope through `ql epi-agent invoke`. Its `operation_inputs` carry a worked request and the practice.
   - **The practice:** each thought joins the open whole at its T coordinate. A whole holds each coordinate once, and a conjugate needs its direct partner present, so a thought that cannot join closes the whole and opens the next.
 - **(b)** `ql_core::classify_coordinate_pair` reads two participations against the contract's laws: identity, n ↔ n′, n ↔ (n+1)′, n ↔ (n−1)′, n ↔ (5−n)′, the mirror n → 5−n, the successor n → n+1, and A/B/C membership with direction. Overlaps are kept. Every declared relation in a whole's binding, and every relation-field read whose axes are members, carries that reading (`kernel`, `pairKernel`).

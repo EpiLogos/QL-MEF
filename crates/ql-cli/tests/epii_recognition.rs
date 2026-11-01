@@ -79,7 +79,7 @@ fn a_threefold_turn_is_recognised_as_its_0_1_and_reopens_to_the_same_binding() {
 }
 
 #[test]
-fn the_twelvefold_is_recognised_through_eighteen_three_one() {
+fn the_twelvefold_is_recognised_through_its_three_sixfolds_eighteen_three_one() {
     let all: Vec<(u8, &str)> = (0..6).flat_map(|p| [(p, ""), (p, "'")]).collect();
     let results = run(vec![
         whole("now", &all, json!([])),
@@ -90,22 +90,71 @@ fn the_twelvefold_is_recognised_through_eighteen_three_one() {
         derivation.contains("compression:18-by-6-to-threefold"),
         "{derivation}"
     );
-    assert!(derivation.ends_with("18-fold:6-plus-6-prime-plus-relational-6"));
+    assert!(
+        derivation.contains("direct+conjugate+relational"),
+        "{derivation}"
+    );
+    assert!(derivation.ends_with("each:[1,2,3,4]+[5,0]"), "{derivation}");
     assert_eq!(results[1]["body"]["members"].as_array().unwrap().len(), 12);
 }
 
 #[test]
-fn grains_without_a_recognition_law_stay_disclosed() {
-    for members in [
-        vec![(1, ""), (2, ""), (3, ""), (4, "")],
-        vec![(0, ""), (1, ""), (2, ""), (3, ""), (4, ""), (5, "")],
-        vec![(1, ""), (2, ""), (5, "")],
+fn the_four_the_sixfold_and_its_readings_are_recognised_and_reopen_exactly() {
+    let six: Vec<(u8, &str)> = (0..6).map(|p| (p, "")).collect();
+    let results = run(vec![
+        whole("four", &[(1, ""), (2, ""), (3, ""), (4, "")], json!([])),
+        json!({"op":"recognise","from":"four","into":"four.1","basis":basis("epii:recognition")}),
+        whole("six", &six, json!([])),
+        json!({"op":"recognise","from":"six","into":"six.1","basis":basis("epii:recognition")}),
+        json!({"op":"recognise","from":"six","into":"six.pairs","route":"pairs-C","basis":basis("epii:recognition")}),
+        json!({"op":"read","useRef":"six.pairs","lens":"L0"}),
+        json!({"op":"reopen","from":"six.pairs","into":"six.open","basis":basis("epii:reopen")}),
+    ]);
+    assert!(
+        results[1]["binding"]["operatorRef"]
+            .as_str()
+            .unwrap()
+            .ends_with(":3+1")
+    );
+    let backbone = results[3]["binding"]["derivationRef"].as_str().unwrap();
+    assert!(
+        backbone
+            .ends_with(":6:4+2:from:ql:shape:1.0.0:constellation:sixfold:parts:[1,2,3,4]+[5,0]"),
+        "{backbone}"
+    );
+    let pairs = results[4]["binding"]["derivationRef"].as_str().unwrap();
+    assert!(pairs.ends_with("parts:[0,5]+[1,4]+[2,3]"), "{pairs}");
+    assert_ne!(
+        results[3]["binding"]["operatorRef"],
+        results[4]["binding"]["operatorRef"]
+    );
+    assert_eq!(results[5]["address"]["kind"], "anchor");
+    assert_eq!(results[6]["binding"], results[2]["binding"]);
+}
+
+#[test]
+fn a_set_that_is_not_a_whole_is_told_to_recognise_its_parts() {
+    for (members, route, expected) in [
+        (vec![(1, ""), (2, ""), (5, "")], None, "recognise its parts"),
+        (
+            vec![(1, ""), (2, ""), (3, "")],
+            Some("4+2"),
+            "reading of six was given",
+        ),
+        (
+            vec![(0, ""), (1, ""), (2, ""), (3, ""), (4, ""), (5, "")],
+            Some("2+2+2"),
+            "unknown reading of six",
+        ),
     ] {
-        let request = json!({"contract":"ql.vak-composition/v1","steps":[
-            whole("w", &members, json!([])),
-            {"op":"recognise","from":"w","into":"w.1","basis":basis("epii:recognition")}]});
+        let mut step =
+            json!({"op":"recognise","from":"w","into":"w.1","basis":basis("epii:recognition")});
+        if let Some(route) = route {
+            step["route"] = json!(route);
+        }
+        let request = json!({"contract":"ql.vak-composition/v1","steps":[whole("w", &members, json!([])), step]});
         let error = execute_request(&request).unwrap_err().to_string();
-        assert!(error.contains("no recognition law"), "{error}");
+        assert!(error.contains(expected), "{error}");
     }
 }
 

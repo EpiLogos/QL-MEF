@@ -402,7 +402,15 @@ pub fn execute_request(request: &Value) -> R<Value> {
                     let (from, into, basis) =
                         (text(s, "from")?, text(s, "into")?, parse_basis(&s["basis"])?);
                     if operation == "recognise" {
-                        graph.recognise(from, into, basis).map_err(error)?;
+                        let route = match optional(s, "route")? {
+                            None => None,
+                            Some(code) => Some(SixfoldRoute::parse(&code).ok_or_else(|| {
+                                error(format!(
+                                    "unknown reading of six {code}; use 4+2, 3+3, pairs-A, pairs-B or pairs-C"
+                                ))
+                            })?),
+                        };
+                        graph.recognise(from, into, route, basis).map_err(error)?;
                     } else {
                         graph.reopen(from, into, basis).map_err(error)?;
                     }

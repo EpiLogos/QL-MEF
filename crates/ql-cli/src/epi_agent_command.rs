@@ -344,9 +344,15 @@ mod tests {
             results[1]["result"]["binding"]["shapeRef"],
             "ql:shape:1.0.0:constellation:anchor-only"
         );
-        assert_eq!(results[2]["result"]["address"]["kind"], "anchor");
+        assert!(
+            results[3]["result"]["binding"]["operatorRef"]
+                .as_str()
+                .unwrap()
+                .ends_with(":6:4+2")
+        );
+        assert_eq!(results[4]["result"]["address"]["kind"], "anchor");
         assert_eq!(
-            results[3]["result"]["binding"],
+            results[5]["result"]["binding"],
             results[0]["result"]["binding"]
         );
         assert_eq!(
