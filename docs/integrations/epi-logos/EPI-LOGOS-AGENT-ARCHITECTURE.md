@@ -273,7 +273,7 @@ The owner: QL is a classifier and a compressor. T thought and MEF-lens readings 
 
 It is done when the owner talks to Epii through the face and:
 
-- every turn carries a kernel reading: constellation, relation fields and harmonic frame;
+- Epii reads a thought through its body's own tools when it judges the reading worth making; every reading it makes is the kernel's machinery, never free text, and what it composes is built from what those readings return;
 - Epii carries the conversation forward as recognised wholes rather than as transcript, and reopens one when the talk returns to it;
 - the tests in §14.5 hold.
 
@@ -296,10 +296,10 @@ QL classifies **wholes**, and compresses by **recognising** them. The L5 offices
 
 ### 14.3 The reading, turn by turn
 
-1. **Participation.** Each utterance, the person's and Epii's, receives a declared reading through the kernel's heads (`ql_project_event`, `ql_decide`), never as free text. The reading gives:
-   - the T position and face;
-   - the MEF cell it reads through;
-   - the active Context Frame.
+1. **Participation.** Epii reads an utterance, the person's or its own, when it chooses to, through its body's Night (P′) reflect tools; nothing requires a reading every turn. Each tool is the native `actuation-research` `reflect.read`: it puts the MEF register's machinery for the lenses it covers to the elected AIKit decision provider (K-E-V) and returns each lens's cell with its distribution. The reading gives:
+   - the T position: the L4′ cell;
+   - the MEF cells it reads through;
+   - once the full text or the three squares are read, the right frame among the lenses (`reflect_right_frame`, `reflect_resonant_frames`).
 2. **Whole.** The turn is a whole whose members are its participations, and so is the conversation. The kernel names the grain.
 3. **Relation.** Epii declares which earlier participation a new one is set against, composed as row × column. The kernel classifies the pair: family, pair index, direction and D degree. Pairs on the same vertices, such as A1 and C2 on (2,3), stay distinct because the declaration says which.
 4. **Frame.** `read` gives the frame pitch, the parts' intervals and their phases (pitch × 30°). `reframe` records any change of Context Frame as a transition.
@@ -354,7 +354,7 @@ QL classifies **wholes**, and compresses by **recognising** them. The L5 offices
 **Epi-Prime**
 
 - **(d)** Re-pin the vendored `ql-agent-reading` and the installation to the QL revision that carries (a)–(c). `ql_invoke` at #5 then reaches them. Seal the manifest; there is no upstream Prime patch.
-- **(e)** Add the Epii practice to the extension's guidance: each turn, declare participations, relations and recognitions through the tools.
+- **(e)** No practice: the toolset is the form. Beside `ql-agent-reading` the body vendors Actuation's Night reflect tools (`vendor/ql-night-reflect`), and their descriptions name their offices. (Superseded 2 November: this item first asked for a practice in the extension's guidance, declaring participations, relations and recognitions each turn.)
 
 **face-rig-chat**
 
@@ -382,8 +382,13 @@ QL classifies **wholes**, and compresses by **recognising** them. The L5 offices
 
 These run in face-rig-chat on Haiku.
 
-1. **Receipts.** Every turn yields kernel receipts: whole, grain, relation classifications and framed reading. Nothing is free-text labelling.
-2. **Blind recovery.** A fresh Haiku Epii given only the transcript recovers the declared constellations (grain and fields). It must do so better than a same-shape random constellation, over permutations.
+1. **Choice.** Epii reads when it judges a reading worth making. The run counts the turns it read, through which tool, and whose words it read: the person's, its own, or a summary. Every reading is a native receipt and nothing is free-text labelling. No turn is required to carry one.
+2. **The readings carry.**
+   - Each reading peaks above a flat distribution.
+   - A re-read of the same words gives the same cells.
+   - Reading without Epii's own disclosure shows what the disclosure adds.
+   - Readings of different thoughts differ more than re-readings of one.
+   - The members Epii composes sit at the T levels their readings returned, more often than chance.
 3. **Kernel relations carry.** In the dialogue, D1 opposition, transform, require and complete, and the A/B/C partners each occur more often than chance. The coder's per-relation weights show which do.
 4. **Compression in QL's terms.**
    - A fresh Epii holding only the carried wholes and the remainder answers questions about the conversation as well as one holding the transcript.
@@ -411,3 +416,37 @@ These run in face-rig-chat on Haiku.
   - The speaking model writes the reading and the recognition in one call, after its answer, in a session that sees its own earlier calls. A refusal teaches it the shape that passes, and the shape that passes is then repeated.
   - Step 1 of §14.3 gives the reading to the kernel's decision heads. The kernel has none for a T reading: its semantic heads are context frame, faculty, operation and span.
   - So participation is free labelling, which step 1 rules out.
+
+**Second live run, 2 November 2026.** This run was rebuilt to the owner's correction: the system is for epistemic work, classification is real tooling in Epii's body, and Epii decides whether to classify. §14.3 step 1, §14.4 (e) and §14.5 tests 1–2 now say so.
+
+- **Built.**
+  - Actuation [#152](https://github.com/EpiLogos/Actuation/pull/152) (`b4754c2`) adds `actuation-research` `reflect.read` and `reflect.tools`.
+    - It carries the MEF register pinned (QL `a8fd57a`) and reads the six Night tools on the elected decision provider through `aikit decide`.
+    - The coverage gate holds the frame tools back until the full text or all three squares have been read.
+    - The launcher refuses a body whose Night closure is missing or changed.
+  - Epi-Prime [#4](https://github.com/EpiLogos/Epi-Prime/pull/4) vendors those tools beside `ql-agent-reading`, and both closures are verified before either loads.
+  - face-rig `500b05a` removes the prompt practice, including `954cc59`'s worked request. What the person marks wrong still reaches Epii, in their words.
+  - `reading-live.mjs` runs ten turns on the MEF general corpus's positions (Ramsey, Kahneman, Frege, Whorf, Freud), two of them plain, and runs tests 1 and 2 as they now stand.
+  - The first run's cause is answered by tooling: a T reading is now a native decision over the register's own options, with its distribution, not text the speaking model writes.
+- **Run 5** (`claude-haiku-5-5`, tools only).
+  - Epii read on 0 of 10 turns, composed on 0, and called no QL operation.
+  - Its answers held up on the material.
+  - A fresh body lists all six Night tools beside the QL tools.
+  - Nothing in the body tells the model who is speaking.
+    - The system prompt is Prime's general coding-agent prompt plus the face's speech section.
+    - The removed practice held the only line that named Epii.
+    - QL's own #5 constitution (`ql epi-agent faculty '#5'`: Epii, M5/M5′, S5′ Aletheia, `logos.return`, `vak.compose`) does not reach the body.
+  - This is §9's tool-only condition, and it sets the floor: with tools alone, Epii does not choose to read.
+- **The instrument on the corpus.** The twelve positions C1–C12 were each read twice through `reflect_full_text` on K-E-V (`kev-latest`, managed-local), at 2.6–2.7 s per reading.
+  - A re-read gave identical cells. The decoder is deterministic, so this shows reproducibility, not robustness to rewording.
+  - The mean peak was 0.32, against 0.167 for a flat distribution.
+  - Two positions agree on 55% of their twelve lens cells.
+  - Five lenses barely move across positions: L4′ Insight 12 of 12, L2 NEITHER 11, L0′ Two 11, L2′ Aether 10, L3′ Life 10. They read the genre, a stated position, more than which position it is.
+  - Where a lens fits the content, it separates the positions:
+    - L1 Svātantrya for Locke and Nozick;
+    - L1′ Introversion for Freud (0.60);
+    - L1′ Thinking for Frege and Ramsey (0.57).
+  - **For composition.**
+    - A T coordinate taken from L4′ puts all twelve positions at Insight.
+    - A whole holds each coordinate once, so each would close its own whole.
+    - Whether thought at other T stages reads differently is untested, because Epii never read in run 5.
