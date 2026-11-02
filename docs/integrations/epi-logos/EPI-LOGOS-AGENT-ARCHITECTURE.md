@@ -523,4 +523,5 @@ These run in face-rig-chat on Haiku.
 - **What this leaves.**
   - Across runs 6–16, Epii on Haiku calls a tool only when the person names that faculty: "read through your lenses", "use your vak_compose tool". It never touched its face tools unasked either.
   - The description, the return shape and the shape of the call have each been made useful. None of them changed that.
-  - What remains is the agent's own deliberation. Haiku 5.5 runs here with `reasoning: false`, so it answers without thinking first. The open question is whether a body that deliberates before answering composes and reads unasked.
+  - Haiku 5.5 already deliberates here. With no thinking parameter it runs adaptive thinking at medium effort (`reasoning: false` only stops Prime 0.9.8 sending the `budget_tokens` Haiku rejects).
+  - Two influences stand untested: the model itself, and Prime's base prompt, which is a coding agent's ("uses code to solve tasks"). The next comparison is the same arms on a larger model in the same body.
