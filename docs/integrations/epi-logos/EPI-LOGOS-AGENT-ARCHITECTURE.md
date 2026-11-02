@@ -391,3 +391,23 @@ These run in face-rig-chat on Haiku.
    - Every recognised whole reopens to its exact basis.
 5. **The owner's eye.** The owner talks with it live, and the readings they mark wrong are counted. Face and voice are judged live, with audio, not from stills.
 6. **Port gate.** The owner accepts 1–5, and the DLW port (j) begins.
+
+**First live run, 2 November 2026.** `face-rig-chat` `test/reading-live.mjs` (face-rig `954cc59`) drove a fixed ten-turn dialogue (moving a pottery studio: two sites, rents, a wiring quote, a lease, raku, a break clause) through a test chat on `claude-haiku-5-5` and ran tests 1–4. The person's side is fixed, so the ten questions of test 4 have answers that do not depend on Epii. Four runs: the first with the practice as built, then three after fixes.
+
+- **The compression holds.**
+  - Every recognised whole reopened to its exact binding when Epii's own whole and recognise steps were replayed: 30 of 30 across runs 2–4.
+  - Carried with its basis, the conversation took 31–41% of the transcript's bytes. A fresh Epii holding only that answered 9–10 of 10, and one holding the transcript answered 10 of 10.
+  - Carried as §14.3 step 6 has it, the 0/1s alone with Epii reopening the wholes it names: Epii asked for 8 of 10 wholes, held 31% of the transcript and answered 9–10 of 10.
+  - The bare 0/1s answered 0 of 10 while Epii named each whole after the conversation, and 4 of 10 at 13% once it named them by what they were of.
+- **The classification does not yet hold.**
+  - Run 1 had the practice in prose only. Haiku wrote a request shape of its own every turn and QL refused all of them: 0 of 10 receipts.
+  - Run 2 showed the faculty's worked request in full. Every turn copied its first whole: 1, 2, 3, one B relation, recognised 3 → 1.
+  - Runs 3 and 4 showed it with the coordinates blank and the rule "never move a thought so that a set can be recognised". Haiku first read 0, 1, 2 (the question a Prompt, the fact a Trace, its own advice a Challenge). QL rightly refused to recognise that set. Haiku then moved the thoughts to 1, 2, 3, and every later turn repeated 1, 2, 3.
+  - Each of runs 2–4 had one distinct reading across ten turns.
+  - Test 2: a fresh Epii reading the transcript blind was also constant (0, 1 every turn), so recovery equals the permuted baseline (p = 1).
+  - Test 3: B and successor occur 10 of 10, chance 3.3 (p 0.0002). That is the repeated relation, not the kernel carrying.
+  - The tests caught each failure: the count of distinct readings, the check for "moved after a refusal" and the permutation baseline.
+- **Cause.**
+  - The speaking model writes the reading and the recognition in one call, after its answer, in a session that sees its own earlier calls. A refusal teaches it the shape that passes, and the shape that passes is then repeated.
+  - Step 1 of §14.3 gives the reading to the kernel's decision heads. The kernel has none for a T reading: its semantic heads are context frame, faculty, operation and span.
+  - So participation is free labelling, which step 1 rules out.
