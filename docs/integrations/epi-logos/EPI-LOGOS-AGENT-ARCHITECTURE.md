@@ -571,3 +571,59 @@ These run in face-rig-chat on Haiku.
   - The core prompt and the return condition did what the descriptions could not. Epii now closes every turn as a whole, and it composes when the person asks in plain words.
   - It still reads only when invited, and its returns repeat a few shapes: T3 + T5 in the fixed dialogue, T2 T3 T5 in the invited one.
   - K-E-V's lean decides much of where a part may stand. It would not hold an open question at T0 Questions.
+
+**Seventh live run, 2 November 2026: each conversation stands on its own NOW.**
+
+- **Why.** The owner asked for the run's NOW to be modelled the way the DLW app means to hold its agent: the NOW, its Thoughts, the session and QL-MEF as one ontology. That ontology is to be built from the owners' own records, not kept in a second graph.
+- **The ontology.** Each link is a ref between records their owners already keep:
+  1. the Workcell's root NOW (Central) holds the conversation's child NOW (Central);
+  2. the child NOW holds the pi session, `pi-session:<id>`;
+  3. the session holds its turns, `pi-session:<id>#<entry>`;
+  4. each turn's thoughts are kept in the NOW's T stream (Central), each with its T level and the session that kept it;
+  5. the turn's whole stands on the NOW (QL). The person's own words are a member of it by their turn's ref;
+  6. the turn ends in its Logos Return.
+  - At the close, AIKit's NOW contemplation distils the stream into a T′ learning (Central), and the NOW keeps a return that names it.
+- **Built.**
+  - Actuation [#159](https://github.com/EpiLogos/Actuation/pull/159) (`b94de38`):
+    - the NOW is offered to the composer as the ground its wholes stand on;
+    - the turn's whole holds the person's own words.
+  - Actuation [#160](https://github.com/EpiLogos/Actuation/pull/160) (`dba2349`): words of the person's that hold no T level stay outside the whole, as the turn's remainder, and the turn still returns. Found live in run 21: turn 10 was refused thirteen times and never returned.
+  - AIKit [#578](https://github.com/EpiLogos/ai-kit/pull/578) (`56cc4c5b`):
+    - a NOW fixture keeps its reading and the session that kept it;
+    - `flow contemplate --record --distilled` takes a host's own distillation, with the body as host;
+    - encounter-use counts the pi body's QL operations.
+  - Epi-Prime [#11](https://github.com/EpiLogos/Epi-Prime/pull/11) and [#12](https://github.com/EpiLogos/Epi-Prime/pull/12) add `extensions/epii-now.ts`, which handles each part of a conversation:
+    - **Start.** The NOW is allocated at the conversation's first turn, so a silent session leaves none.
+    - **Join.** `EPII_NOW` joins an existing NOW, and the new session is given what the earlier conversations there carry.
+    - **Compaction.** It writes each returned turn as its Logos Return.
+    - **`/close`.** Epii distils the stream (`now_distil`), and the NOW keeps a return. The NOW rests only under Central's native authority.
+    - The install test runs fifteen scripted turns through pi's own loop.
+  - face-rig `40142e3`, `33e977d`, `6e9dfb5`:
+    - the chat's NOW panel shows the thoughts at their T levels, the T′ learnings and the returns;
+    - Close;
+    - Conversations, which reopens a past conversation;
+    - reading-live now closes the dialogue and runs test 5.
+  - Installed as body `70ed4ec081cd60ee`, registered at `dba2349`.
+- **Runs 20 and 21** (`claude-haiku-5-5`, the fixed and the invited arm).
+  - **Returns.** Fixed: 10 of 10. Invited: 9 of 10. Invited turn 10 is the refusal #160 mends.
+  - **Wholes.**
+    - Fixed: two twofolds and, on turn 8, a fourfold-1234 recognised by 3+1. It is the first fourfold in these runs. The other seven turns made none of QL's wholes.
+    - Invited: two twofolds recognised. Epii read on three turns, all of them invited.
+  - **Close.** The close took 5.5–5.6 s. Each NOW kept 26 thoughts, one T′ learning and one return that names it.
+  - **Cost.** The fixed dialogue averaged 16.8 s a turn, against 14.0 s in run 17. The extra time is each kept thought's write to Central.
+  - **Compression (test 4).** Now that the person's words stand in each whole, the carried views are larger than the transcript.
+    - Fixed: 1.51× with basis, 1.26× presented. It answered 10, 8 and 10 of 10 (basis, presented, reopening).
+    - Invited: 1.34× and 1.13×. It answered 10, 9 and 10/9.
+    - Every recognised whole reopened to its exact basis: 3 of 3 and 2 of 2.
+  - **The NOW carries (test 5, new).**
+    - The method: a fresh Epii joins the closed conversation's NOW and is given only what that NOW carries, each returned turn's T, T′ and C′ and the words of turns not returned. It is then asked the ten questions.
+    - It answered 10 of 10 in all six trials, from 0.90–1.33× the transcript.
+    - The carry grows as joined sessions add their own returns to the NOW.
+- **Found along the way.**
+  - face-rig imports the QL extension itself, and its resolve hook supplied `typebox` but not pi's own packages. The NOW extension imports pi's `SessionManager`, so the whole QL faculty failed to load and the first attempt at run 20 ran with no tools. The hook now resolves both from the body's own pi, as pi's loader does.
+  - Central's `central.now.read` lists receiving-ledger Returns only. A conversation's return is a NOW handoff naming the NOW, so it is read through `projectcentral.now.inspect`.
+  - The T0 label is "Prompts" in QL, "Questions" in Actuation and "Question" in Central. It is left as it stands.
+- **Authority.**
+  - A NOW's rest and re-entry are lifecycle changes, and Central admits those only under a native-action-authority grant. Live, only the owner's human grant holds `central.now.lifecycle`, and `project:face-rig` is outside its scopes.
+  - So a closed conversation's NOW stays active, and the body says so. A NOW at rest could not be joined.
+  - The seven test conversations of these runs stand active in face-rig. Resting them, and whether the body should hold a native-service grant of its own, is the owner's decision.
