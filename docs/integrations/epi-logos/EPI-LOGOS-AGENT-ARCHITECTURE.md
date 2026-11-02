@@ -478,3 +478,26 @@ These run in face-rig-chat on Haiku.
   - Epii reads when asked and not otherwise. Neither the identity, the descriptions nor a useful giving brought a reading the person had not invited.
   - Epii has never composed. `vak.compose` reaches it only through the generic `ql_invoke` tool ("Invoke an exact current QL faculty operation with its required input"). The constitution names the operation but not what it does or takes. Nothing in the body says that composing is how readings become the carried wholes of test 4. This is the same fault the giving had, in QL's own vendored reading extension.
   - K-E-V's yes-lean puts most sub-slots near or above one half. A profile's shape is legible, but its holds alone barely separate one thought from another.
+
+**Fourth live run, 2 November 2026: composition as Epii's own tool.**
+
+- **Built.** Actuation [#154](https://github.com/EpiLogos/Actuation/pull/154) gives `vak.compose` a tool of its own in QL's vendored reading extension. It is registered only when the constitution the body carries holds the operation. face-rig `119abf1` draws and measures it.
+  - `vak_compose` takes four kinds of step: `whole`, `recognise` (with a route for a sixfold), `reopen` and `read`.
+  - A whole's members are Epii's readings, by number, each at a T level that reading holds (L4.n′ is Tn). The tool refuses before the kernel when a reading is missing, does not hold that level, or appears twice.
+  - The tool builds the `ql.vak-composition/v1` request itself. The basis is the session's readings, and each request replays the conversation's earlier composition, because the kernel evaluates in memory.
+  - Its giving names:
+    - the grain, or that the members make none;
+    - each member, with the reading it came from;
+    - the pair the kernel reads for each member set against another;
+    - recognition, by its operator;
+    - frame pitch and phase.
+  - Night readings are numbered in the order taken. In a body that carries `vak.compose`, each reading ends with where its thought can stand in a whole.
+  - Epi-Prime's install test runs this in a session of the body's own Prime against the real engine. Three recorded readings compose as threefold-123, with T2 set against T1 read as B pair 0, reversed. The test also covers the refusals, a recognition one turn later that replays the earlier whole, and a reopen.
+- **Runs 9–12** (`claude-haiku-5-5`, fixed and invited dialogues, before and after the description was rewritten to say what the tool answers: whether read thoughts hold together and how each pair stands).
+  - Fixed dialogue: Epii read and composed on none of the 10 turns.
+  - Invited dialogue: Epii read on the three invited turns and composed on none.
+  - At turn 10, "Does it hold together, or have I smuggled something in?", it read the summary as one passage. It then reasoned out unaided what a whole would have shown: "the four inferences are not the same kind of claim … filing them all under 'inferred' makes them look more alike than they are."
+- **What this leaves.**
+  - A whole needs one reading per member thought, so the question "does this hold together?" costs a reading of each part and then a composition. Epii takes one reading of the whole passage.
+  - The description now reaches Epii. The tool's shape still stands between the question and the answer.
+  - The fitting shape is for `vak_compose` to take its members as thoughts in words and place each by its own L4′ reading in the same call. That needs a native L4′-only read in Actuation's `reflect.read`, so that placing six members costs six Nouls each, not 72.
