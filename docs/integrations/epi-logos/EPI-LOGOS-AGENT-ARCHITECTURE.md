@@ -525,3 +525,49 @@ These run in face-rig-chat on Haiku.
   - The description, the return shape and the shape of the call have each been made useful. None of them changed that.
   - Haiku 5.5 already deliberates here. With no thinking parameter it runs adaptive thinking at medium effort (`reasoning: false` only stops Prime 0.9.8 sending the `budget_tokens` Haiku rejects).
   - Two influences stand untested: the model itself, and Prime's base prompt, which is a coding agent's ("uses code to solve tasks"). The next comparison is the same arms on a larger model in the same body.
+
+**Sixth live run, 2 November 2026: the body moves to pi, speaks from its core prompt and closes each turn through `logos.return`.**
+
+- **Why.** The owner traced runs 6–16 to the body, not the model.
+  - Epii's prompt was 14,212 characters, and 71% of it was Prime's stock coding-agent prompt, which ends "When you are done, stop calling tools and state your final answer". The owner's Relational Logos reached none of it.
+  - Prime's loop ends a turn on bare prose. QL's own toolset loop ends one only through `close`, and the body could not reach it.
+  - Prime 0.10 is a Rust rewrite without the extension API, so the QL tools could not move with it. pi, which Prime 0.9 forked, keeps that API.
+- **Built.**
+  - Actuation [#156](https://github.com/EpiLogos/Actuation/pull/156) (`0b001b27`):
+    - `logos_return` in QL's vendored reading extension. The turn's close is composed through `vak.compose` and answered by the engine's `logos.return` (`ql.epii-logos-return/v1`).
+    - The return condition on pi's `agent_before_settle`. A turn that ends in words alone is sent back twice, then recorded as unreturned. This is `close` from the toolset loop, carried into conversation.
+    - The launcher takes `--pi-bin` and the core prompt. It verifies both at their installed digests, then starts pi with `--system-prompt` in place of pi's coding prompt, tool list and rules.
+  - Actuation [#157](https://github.com/EpiLogos/Actuation/pull/157) (`07d83ab`): a whole holds one thought per T level, and a level given twice is refused in words before anything is read. This was found live: Haiku gave two parts at T2, and the kernel's only answer was "duplicate structural coordinate".
+  - Actuation [#158](https://github.com/EpiLogos/Actuation/pull/158) (`907f599`): `logos_return` reports what was replayed before its own whole.
+    - Before this, a recognised return looked as if its whole had been replayed. The chat drew only its 0/1, and the live count missed 7 of 10 returned wholes.
+    - Epi-Prime's install test failed on this first.
+  - Epi-Prime [#8](https://github.com/EpiLogos/Epi-Prime/pull/8)–[#10](https://github.com/EpiLogos/Epi-Prime/pull/10): the body owns a pinned pi 1.5.0.
+    - `install` composes `prompt.md`: the owner's Relational Logos, then who the body is, from the #5 constitution.
+    - The binding extension keeps only the QL and Night tools active.
+    - The install test runs turns of the installed body through pi's own agent loop, with the model scripted by pi's faux provider. It has 21 checks and makes no model calls.
+  - AIKit [#576](https://github.com/EpiLogos/ai-kit/pull/576), [#577](https://github.com/EpiLogos/ai-kit/pull/577): the Epi row is `pi-rpc`.
+  - face-rig `245aa5b`, `053c21a`:
+    - the chat accepts only the pi registration, ends a turn when pi settles, and draws `logos_return`;
+    - test 4 carries members given in words with their words.
+  - Installed as body `d2527cd928d4c0ec`, registered at `907f599`.
+- **Runs 17–19** (`claude-haiku-5-5`, the same three arms as runs 13, 14 and 16).
+  - **Every turn returned:** 10 of 10 fixed, 10 of 10 invited, 2 of 2 compose-probe. No turn was recorded as unreturned.
+    - Refusals were few, and Epii mended each in the same turn. On turn 10 of the fixed dialogue, K-E-V held no T level for one part, and then the new check refused T2 given twice. The third return stood.
+  - **What the returns carry.**
+    - Fixed dialogue: seven twofolds, recognised as 0/1 (2 → 1), five of them T3 Patterns with T5 Insight. Three single parts stayed open.
+    - Invited dialogue: seven turns returned the same three levels, T2 T3 T5, which make none of QL's wholes. This is the repetition of runs 2–4 in a new place.
+  - **Asked in plain words to "set the three parts of my summary together as one whole", Epii composed.** It called `vak_compose`, was refused once, then placed the three parts at T1, T3 and T2, a threefold-123, and returned. In runs 13–16 on Prime the same words brought prose only.
+    - In the chat itself on Haiku, a plain request to set three parts together brought `vak_compose`. K-E-V would not hold the open question at T0, so after three refusals the whole stood at T1, T3 and T4 (grain other). The ring drew it, and the face spoke the answer.
+  - **Reading is unchanged.** Epii read on the three invited turns and on no other. Apart from one summary on turn 1, it read the person's words.
+  - **Cost of the return.** The fixed dialogue averaged 14.0 s a turn, against 10.6 s in run 13. Each return places its parts on K-E-V and makes one more engine call.
+  - **Compression (test 4).** Test 4 now carries what §14.3 step 6 names: the wholes and the unrecognised remainder (face-rig `053c21a`, `386e66c`). A member given in words stands in the kernel by its thought ref, so the view gives its words. The members are Epii's own thoughts, so the person's words are the remainder.
+    - Fixed dialogue: a fresh Epii answered 10 of 10 holding 40% of the transcript (recognised wholes as their 0/1s) or 72% (with their basis). Every recognised whole reopened to its exact basis, 7 of 7.
+    - Invited dialogue: 10 of 10 at 89%.
+    - The wholes alone answered 1–2 of 10, and 4 of 10 with all ten reopened. The answers come from the person's words. What the returns compress is Epii's own side of the talk.
+- **Found along the way.**
+  - Under the Anthropic subscription login, pi's Anthropic provider puts "You are Claude Code, Anthropic's official CLI for Claude." before the body's own prompt. The login requires it, and Prime 0.9 did the same. Epii then introduces itself as Claude Code working as Epii. An Anthropic API key in place of the subscription login would leave the core prompt first. That choice is the owner's.
+  - pi's `-p` prints only a run that ends on the assistant's words, so a returned turn printed nothing. `epi-chat -p` now prints the turn's answer from pi's JSON events.
+- **What this leaves.**
+  - The core prompt and the return condition did what the descriptions could not. Epii now closes every turn as a whole, and it composes when the person asks in plain words.
+  - It still reads only when invited, and its returns repeat a few shapes: T3 + T5 in the fixed dialogue, T2 T3 T5 in the invited one.
+  - K-E-V's lean decides much of where a part may stand. It would not hold an open question at T0 Questions.
