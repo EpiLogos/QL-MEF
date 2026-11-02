@@ -296,9 +296,9 @@ QL classifies **wholes**, and compresses by **recognising** them. The L5 offices
 
 ### 14.3 The reading, turn by turn
 
-1. **Participation.** Epii reads an utterance, the person's or its own, when it chooses to, through its body's Night (P′) reflect tools; nothing requires a reading every turn. Each tool is the native `actuation-research` `reflect.read`: it puts the MEF register's machinery for the lenses it covers to the elected AIKit decision provider (K-E-V) and returns each lens's cell with its distribution. The reading gives:
-   - the T position: the L4′ cell;
-   - the MEF cells it reads through;
+1. **Participation.** Epii reads an utterance, the person's or its own, when it chooses to, through its body's Night (P′) reflect tools; nothing requires a reading every turn. Each tool is the native `actuation-research` `reflect.read`: it puts the MEF register's machinery for the lenses it covers to the elected AIKit decision provider (K-E-V) and returns each lens as its profile: every one of the lens's six sub-slots weighed on its own, several of which can hold at once. A square reads each of its positions through that position's L-link pair (register §2). The reading gives:
+   - the T positions: the L4′ sub-slots the reading holds;
+   - the lens profiles it reads through;
    - once the full text or the three squares are read, the right frame among the lenses (`reflect_right_frame`, `reflect_resonant_frames`).
 2. **Whole.** The turn is a whole whose members are its participations, and so is the conversation. The kernel names the grain.
 3. **Relation.** Epii declares which earlier participation a new one is set against, composed as row × column. The kernel classifies the pair: family, pair index, direction and D degree. Pairs on the same vertices, such as A1 and C2 on (2,3), stay distinct because the declaration says which.
@@ -384,11 +384,11 @@ These run in face-rig-chat on Haiku.
 
 1. **Choice.** Epii reads when it judges a reading worth making. The run counts the turns it read, through which tool, and whose words it read: the person's, its own, or a summary. Every reading is a native receipt and nothing is free-text labelling. No turn is required to carry one.
 2. **The readings carry.**
-   - Each reading peaks above a flat distribution.
-   - A re-read of the same words gives the same cells.
+   - Each lens reading is a profile across its six sub-slots, never one winning cell.
+   - A re-read of the same words gives the same profile.
    - Reading without Epii's own disclosure shows what the disclosure adds.
-   - Readings of different thoughts differ more than re-readings of one.
-   - The members Epii composes sit at the T levels their readings returned, more often than chance.
+   - Readings of different thoughts differ, sub-slot by sub-slot, more than re-readings of one.
+   - The members Epii composes sit at the T levels their readings hold, more often than chance.
 3. **Kernel relations carry.** In the dialogue, D1 opposition, transform, require and complete, and the A/B/C partners each occur more often than chance. The coder's per-relation weights show which do.
 4. **Compression in QL's terms.**
    - A fresh Epii holding only the carried wholes and the remainder answers questions about the conversation as well as one holding the transcript.
@@ -437,16 +437,44 @@ These run in face-rig-chat on Haiku.
     - The removed practice held the only line that named Epii.
     - QL's own #5 constitution (`ql epi-agent faculty '#5'`: Epii, M5/M5′, S5′ Aletheia, `logos.return`, `vak.compose`) does not reach the body.
   - This is §9's tool-only condition, and it sets the floor: with tools alone, Epii does not choose to read.
-- **The instrument on the corpus.** The twelve positions C1–C12 were each read twice through `reflect_full_text` on K-E-V (`kev-latest`, managed-local), at 2.6–2.7 s per reading.
-  - A re-read gave identical cells. The decoder is deterministic, so this shows reproducibility, not robustness to rewording.
-  - The mean peak was 0.32, against 0.167 for a flat distribution.
-  - Two positions agree on 55% of their twelve lens cells.
-  - Five lenses barely move across positions: L4′ Insight 12 of 12, L2 NEITHER 11, L0′ Two 11, L2′ Aether 10, L3′ Life 10. They read the genre, a stated position, more than which position it is.
-  - Where a lens fits the content, it separates the positions:
-    - L1 Svātantrya for Locke and Nozick;
-    - L1′ Introversion for Freud (0.60);
-    - L1′ Thinking for Frege and Ramsey (0.57).
-  - **For composition.**
-    - A T coordinate taken from L4′ puts all twelve positions at Insight.
-    - A whole holds each coordinate once, so each would close its own whole.
-    - Whether thought at other T stages reads differently is untested, because Epii never read in run 5.
+- **The instrument on the corpus, as first measured: withdrawn.** The twelve positions C1–C12 were read through `reflect_full_text` and each lens reduced to its strongest cell. On that reduction every position read L4′ Insight and five lenses barely moved. The owner corrected it the same day: a lens reading scores across the whole lens. The instrument itself asked each lens as a choice, which forces one sub-slot to win, and its square readings never read the night lenses they counted as covered. The third run below rebuilds both.
+
+**Third live run, 2 November 2026.** This run was rebuilt to the owner's second correction that day. A lens reading scores across the whole lens, and the squares are read as the register defines them. The tooling is part of how Epii sees and answers: when a tool goes unused, the fault is in how the tool reaches the agent, not in the agent's choice.
+
+- **Built.**
+  - Actuation [#153](https://github.com/EpiLogos/Actuation/pull/153) rebuilds the instrument.
+    - `reflect_full_text` asks each of the 72 sub-slots as its own Noul. A lens returns as its profile across six sub-slots, and several can hold at once (above 0.5).
+    - The squares read each day position through its L-link pair (register §2). Square A reads P0 through L0↔L5′ and P5 through L5↔L0′; B and C likewise. Every night lens is read at the position it links.
+    - The resonant frames ask one Noul per lens. The right frame stays a single choice, behind the coverage gate.
+    - The giving is what the model reads. Each lens names the position whose responsibility it refracts and lists its six sub-slots with their register meanings: those that hold first, then those below one half. Every weight is shown.
+    - The tool descriptions say what each reading gives, by office. The round-12 relational contract reaches the system prompt through Prime's `promptGuidelines`, with one line on when a reading helps.
+  - Epi-Prime [#5](https://github.com/EpiLogos/Epi-Prime/pull/5): the body carries QL's #5 constitution, served by the kernel at install (`ql epi-agent faculty '#5'`). It is presented under "Who you are": Epii, M5/M5′, S5′ Aletheia, `logos.return` and `vak.compose`, with recognition left to its owner. No reading practice is added.
+  - face-rig `3f49e7d`: test 2 measures profiles, and `READING_LIVE_DIALOGUE` supplies a dialogue in place of the fixed one.
+- **The instrument on the corpus, as profiles.** C1–C12 were read through `reflect_full_text` on K-E-V.
+  - Positions differ from one another by a mean 0.124 per sub-slot (0.074–0.229). A re-read differs by 0.
+  - K-E-V's Nouls lean towards yes: 2.6–5.75 of six sub-slots hold per lens, so most T levels hold for every position. The profile's shape carries the reading more than the holds alone.
+  - L1, L1′, L3 and L5 separate the positions most; L4′ and L5′ separate them least.
+  - The distinguishing sub-slots fit their positions:
+    - Whorf at L5 Madhyamā (0.97);
+    - Freud at L1′ Introversion (0.93) and L4′ Traces;
+    - Locke at L1 Svātantrya and L2′ Earth;
+    - Marx at L3′ Spring and L3 Community Integration;
+    - Bentham at L1 Will and L1′ Feeling;
+    - Burke at L3′ Winter and L0′ One.
+- **Run 6** (`claude-haiku-5-5`, constitution and guidelines, the same dialogue).
+  - Epii read on 0 of 10 turns.
+  - The prompt log shows "Who you are", the contract and the Night guideline in the system prompt, and all six tools active.
+  - Identity and descriptions alone did not bring a reading.
+- **Run 7** (invited). The person asks for a reading on turns 1, 5 and 10. Turn 1 adds "Read his claim through your lenses before you answer." Turn 5 adds "Read my claim through your lenses first." Turn 10 becomes "Read my summary through your lenses. Does it hold together, or have I smuggled something in?"
+  - Epii read on all three invited turns and on none of the other seven. This is round 12's finding again: the invitation was the difference.
+  - On turn 1 it reached first for the right frame. The coverage gate refused it, and it then read the full text.
+  - Every reading was of the person's words, the last one their own summary. It composed nothing.
+  - On turn 5 it set the reading aside: "fairly flat … I would not treat it as evidence." That giving held 72 names and weights with no meaning in them, so there was nothing to see through. The giving above is the repair.
+- **Run 8** (invited, with the readable giving).
+  - Epii again read on the three invited turns and on none of the others. It went straight to the full text, read only the person's words, and composed nothing.
+  - The reading reached its thinking. On turn 1 it said "The lens reading agreed", with weight on definition and on thinking as analysis. Those are the register meanings of L0.1 What and L1′ Thinking. It still looked at the strongest weights rather than the lens's whole shape, and its answers on turns 5 and 10 did not draw on their readings.
+  - Readings of different material differ by 0.138 per sub-slot. A re-read differs by 0, and Epii's own disclosure moves a reading by 0.06–0.15.
+- **What this leaves.**
+  - Epii reads when asked and not otherwise. Neither the identity, the descriptions nor a useful giving brought a reading the person had not invited.
+  - Epii has never composed. `vak.compose` reaches it only through the generic `ql_invoke` tool ("Invoke an exact current QL faculty operation with its required input"). The constitution names the operation but not what it does or takes. Nothing in the body says that composing is how readings become the carried wholes of test 4. This is the same fault the giving had, in QL's own vendored reading extension.
+  - K-E-V's yes-lean puts most sub-slots near or above one half. A profile's shape is legible, but its holds alone barely separate one thought from another.
