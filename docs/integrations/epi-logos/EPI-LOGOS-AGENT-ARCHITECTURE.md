@@ -501,3 +501,26 @@ These run in face-rig-chat on Haiku.
   - A whole needs one reading per member thought, so the question "does this hold together?" costs a reading of each part and then a composition. Epii takes one reading of the whole passage.
   - The description now reaches Epii. The tool's shape still stands between the question and the answer.
   - The fitting shape is for `vak_compose` to take its members as thoughts in words and place each by its own L4′ reading in the same call. That needs a native L4′-only read in Actuation's `reflect.read`, so that placing six members costs six Nouls each, not 72.
+
+**Fifth live run, 2 November 2026: members in words.**
+
+- **Built.** The owner approved members in words.
+  - Actuation [#155](https://github.com/EpiLogos/Actuation/pull/155):
+    - `reflect.read` gains a `place` mode. It reads L4′ alone, the T levels, with six Nouls. It is not a tool of the body's own.
+    - `reflect.tools` carries the T levels from the register, with meanings.
+    - The Night extension offers placement on the session's event bus, so QL's extension carries no T table and never calls Actuation's binary. `vak_compose` is registered once the offer arrives.
+    - A member is a thought in words at the T level Epii sees it standing, placed in the call. A level it does not hold is refused, with where it can stand.
+  - Epi-Prime [#7](https://github.com/EpiLogos/Epi-Prime/pull/7) proves this in the body's own Prime, against the real kernel and the native place mode.
+  - A real placement on K-E-V takes 0.76 s.
+- **Runs 13–16** (`claude-haiku-5-5`).
+  - **Fixed dialogue:** Epii read 0 times and composed 0 times.
+  - **Invited to read:** Epii read on 3 of 3 invited turns and composed 0 times. Each reading ended with where its thought can stand.
+  - **Asked in plain words to "set the three parts of my summary together as one whole":** Epii answered in prose and made no call.
+  - **Asked to use `vak_compose`:**
+    - Epii gave the three parts in words, at levels that fit them: observed at T1 Traces, inferred at T3 Patterns, open at T0 Questions.
+    - The call placed each part on K-E-V, and the kernel answered "grain other": {0, 1, 3} is not one of QL's wholes.
+    - Epii said so in its answer. The path works end to end when it is chosen.
+- **What this leaves.**
+  - Across runs 6–16, Epii on Haiku calls a tool only when the person names that faculty: "read through your lenses", "use your vak_compose tool". It never touched its face tools unasked either.
+  - The description, the return shape and the shape of the call have each been made useful. None of them changed that.
+  - What remains is the agent's own deliberation. Haiku 5.5 runs here with `reasoning: false`, so it answers without thinking first. The open question is whether a body that deliberates before answering composes and reads unasked.
