@@ -626,4 +626,8 @@ These run in face-rig-chat on Haiku.
 - **Authority.**
   - A NOW's rest and re-entry are lifecycle changes, and Central admits those only under a native-action-authority grant. Live, only the owner's human grant holds `central.now.lifecycle`, and `project:face-rig` is outside its scopes.
   - So a closed conversation's NOW stays active, and the body says so. A NOW at rest could not be joined.
-  - The seven test conversations of these runs stand active in face-rig. Resting them, and whether the body should hold a native-service grant of its own, is the owner's decision.
+  - On 3 November the owner gave the body a grant of its own: `native-service:epi-prime/epii`. It holds `central.now.lifecycle` only, in `project:O-I` and `project:face-rig`, until 2027-11-03.
+    - The token is an owner-only file, `~/.central/native-token-epii`. The registration records its location (`--central-token-file`, AIKit [#579](https://github.com/EpiLogos/ai-kit/pull/579)), and the launcher hands the location to the body (Actuation [#161](https://github.com/EpiLogos/Actuation/pull/161)).
+    - `epii-now.ts` reads the token only at the lifecycle call and gives it only to that `ctrl` child (Epi-Prime [#13](https://github.com/EpiLogos/Epi-Prime/pull/13)). A human's `CENTRAL_NATIVE_TOKEN` is never borrowed, and the launcher withholds it from pi.
+    - Live on Haiku, `/close` rests the conversation's NOW, and reopening the conversation makes it active again with its thoughts, learning and return intact. The seven test conversations were rested under the same grant.
+    - The check found one more defect, now fixed (Epi-Prime [#14](https://github.com/EpiLogos/Epi-Prime/pull/14)): after "new", the chat still showed the previous conversation's NOW, because a session with no NOW yet never said so.
