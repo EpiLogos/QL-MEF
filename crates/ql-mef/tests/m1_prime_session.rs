@@ -166,6 +166,34 @@ fn auto_shape_follows_the_band_and_is_a_klein_bottle_for_one_step_at_each_return
     assert_eq!(open(sequence).figure(at(1.0)), None);
 }
 
+/// The reading carries the figure law with the figure (O-I #851): a reader
+/// that holds one reading names the shape at any later sample of the same
+/// settings, the tritone's Klein bottle included, exactly as `figure` does.
+#[test]
+fn the_reading_carries_the_figure_law_so_a_reader_tells_the_shape_between_reads() {
+    let mut session = open(free(2.0));
+    let quiet = session.reading(at(1.0), 220.0);
+    let law = &quiet["figure_law"];
+    assert_eq!(law["return_steps"], 12.0, "{quiet}");
+    assert_eq!(law["klein_for_steps"], 1.0);
+    assert_eq!(law["klein_until_steps"], serde_json::Value::Null);
+    assert_eq!(law["by_band"]["rhythm"], "figure-eight");
+    assert_eq!(law["by_band"]["pitch"], "torus");
+    assert_eq!(law["by_band"]["breath"], "spiral");
+    // A tritone at 1 s (step 2) shows the Klein bottle until step 3.
+    session.cross_tritone(at(1.0));
+    let crossed = session.reading(at(1.0), 220.0);
+    assert_eq!(crossed["figure_law"]["klein_until_steps"], 3.0, "{crossed}");
+    assert_eq!(crossed["figure"], "klein-bottle");
+    let until = crossed["figure_law"]["klein_until_steps"].as_f64().unwrap();
+    // Read from the one reading: Klein before the step it names, the band's shape after.
+    for (seconds, expected) in [(1.25, Figure::KleinBottle), (1.6, Figure::FigureEight)] {
+        let steps = session.steps_at(at(seconds));
+        assert_eq!(steps < until, expected == Figure::KleinBottle);
+        assert_eq!(session.figure(at(seconds)), Some(expected));
+    }
+}
+
 #[test]
 fn polyphony_counts_notes_and_the_oldest_makes_way() {
     let mut session = open(Settings {
