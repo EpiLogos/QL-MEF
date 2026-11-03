@@ -611,7 +611,7 @@
     "#1-3",
     "#1-5-1"
    ],
-   "rationale": "The Torus's M1′ played session (O-I #850; DLW manual §21.2; M1′ seed §2.M1-1′): the rate of the one pulse round the spanda ring of twelve (#1-3) and its five bands with phase continuity, Free and Sync, the Fundamental over the map's 1:1, the Carrier held as a setting, the Shape with its Auto figures, the Tuning, Polyphony with the oldest note making way, and one Pythagorean comma (six epogdoons over the octave) per full 720° return of the M1 torus (#1-5-1), from nothing at open. It holds no oscillator and no field: the scene owner keeps the body.",
+   "rationale": "The Torus's M1′ played session (O-I #850; DLW manual §21.2; M1′ seed §2.M1-1′): the rate of the one pulse round the spanda ring of twelve (#1-3) and its five bands with phase continuity, Free and Sync, the Fundamental over the map's 1:1, the Carrier as each step's share of an event's excitation (carrier_step), the Shape with its Auto figures, the Tuning, Polyphony with the oldest note making way, and one Pythagorean comma (six epogdoons over the octave) per full 720° return of the M1 torus (#1-5-1), from nothing at open. It holds no oscillator and no field: the scene owner keeps the body.",
    "tests": [
     "crates/ql-mef/tests/m1_prime_session.rs",
     "crates/ql-mef/tests/torus_host.rs"

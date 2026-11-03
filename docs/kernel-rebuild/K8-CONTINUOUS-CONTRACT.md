@@ -169,6 +169,28 @@ reaches; the others rest and keep any tail. An event excites only the group in
 force. The four boundaries (`nodal_quartet`) reach the body as the voices'
 nodal numbers and are disclosed as `boundaries`, never as voices.
 
+A new Torus opens under Logic, the manual's default. A saved sound
+(`SceneConfig.torus`, carried by the binding and world requests' `torus`: an M1′
+settings edit over the session's defaults, refused in the session's words) opens
+with its own settings: its tuning is the group in force and excited at open, and
+its Fundamental sounds from the open.
+
+The Carrier is the pulse's drive of the body between strikes. At each step of
+the pulse every voice of the tuning in force receives `carrier_step` of the
+excitation an event gives it (`strike_metres`); the other resident voices rest.
+`carrier_step` is the Carrier itself up to the spanda carrier's anchor rate (2.5
+steps a second) and Carrier × 2.5 / rate above it, so a step carries at most one
+event's share and the drive a second never passes the anchor's. The native owner
+lands each step exactly before the first sample whose steps reach it, as a strike
+at that sample would (`ContinuousField::set_carrier`; wire `set-carrier
+{steps_per_second, anchor_samples, anchor_steps, impulses}`: the session's own
+pulse law and one impulse per mode). It is a performance setting: generation,
+clock, cursor and body are unchanged when it is set, and only the pulse's later
+steps move the body. At 0 % nothing is driven and the body sounds only when
+struck; at rhythm rates the drive beats; at pitch rates it sounds a note at the
+pulse's rate. Readings carry `carrier: {value, drive: "pulse", step,
+metres_per_step, native}`.
+
 The Fundamental (`CoupledInput.fundamental_hz`, 20–2,000 Hz, absent = the map's
 1:1, `CoupledInput::map_hz`) scales every bound voice of every bus by one ratio,
 so each voice keeps its ratio over it. Absent, the scale is exactly 1 and every
@@ -177,7 +199,7 @@ earlier input composes bit-for-bit as before.
 | Host operation | Native effect | Generation |
 |---|---|---|
 | `torus-state {}` | none: the session reading as `torus` | unchanged |
-| `torus-set {edit}` | Rate, Carrier, Shape, Tuning, Polyphony, tempo: none. Fundamental: one modes continuation of the same resident voices, no strike, no reshape | unchanged, or +1 for a Fundamental change |
+| `torus-set {edit}` | Rate, Carrier, Shape, Tuning, Polyphony, tempo: no body state; the Carrier's drive follows the re-anchored pulse (`set-carrier`). Fundamental: one modes continuation of the same resident voices, no strike, no reshape | unchanged, or +1 for a Fundamental change |
 | `torus-play {keys, amplitude, at_samples_elapsed?}` | each key's moving point at the pulse (`janko::JankoSurface::point`) struck on the tuning in force: one `strike-at` | +1 |
 | `torus-release {keys}` | none: the body rings on | unchanged |
 
@@ -185,7 +207,9 @@ Every answer carries `torus`; `torus-set` adds `influence` (its `tuning`,
 sounding `voices`, `boundaries`, `resident_tunings`, `fundamental_hz`);
 `torus-play` adds `torus_play` (`ql.torus-play/v1`: each note's place, point and
 own cell) and `strike_at` (`ql.strike-at/v1`). Not built, and disclosed as such
-in every reading: the Carrier's drive of the body between strikes (the value is
-held and read back with `drive: "unbuilt"`) and a per-note voice bank sounding
-each note's own cell (QL-MEF #287 packet A). Tests:
-`crates/ql-mef/tests/{m1_prime_session,scene_tuning,torus_host}.rs`.
+in every played note: a per-note voice bank sounding each note's own cell (QL-MEF
+#287 packet A). Tests: `crates/ql-mef/tests/{m1_prime_session,scene_tuning,torus_host}.rs`
+(the carrier heard on the rendered PCM: silence at 0 % unstruck, a note at the
+pulse's period at pitch rates, a beat at rhythm rates) and
+`cpp/tests/continuous_field.cpp` (the drive bit-identical to strikes at the same
+samples, a step at the cursor landing once).

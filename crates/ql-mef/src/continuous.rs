@@ -580,6 +580,51 @@ impl FieldSession {
         }
         self.operation("strike", act)
     }
+    /// The M1′ pulse's drive of the body between strikes (the Torus's Carrier, O-I 850):
+    /// from the cursor on, each step of the pulse (`anchor_steps` at `anchor_samples`, then
+    /// `steps_per_second`) adds `impulses[i]` modal metres to mode i, landing as a strike at
+    /// that sample would. A performance setting, not a body act: generation, clock, cursor and
+    /// body stay. Zero rate or zero impulses is no drive. Malformed drives are refused here
+    /// without transport; the worker re-validates them.
+    pub fn set_carrier(
+        &mut self,
+        steps_per_second: f64,
+        anchor_samples: u64,
+        anchor_steps: f64,
+        impulses: &[[f64; 2]],
+    ) -> Result<Value> {
+        let cursor: u64 = self.receipt["samples_elapsed"]
+            .as_str()
+            .and_then(|text| text.parse().ok())
+            .ok_or("invalid acknowledged native cursor")?;
+        let modes = self.receipt["amplitudes_metres"]
+            .as_array()
+            .map_or(0, Vec::len);
+        if !steps_per_second.is_finite() || steps_per_second < 0.0 {
+            return Err("invalid carrier rate".into());
+        }
+        if anchor_samples > cursor {
+            return Err("the carrier's pulse is anchored after the cursor".into());
+        }
+        if !anchor_steps.is_finite() || anchor_steps < 0.0 {
+            return Err("invalid carrier pulse phase".into());
+        }
+        if impulses.len() != modes
+            || impulses
+                .iter()
+                .flatten()
+                .any(|x| !x.is_finite() || x.abs() > 1e6)
+        {
+            return Err(
+                "a carrier names one finite impulse within 1e6 metres for every mode".into(),
+            );
+        }
+        self.operation(
+            "set-carrier",
+            json!({"steps_per_second":steps_per_second, "anchor_samples":anchor_samples.to_string(),
+                "anchor_steps":anchor_steps, "impulses":impulses}),
+        )
+    }
     pub fn read(&mut self) -> Result<Value> {
         self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))
     }

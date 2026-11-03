@@ -747,6 +747,19 @@ impl CoupledFieldSession {
         self.field.strike_when(strikes, at_samples_elapsed)?;
         Ok(self.last_field().clone())
     }
+    /// The M1′ pulse's drive of the body between strikes (`FieldSession::set_carrier`).
+    /// The whole basis and the resident state are unchanged; the pulse's later steps
+    /// move the body in the render.
+    pub fn set_carrier_field(
+        &mut self,
+        steps_per_second: f64,
+        anchor_samples: u64,
+        anchor_steps: f64,
+        impulses: &[[f64; 2]],
+    ) -> Result<Value, String> {
+        self.field
+            .set_carrier(steps_per_second, anchor_samples, anchor_steps, impulses)
+    }
     pub fn replace(&mut self, input: CoupledInput) -> Result<Value, String> {
         self.replace_field(input)?;
         Ok(self.snapshot())

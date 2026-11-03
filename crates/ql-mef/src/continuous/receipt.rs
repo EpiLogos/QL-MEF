@@ -427,6 +427,38 @@ impl ReceiptGuard {
                     "independent axis acknowledgement disagrees",
                 )?;
             }
+            "set-carrier" => {
+                // The M1′ pulse's drive of the body (the Torus's Carrier): a
+                // performance setting, not a body act. The pulse's later steps
+                // move the body in the render; setting the drive moves nothing.
+                let rate = request["steps_per_second"]
+                    .as_f64()
+                    .ok_or("invalid carrier rate")?;
+                require(rate.is_finite() && rate >= 0.0, "invalid carrier rate")?;
+                let anchor = unsigned(&request["anchor_samples"])?;
+                require(
+                    anchor <= unsigned(&previous["samples_elapsed"])?,
+                    "the carrier's pulse is anchored after the cursor",
+                )?;
+                let phase = request["anchor_steps"]
+                    .as_f64()
+                    .ok_or("invalid carrier pulse phase")?;
+                require(
+                    phase.is_finite() && phase >= 0.0,
+                    "invalid carrier pulse phase",
+                )?;
+                for impulse in array(&request["impulses"], self.modes)? {
+                    for component in array(impulse, 2)? {
+                        finite(component, 1e6)?;
+                    }
+                }
+                require(
+                    value["clock"] == previous["clock"]
+                        && value["amplitudes_metres"] == previous["amplitudes_metres"]
+                        && value["targets"] == previous["targets"],
+                    "setting the carrier moved the body",
+                )?;
+            }
             "advance" => {
                 // Native C owns the exact lifted trajectory. This checks its
                 // wire cursor boundary; native numerical parity is tested there.

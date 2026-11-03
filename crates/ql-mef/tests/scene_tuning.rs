@@ -5,7 +5,8 @@
 //! the composed event alone: no worker is needed.
 use ql_mef::continuous::StrikeAtInput;
 use ql_mef::continuous::scene_field::{
-    ShapeBasis, Tuning, complete, default_event, default_material,
+    BINDING_REQUEST, BindingRequest, ShapeBasis, Tuning, binding, complete, default_event,
+    default_material,
 };
 use ql_mef::m2_engine::MaterialFibre;
 
@@ -169,4 +170,75 @@ fn an_event_whose_condition_admits_its_maqam_holds_the_maqam_resident() {
     for (voice, hz) in maqam.iter().zip(&pitches) {
         assert!((voice - hz).abs() < 1e-9, "{voice} vs {hz}");
     }
+}
+
+/// The opening excitation of each resident group in the binding's composed body.
+fn opening(request: serde_json::Value) -> (serde_json::Value, Vec<(String, f64)>) {
+    let mut asked = serde_json::json!({"schema": BINDING_REQUEST, "instance_ref": "test:open",
+        "texture": [8, 8], "units_per_metre": 1.0});
+    for (key, value) in request.as_object().unwrap() {
+        asked[key] = value.clone();
+    }
+    let reply = binding(serde_json::from_value::<BindingRequest>(asked).unwrap()).unwrap();
+    let modes = reply["native_basis"]["m2"]["resonator"]["modes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|mode| {
+            (
+                mode["mode_ref"].as_str().unwrap().to_owned(),
+                mode["amplitude"][0].as_f64().unwrap(),
+            )
+        })
+        .collect();
+    (reply["host"].clone(), modes)
+}
+
+#[test]
+fn a_new_torus_opens_under_logic_and_a_saved_sound_opens_with_its_own_tuning() {
+    // Manual §21.2 Parameters: Tuning "Logic · Maqām · Sky", default Logic; §21.2 Rules: "A saved
+    // sound keeps every parameter, its body, and its tuning … It opens with the same sound."
+    let (host, modes) = opening(serde_json::json!({}));
+    assert!(
+        host.get("torus").is_none(),
+        "a new sound names no saved settings"
+    );
+    let excited = |group: &str| {
+        modes
+            .iter()
+            .filter(|(mode, _)| mode.starts_with(group))
+            .map(|(_, a)| *a)
+            .collect::<Vec<_>>()
+    };
+    let strike = default_material().strike_metres;
+    assert_eq!(
+        excited("scene:logic/"),
+        vec![strike; 8],
+        "the octet rings at open"
+    );
+    assert!(
+        excited("scene:planet/").iter().all(|a| *a == 0.0),
+        "the sky rests"
+    );
+    let (host, modes) = opening(serde_json::json!({"torus": {"tuning": "sky", "carrier": 0.25}}));
+    assert_eq!(host["torus"]["tuning"], "sky");
+    assert_eq!(host["torus"]["carrier"], 0.25);
+    let excited = |group: &str| {
+        modes
+            .iter()
+            .filter(|(mode, _)| mode.starts_with(group))
+            .map(|(_, a)| *a)
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        excited("scene:planet/"),
+        vec![strike; 9],
+        "the saved sound's sky rings"
+    );
+    assert!(excited("scene:logic/").iter().all(|a| *a == 0.0));
+    // A saved sound's settings are the session's own, refused in its words.
+    let asked = serde_json::json!({"schema": BINDING_REQUEST, "instance_ref": "test:open",
+        "texture": [8, 8], "units_per_metre": 1.0, "torus": {"polyphony": 40}});
+    let refused = binding(serde_json::from_value::<BindingRequest>(asked).unwrap()).unwrap_err();
+    assert!(refused.contains("Polyphony"), "{refused}");
 }

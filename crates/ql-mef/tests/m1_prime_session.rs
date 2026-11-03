@@ -252,3 +252,47 @@ fn a_held_key_strikes_a_moving_point_and_always_the_same_place_of_its_helix() {
     assert!((pratibimba.phi - bimba.phi).abs() < 1e-12);
     assert!((pratibimba.theta - bimba.theta - std::f64::consts::PI).abs() < 1e-12);
 }
+
+#[test]
+fn the_carrier_drives_the_body_at_each_step_and_a_faster_pulse_does_not_drive_it_harder() {
+    // Manual §21.2 Carrier: how strongly the pulse drives the body between strikes; at 0 % the
+    // body sounds only when struck. Each step carries at most one event's share of excitation (Carrier × 1);
+    // above the spanda carrier's anchor (2.5 steps a second) the drive per second stays the
+    // anchor's, so a note at pitch does not ring the body harder than a beat at the anchor.
+    let mut session = open(free(2.5));
+    assert_eq!(
+        session.carrier_step(),
+        0.0,
+        "at 0 % the pulse drives nothing"
+    );
+    let edit = |s: &mut Session, carrier: f64, sps: f64| {
+        s.edit(
+            &SettingsEdit {
+                carrier: Some(carrier),
+                rate: Some(Rate::Free {
+                    steps_per_second: sps,
+                }),
+                ..SettingsEdit::default()
+            },
+            0,
+        )
+        .unwrap();
+    };
+    edit(&mut session, 0.5, 2.5);
+    assert_eq!(session.carrier_step(), 0.5);
+    edit(&mut session, 0.5, 0.25);
+    assert_eq!(
+        session.carrier_step(),
+        0.5,
+        "a slow step is one event's share, never more"
+    );
+    edit(&mut session, 0.5, 250.0);
+    assert!(
+        (session.carrier_step() * 250.0 - 0.5 * 2.5).abs() < 1e-12,
+        "the anchor's drive a second"
+    );
+    let reading = session.reading(0, 130.81);
+    assert_eq!(reading["carrier"]["value"], 0.5);
+    assert_eq!(reading["carrier"]["drive"], "pulse");
+    assert!((reading["carrier"]["step"].as_f64().unwrap() - 0.005).abs() < 1e-12);
+}
