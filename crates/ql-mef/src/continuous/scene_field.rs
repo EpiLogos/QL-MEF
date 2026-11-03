@@ -125,6 +125,11 @@ pub struct SceneConfig {
     /// reception of the event. Its receiver inputs arrive separately.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reception: Option<PersonalConstitution>,
+    /// The Torus's saved sound: the M1′ settings it keeps, over the session's defaults (DLW
+    /// manual §21.2 Rules: "A saved sound keeps every parameter … It opens with the same
+    /// sound."). Absent, a new Torus opens with the defaults, Tuning Logic among them.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub torus: Option<m1_prime::SettingsEdit>,
 }
 
 /// One voice's source-read surface term.
@@ -336,7 +341,29 @@ impl SceneConfig {
         {
             return Err("scene strike or gain outside the supported range".into());
         }
+        self.torus_settings()?;
         Ok(())
+    }
+
+    /// The Torus settings this scene opens with: the saved sound's, over the session's
+    /// defaults; refused in the session's own words.
+    pub fn torus_settings(&self) -> Result<m1_prime::Settings, String> {
+        let defaults = m1_prime::Settings::default();
+        self.torus
+            .as_ref()
+            .map_or(Ok(defaults), |saved| saved.apply(&defaults))
+    }
+
+    /// The event the scene opens on: a saved sound's Fundamental sounds from the open.
+    fn opening_event(&self) -> CoupledInput {
+        let mut event = self.basis.clone();
+        if let Some(fundamental) = self.torus.as_ref().and_then(|saved| saved.fundamental) {
+            event.fundamental_hz = match fundamental {
+                m1_prime::Fundamental::Map => None,
+                m1_prime::Fundamental::Hz { hz } => Some(hz),
+            };
+        }
+        event
     }
 }
 
@@ -865,6 +892,9 @@ pub struct BindingRequest {
     /// Optional Nara constitution for a personal reception of this event.
     #[serde(default)]
     pub reception: Option<PersonalConstitution>,
+    /// A saved Torus sound to open with (`SceneConfig::torus`); absent, a new Torus.
+    #[serde(default)]
+    pub torus: Option<m1_prime::SettingsEdit>,
 }
 
 /// QL's default starting event: the dated scene the binding opens on.
@@ -1053,14 +1083,16 @@ pub fn binding(request: BindingRequest) -> Result<Value, String> {
         geometry: request.geometry.unwrap_or_else(default_geometry),
         material: request.material.unwrap_or_else(default_material),
         reception: request.reception,
+        torus: request.torus,
     };
     config.validate()?;
-    // Compose once here so an unusable event is refused before any owner opens.
+    // Compose once here, under the tuning the Torus opens with, so an unusable event or
+    // saved sound is refused before any owner opens.
     let (_, basis) = complete(
-        &config.basis,
+        &config.opening_event(),
         &config.material,
         MaterialFibre::Earth,
-        Tuning::Sky,
+        config.torus_settings()?.tuning,
     )?;
     let sky = config
         .basis
@@ -1186,18 +1218,32 @@ pub struct SceneInstrument {
     personal: Option<PersonalFieldInstance>,
     /// The Torus's M1′ session: its pulse runs on this owner's sample clock.
     torus: m1_prime::Session,
+    /// The Carrier's drive the native owner holds; `None` while it drives nothing.
+    carrier: Option<CarrierDrive>,
+}
+
+/// The M1′ pulse's drive of the body as the native owner holds it
+/// (`FieldSession::set_carrier`): the session's pulse law and one impulse per
+/// resident voice, in the owner's mode order.
+#[derive(Debug, Clone, PartialEq)]
+struct CarrierDrive {
+    steps_per_second: f64,
+    anchor_samples: u64,
+    anchor_steps: f64,
+    impulses: Vec<[f64; 2]>,
 }
 
 impl SceneInstrument {
     pub fn open(worker: &Path, config: SceneConfig, timeout: Duration) -> Result<Self, String> {
         config.validate()?;
-        // The scene opens under Sky: the DLW scene's own voices.
-        let tuning = Tuning::Sky;
+        // A new Torus opens with the session's defaults, Tuning Logic (DLW manual §21.2
+        // Parameters); a saved sound opens with its own settings (§21.2 Rules).
+        let settings = config.torus_settings()?;
         let (input, basis) = complete(
-            &config.basis,
+            &config.opening_event(),
             &config.material,
             MaterialFibre::Earth,
-            tuning,
+            settings.tuning,
         )?;
         let shape = ShapeBasis::from_basis(&basis)?;
         let field = FieldInput {
@@ -1227,15 +1273,8 @@ impl SceneInstrument {
         let sample_rate = config.field.sample_rate;
         let session = CoupledFieldSession::open(worker, input.clone(), field, timeout)?;
         let opened = samples_of(session.last_field());
-        let torus = m1_prime::Session::open(
-            m1_prime::Settings {
-                tuning,
-                ..m1_prime::Settings::default()
-            },
-            sample_rate,
-            opened,
-        )?;
-        Ok(Self {
+        let torus = m1_prime::Session::open(settings, sample_rate, opened)?;
+        let mut instrument = Self {
             instance_ref: config.instance_ref,
             geometry: config.geometry,
             material: config.material,
@@ -1244,7 +1283,64 @@ impl SceneInstrument {
             event: input,
             personal,
             torus,
+            carrier: None,
+        };
+        instrument.sync_carrier()?;
+        Ok(instrument)
+    }
+
+    /// The drive the Torus's Carrier asks of the native owner now: at each step of
+    /// the session's pulse, every voice of the tuning in force receives
+    /// `carrier_step` of the excitation an event gives it (`strike_metres`); the
+    /// other resident voices rest. `None` while the Carrier drives nothing.
+    fn carrier_drive(&self) -> Option<CarrierDrive> {
+        let share = self.torus.carrier_step();
+        if share == 0.0 {
+            return None;
+        }
+        let tuning = self.tuning();
+        let (anchor_samples, anchor_steps) = self.torus.anchor();
+        Some(CarrierDrive {
+            steps_per_second: self.torus.steps_per_second(),
+            anchor_samples,
+            anchor_steps,
+            impulses: self
+                .shape
+                .resident_voices()
+                .map(|voice| {
+                    if voice.tuning == tuning {
+                        [share * self.material.strike_metres, 0.0]
+                    } else {
+                        [0.0, 0.0]
+                    }
+                })
+                .collect(),
         })
+    }
+
+    /// Gives the native owner the Carrier's drive when it differs from the one it
+    /// holds; a Carrier that drives nothing stops the drive.
+    fn sync_carrier(&mut self) -> Result<(), String> {
+        let drive = self.carrier_drive();
+        if drive == self.carrier {
+            return Ok(());
+        }
+        match &drive {
+            Some(d) => self.session.set_carrier_field(
+                d.steps_per_second,
+                d.anchor_samples,
+                d.anchor_steps,
+                &d.impulses,
+            )?,
+            None => {
+                let (anchor_samples, anchor_steps) = self.torus.anchor();
+                let rest = vec![[0.0, 0.0]; self.shape.resident_voices().count()];
+                self.session
+                    .set_carrier_field(0.0, anchor_samples, anchor_steps, &rest)?
+            }
+        };
+        self.carrier = drive;
+        Ok(())
     }
 
     /// The tuning in force: which resident voices a strike reaches.
@@ -1274,13 +1370,18 @@ impl SceneInstrument {
                 .collect::<Vec<_>>()
         );
         reading["sounding_voices"] = json!(self.shape.group(self.tuning()).len());
+        reading["carrier"]["metres_per_step"] =
+            json!(self.torus.carrier_step() * self.material.strike_metres);
+        reading["carrier"]["native"] = json!(self.carrier.is_some());
         reading
     }
 
     /// One edit of the Torus session (`torus-set`). Session settings move no
-    /// native state; a Fundamental change is one modes continuation of the
-    /// SAME resident voices, every voice one ratio over the new Fundamental.
-    /// A refused edit changes nothing. Returns the field when the owner moved.
+    /// native body state; a Fundamental change is one modes continuation of the
+    /// SAME resident voices, every voice one ratio over the new Fundamental, and
+    /// the Carrier's drive follows the pulse (`FieldSession::set_carrier`), which
+    /// moves the body only at the pulse's later steps. A refused edit changes
+    /// nothing. Returns the field when the owner's modes moved.
     pub fn torus_set(&mut self, edit: &m1_prime::SettingsEdit) -> Result<Option<Value>, String> {
         if edit.is_empty() {
             return Err("a Torus edit names at least one setting".into());
@@ -1303,6 +1404,8 @@ impl SceneInstrument {
             None
         };
         self.torus = next;
+        // Every edit re-anchors the pulse where it stands; the native drive follows.
+        self.sync_carrier()?;
         Ok(field)
     }
 
@@ -1970,6 +2073,7 @@ mod scene_tests {
             geometry: None,
             material: None,
             reception: None,
+            torus: None,
         });
         assert!(result.unwrap_err().contains("registry revision differ"));
     }
@@ -2000,6 +2104,7 @@ mod scene_tests {
             geometry: None,
             material: None,
             reception: None,
+            torus: None,
         })
         .unwrap();
         assert_eq!(reading["scene"]["bodies"].as_array().unwrap().len(), 10);

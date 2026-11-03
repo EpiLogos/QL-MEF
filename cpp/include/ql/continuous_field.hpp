@@ -63,6 +63,9 @@ struct Strike {
 // The most played acts one continuation holds admitted but not yet landed. A player schedules ahead by
 // its presentation lookahead, not a whole performance; the bound keeps the pending set finite.
 inline constexpr std::size_t max_pending_strikes = 256;
+// The most steps of the pulse one sample may carry: the M1′ session's fastest rate (40,000 steps a
+// second) at the lowest supported sample rate (8 kHz) is five.
+inline constexpr double max_carrier_steps_per_sample = 8;
 inline bool finite(Complex x) { return std::isfinite(x.real()) && std::isfinite(x.imag()); }
 inline void require(bool condition, const char *message) {
     if (!condition) throw std::invalid_argument(message);
@@ -87,9 +90,24 @@ class ContinuousField {
     // A strike admitted for a later sample: its impulses by prepared mode index, landing as the cursor
     // reaches `at`. Kept in sample order (admission order within a sample); [0, landed_) have landed.
     struct Pending { std::uint64_t at; std::vector<std::pair<std::size_t, Complex>> impulses; };
+    // The M1′ pulse's drive of the body between strikes (the Torus's Carrier, O-I #850; DLW manual
+    // §21.2). The pulse stands at `anchor_steps` at sample `anchor_samples` and runs at
+    // `steps_per_second` since, the session's own law (m1_prime::Session::steps_at); `reached` is
+    // the whole steps already landed. One impulse per prepared mode, zero where the pulse drives none.
+    struct Carrier {
+        double steps_per_second = 0, anchor_steps = 0;
+        std::uint64_t anchor_samples = 0;
+        double reached = 0;
+        std::vector<Complex> impulses;
+        double steps(std::uint64_t at, unsigned rate) const noexcept {
+            const double elapsed = at > anchor_samples ? double(at - anchor_samples) : 0;
+            return anchor_steps + elapsed / double(rate) * steps_per_second;
+        }
+    };
     ContinuationInput source_;
     std::vector<Prepared> modes_;
     std::vector<Pending> pending_;
+    Carrier carrier_;
     std::size_t landed_ = 0;
     std::uint64_t elapsed_ = 0, driver_remainder_ = 0;
     double last_ = 0;
@@ -250,6 +268,33 @@ public:
     }
     // Strikes admitted for a later sample that have not landed yet.
     std::size_t pending_strikes() const noexcept { return pending_.size() - landed_; }
+    // The pulse's drive of the body (the Torus's Carrier, O-I #850): from the cursor on, each step
+    // of the M1′ pulse adds `impulses[i]` (modal metres) to prepared mode i, landing exactly before
+    // the first sample whose steps reach it, as a strike at that sample would. The pulse is the
+    // session's: `anchor_steps` at `anchor_samples` (at or behind the cursor), then `steps_per_second`.
+    // A step the pulse reached before the cursor's sample does not land again. Zero rate or zero impulses is
+    // no drive. Performance setting, not a body act: generation, cursor, clock and state stay. All
+    // validation and allocation precede the commit; render_audio only reads the drive.
+    void set_carrier(double steps_per_second, std::uint64_t anchor_samples, double anchor_steps,
+                     const std::vector<Complex> &impulses) {
+        require(std::isfinite(steps_per_second) && steps_per_second >= 0 &&
+                    steps_per_second <= max_carrier_steps_per_sample * source_.sample_rate,
+                "invalid carrier rate");
+        require(anchor_samples <= elapsed_, "the carrier's pulse is anchored after the cursor");
+        require(std::isfinite(anchor_steps) && anchor_steps >= 0 && anchor_steps <= 9007199254740991.0,
+                "invalid carrier pulse phase");
+        require(impulses.size() == modes_.size(), "carrier/mode basis mismatch");
+        for (const auto &impulse : impulses)
+            require(finite(impulse) && std::abs(impulse) <= 1e6, "invalid carrier impulse");
+        Carrier next{steps_per_second, anchor_steps, anchor_samples, 0, impulses};
+        // The whole steps already landed: those the pulse reached before the cursor's sample. At its
+        // anchor the pulse stands on `anchor_steps`; a whole step it stands on there lands with that
+        // sample, so setting the drive again on the same pulse neither loses nor repeats a step.
+        next.reached = elapsed_ > anchor_samples ? std::floor(next.steps(elapsed_ - 1, source_.sample_rate))
+                                                 : std::ceil(anchor_steps) - 1;
+        require(next.reached <= 9007199254740991.0, "carrier pulse beyond exact steps");
+        std::swap(carrier_, next);
+    }
     // One buffer is one bounded block. Validation/preflight precedes mutation.
     // Audio gain is explicit linear output gain, not a claim of sound pressure.
     // Muting affects output only. Host must not integrate again per visual view.
@@ -270,15 +315,29 @@ public:
         double landing = 0;
         for (std::size_t i = landed_; i < pending_.size() && pending_[i].at <= end; ++i)
             for (const auto &impulse : pending_[i].impulses) landing += std::abs(impulse.second);
-        for (const auto &m : modes_) {
-            const double bound = (std::abs(m.state) + frames * std::abs(m.forcing) + landing) * 1.000000001;
+        // The pulse's steps that land in this block (the carrier), each on its driven modes.
+        const bool driving = carrier_.steps_per_second > 0 && !carrier_.impulses.empty();
+        const double kicks = driving ? std::floor(carrier_.steps(end, source_.sample_rate)) - carrier_.reached : 0;
+        for (std::size_t i = 0; i < modes_.size(); ++i) {
+            const auto &m = modes_[i];
+            const double drive = driving ? kicks * std::abs(carrier_.impulses[i]) : 0;
+            const double bound = (std::abs(m.state) + frames * std::abs(m.forcing) + landing + drive) * 1.000000001;
             if (!std::isfinite(bound) || bound > 1e12) return false;
         }
         // A pending strike lands exactly before its sample is rendered; one at
-        // the block's end lands as the cursor reaches it.
+        // the block's end lands as the cursor reaches it. A step of the pulse
+        // lands exactly before the first sample whose steps reach it.
         std::size_t due = landed_;
         for (std::size_t sample = 0; sample < frames; ++sample) {
             while (due < pending_.size() && pending_[due].at == elapsed_ + sample) land(pending_[due++]);
+            if (driving) {
+                const double reached = std::floor(carrier_.steps(elapsed_ + sample, source_.sample_rate));
+                if (reached > carrier_.reached) {
+                    const double steps = reached - carrier_.reached;
+                    for (std::size_t i = 0; i < modes_.size(); ++i) modes_[i].state += steps * carrier_.impulses[i];
+                    carrier_.reached = reached;
+                }
+            }
             double value = 0;
             for (auto &m : modes_) {
                 m.state = m.step * m.state + m.forcing;

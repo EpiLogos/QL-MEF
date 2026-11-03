@@ -458,6 +458,23 @@ impl Session {
         }
     }
 
+    /// The pulse's anchor: `(samples, steps)`, from which [`Self::steps_at`] runs at the rate.
+    pub fn anchor(&self) -> (u64, f64) {
+        (self.anchor_samples, self.anchor_steps)
+    }
+
+    /// How strongly one step of the pulse drives the body, as a share of one event's excitation: Carrier
+    /// itself up to the spanda carrier's anchor rate ([`RATE_DEFAULT`]), then shared out so the
+    /// drive a second stays the anchor's. At 0 % (or a stopped pulse) it is nothing, and the
+    /// body sounds only when struck (manual §21.2 Carrier).
+    pub fn carrier_step(&self) -> f64 {
+        let steps_per_second = self.steps_per_second();
+        if self.settings.carrier == 0.0 || steps_per_second <= 0.0 {
+            return 0.0;
+        }
+        self.settings.carrier * (RATE_DEFAULT / steps_per_second).min(1.0)
+    }
+
     /// Moves the anchor to `samples` so a change of rate keeps the phase.
     fn rebase(&mut self, samples: u64) {
         let samples = samples.max(self.anchor_samples);
@@ -580,8 +597,9 @@ impl Session {
             "notes": self.notes,
             "polyphony": self.settings.polyphony,
             "carrier": {"value": self.settings.carrier,
-                "drive": "unbuilt",
-                "standing": "held by the session and read back; the pulse's own drive of the body between strikes needs the native carrier (QL-MEF #287 packet A), so at 0 % and above alike the body sounds only when struck"},
+                "drive": "pulse",
+                "step": self.carrier_step(),
+                "law": "each step of the pulse gives every voice of the tuning in force this share of the excitation an event gives it; one event's share at most, and above the spanda carrier's anchor rate the drive a second stays the anchor's. At 0 % the body sounds only when something strikes it; at rhythm rates the carrier beats; at pitch rates it sounds (manual §21.2 Carrier)"},
             "crossings": "samples → seconds by the sample rate; seconds → steps by the Free rate, or under Sync one step per note length at the set's tempo (a whole note is four beats)",
             "source_ref": SEED_REF,
         })

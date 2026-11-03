@@ -213,6 +213,19 @@ int main() {
                         strikes.push_back({text(get(act, "mode_ref")), pair(get(act, "amplitude"))});
                     }
                     field->strike(strikes, landing); committed = true;
+                } else if (op == "set-carrier") {
+                    // The M1′ pulse's drive of the body (the Torus's Carrier, O-I #850): the session's
+                    // pulse (rate, anchor sample and steps) and one impulse per mode, in mode order.
+                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed",
+                        "steps_per_second", "anchor_samples", "anchor_steps", "impulses"});
+                    J *items = get(request.get(), "impulses");
+                    auto n = count(items, field->source().modes.size());
+                    std::vector<ql::Complex> impulses; impulses.reserve(n);
+                    for (std::size_t i = 0; i < n; ++i) impulses.push_back(pair(at(items, i)));
+                    field->set_carrier(number(get(request.get(), "steps_per_second")),
+                        decimal<std::uint64_t>(get(request.get(), "anchor_samples")),
+                        number(get(request.get(), "anchor_steps")), impulses);
+                    committed = true;
                 } else { keys(request.get(), {"schema", "operation"}); ql::require(op == "read", "unknown field operation"); }
             }
             auto output = own(response(*field, audio, true, 1));

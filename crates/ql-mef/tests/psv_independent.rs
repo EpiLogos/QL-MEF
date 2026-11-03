@@ -752,6 +752,7 @@ fn open_scene(instance: &str) -> FieldHost {
         }),
         material: None,
         reception: None,
+        torus: None,
     })
     .unwrap();
     let config = serde_json::from_value(binding["host"].clone()).unwrap();

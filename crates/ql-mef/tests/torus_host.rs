@@ -33,6 +33,7 @@ fn open() -> FieldHost {
         }),
         material: None,
         reception: None,
+        torus: None,
     })
     .unwrap();
     let config: SceneConfig = serde_json::from_value(binding["host"].clone()).unwrap();
@@ -120,8 +121,8 @@ fn each_setting_reaches_the_owner_and_reads_back() {
     assert_eq!(torus["schema"], "ql.m1-prime-session/v1");
     assert_eq!(torus["band"], "rhythm");
     assert_eq!(torus["comma_cents"], json!(0.0));
-    // The scene opens under Sky: the DLW scene's own voices.
-    assert_eq!(torus["settings"]["tuning"], "sky");
+    // A new Torus opens under Logic, the manual's default (§21.2 Parameters).
+    assert_eq!(torus["settings"]["tuning"], "logic");
     let generation = d.generation();
     let set = d.send(json!({"operation":"torus-set","edit":{
         "rate":{"mode":"free","steps_per_second":440.0},"carrier":0.25,"shape":"spiral","polyphony":3}}));
@@ -209,7 +210,8 @@ fn tuning_and_fundamental_change_the_voice_frequencies_the_owner_reports() {
             .map(|v| v["frequency_hz"].as_f64().unwrap())
             .collect()
     };
-    let sky = d.send(json!({"operation":"influence"}));
+    let sky = d.send(json!({"operation":"torus-set","edit":{"tuning":"sky"}}));
+    assert_eq!(sky["status"], "ok", "{sky}");
     assert_eq!(voices(&sky).len(), 9);
     let logic = d.send(json!({"operation":"torus-set","edit":{"tuning":"logic"}}));
     assert_eq!(logic["status"], "ok", "{logic}");
@@ -231,4 +233,103 @@ fn tuning_and_fundamental_change_the_voice_frequencies_the_owner_reports() {
     for (a, b) in map.iter().zip(voices(&tuned)) {
         assert!((b - 2.0 * a).abs() < 1e-3, "{b} vs {a}");
     }
+}
+
+/// The PCM of `seconds` of the field, rendered in blocks of 4800 samples.
+fn render(d: &mut Driver, seconds: f64) -> Vec<f64> {
+    let mut pcm = Vec::new();
+    for _ in 0..(seconds * 10.0).round() as usize {
+        let advanced = d.send(json!({"operation":"advance","frames":4800,"muted":false}));
+        assert_eq!(advanced["status"], "ok", "{advanced}");
+        pcm.extend(
+            advanced["field"]["audio"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_f64().unwrap()),
+        );
+    }
+    pcm
+}
+
+fn rms(x: &[f64]) -> f64 {
+    (x.iter().map(|v| v * v).sum::<f64>() / x.len() as f64).sqrt()
+}
+
+/// The normalised correlation of the signal with itself `lag` samples on.
+fn correlation(x: &[f64], lag: usize) -> f64 {
+    let (a, b) = (&x[..x.len() - lag], &x[lag..]);
+    let dot: f64 = a.iter().zip(b).map(|(p, q)| p * q).sum();
+    dot / (rms(a) * rms(b) * a.len() as f64)
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn lowering_the_rate_through_the_bands_is_heard_a_note_becoming_a_beat() {
+    // Manual §21.2: "One pulse makes every sound of the Torus"; Carrier is how strongly the pulse
+    // drives the body between strikes, and at 0 % the body sounds only when something strikes it.
+    // At pitch rates the carrier sounds a note at the pulse's rate; at rhythm rates it beats.
+    let mut d = Driver::open();
+    // Quiet the opening ring (a damping edit re-excites nothing), then ring briefly: 40 a second.
+    assert_eq!(
+        d.send(json!({"operation":"set-damping","per_second":4000.0}))["status"],
+        "ok"
+    );
+    render(&mut d, 0.1);
+    assert_eq!(
+        d.send(json!({"operation":"set-damping","per_second":40.0}))["status"],
+        "ok"
+    );
+    let silent = render(&mut d, 1.0);
+    assert!(
+        silent.iter().all(|v| v.abs() < 1e-12),
+        "at 0 % with no strike the body is silent"
+    );
+    // A note: 240 steps a second (200 samples a step at 48 kHz), Carrier 50 %.
+    let note = d.send(json!({"operation":"torus-set","edit":{
+        "carrier":0.5,"rate":{"mode":"free","steps_per_second":240.0}}}));
+    assert_eq!(note["status"], "ok", "{note}");
+    assert_eq!(note["torus"]["carrier"]["drive"], "pulse");
+    let tone = render(&mut d, 0.5);
+    let steady = &tone[12_000..];
+    assert!(
+        rms(steady) > 1e-4,
+        "the carrier sounds: rms {}",
+        rms(steady)
+    );
+    let at_step = correlation(steady, 200);
+    assert!(at_step > 0.95, "periodic at the pulse's step: {at_step}");
+    assert!(
+        correlation(steady, 150) < at_step - 0.1,
+        "and at the step, not any lag"
+    );
+    // A beat: lower the rate into Rhythm, four steps a second.
+    let beat = d.send(
+        json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":4.0}}}),
+    );
+    assert_eq!(beat["torus"]["band"], "rhythm");
+    let beats = render(&mut d, 1.6);
+    let envelope: Vec<f64> = beats[4_800..].chunks(240).map(rms).collect();
+    let peak = envelope.iter().cloned().fold(0.0, f64::max);
+    assert!(peak > 1e-4, "each step strikes the body: peak {peak}");
+    let onsets = envelope
+        .windows(2)
+        .filter(|w| w[0] < 0.3 * peak && w[1] >= 0.3 * peak)
+        .count();
+    assert!(
+        (5..=7).contains(&onsets),
+        "a beat four times a second: {onsets} onsets in 1.5 s"
+    );
+    let quietest = envelope.iter().cloned().fold(f64::INFINITY, f64::min);
+    assert!(
+        quietest < 0.01 * peak,
+        "the body falls quiet between beats: {quietest} of {peak}"
+    );
+    // Back to 0 %: the drive stops; the tail decays, and nothing sounds again unstruck.
+    d.send(json!({"operation":"torus-set","edit":{"carrier":0.0}}));
+    let after = render(&mut d, 1.0);
+    assert!(
+        after[24_000..].iter().all(|v| v.abs() < 1e-6 * peak),
+        "the tail decays and nothing drives it"
+    );
 }

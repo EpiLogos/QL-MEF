@@ -254,10 +254,78 @@ int main() {
     try { scheduled.strike({{"mode:earth", {1e-6, 0}}}, cursor + 1); } catch (const std::invalid_argument &) { full = true; }
     assert(full && scheduled.receipt().generation == held_generation + ql::max_pending_strikes);
     assert(scheduled.render_audio(landed.data(), ql::max_pending_strikes) && scheduled.pending_strikes() == 0);
+    // The pulse drives the body between strikes (the Torus's Carrier, O-I #850; DLW §21.2). At each
+    // step of the M1′ pulse every driven mode receives its impulse, landing exactly before the first
+    // sample whose steps reach the step: steps(n) = anchor_steps + (n − anchor_samples) / rate ·
+    // steps_per_second, the session's own law. Its PCM is bit-identical to strikes at those samples.
+    // 375 steps a second at 48 kHz is 1/128 step a sample; from 0.3 steps the first step falls at +90.
+    ql::ContinuousField driven(voiced), struck(voiced), still(voiced);
+    advance(driven, 1024, 512); advance(struck, 1024, 512); advance(still, 1024, 512);
+    const auto before_drive = driven.receipt();
+    const std::vector<Complex> kick{{0.003, 0}, {0, 0}};
+    driven.set_carrier(375, before_drive.samples_elapsed, 0.3, kick);
+    assert(driven.receipt().generation == before_drive.generation &&
+           driven.receipt().samples_elapsed == before_drive.samples_elapsed && driven.amplitude(0) == still.amplitude(0));
+    std::array<float, 1024> pulsed{}, plucked{}, resting{};
+    assert(driven.render_audio(pulsed.data(), 600) && driven.render_audio(pulsed.data() + 600, 424));
+    std::size_t from = 0;
+    for (std::size_t at = 90; at < 1024; at += 128) {
+        assert(struck.render_audio(plucked.data() + from, at - from));
+        struck.strike({{"mode:earth", kick[0]}});
+        from = at;
+    }
+    assert(struck.render_audio(plucked.data() + from, 1024 - from));
+    assert(still.render_audio(resting.data(), resting.size()));
+    assert(pulsed == plucked && pulsed[89] == resting[89] && pulsed[90] != resting[90]);
+    assert(driven.amplitude(0) == struck.amplitude(0) && driven.amplitude(1) == struck.amplitude(1));
+    // The mode the pulse does not drive is untouched; no drive is no carrier; a refused drive changes nothing.
+    assert(driven.amplitude(1) == still.amplitude(1));
+    driven.set_carrier(375, driven.receipt().samples_elapsed, 0, {{0, 0}, {0, 0}});
+    still.set_carrier(0, still.receipt().samples_elapsed, 0, {{0.5, 0}, {0.5, 0}});
+    std::array<float, 512> quiet_driven{}, quiet_struck{}, quiet_still{}, untouched_still{};
+    ql::ContinuousField never(voiced); advance(never, 2048, 512);
+    assert(driven.render_audio(quiet_driven.data(), 512) && struck.render_audio(quiet_struck.data(), 512));
+    assert(still.render_audio(quiet_still.data(), 512) && never.render_audio(untouched_still.data(), 512));
+    assert(quiet_driven == quiet_struck && quiet_still == untouched_still);
+    auto refused_drive = [&](double rate, std::uint64_t anchor, double phase, std::vector<Complex> impulses) {
+        bool no = false;
+        try { driven.set_carrier(rate, anchor, phase, impulses); } catch (const std::invalid_argument &) { no = true; }
+        assert(no);
+    };
+    const auto cursor_now = driven.receipt().samples_elapsed;
+    refused_drive(-1, cursor_now, 0, {{0, 0}, {0, 0}});
+    refused_drive(std::nan(""), cursor_now, 0, {{0, 0}, {0, 0}});
+    refused_drive(48000.0 * 9, cursor_now, 0, {{0, 0}, {0, 0}});
+    refused_drive(375, cursor_now + 1, 0, {{0, 0}, {0, 0}});
+    refused_drive(375, cursor_now, std::nan(""), {{0, 0}, {0, 0}});
+    refused_drive(375, cursor_now, 0, {{0, 0}});
+    refused_drive(375, cursor_now, 0, {{2e6, 0}, {0, 0}});
+    std::array<float, 512> after_refusals{};
+    assert(driven.render_audio(after_refusals.data(), 512) && struck.render_audio(quiet_struck.data(), 512));
+    assert(after_refusals == quiet_struck);
+    // A step the pulse reaches exactly at the cursor has not landed yet (it lands before that sample
+    // is rendered): a drive set there lands it once, and a drive set again on the same pulse neither
+    // loses nor repeats it. 375 steps a second is 1/128 step a sample.
+    ql::ContinuousField at_step(voiced), at_step_struck(voiced), kept(voiced), resent(voiced);
+    for (auto *f : {&at_step, &at_step_struck, &kept, &resent}) advance(*f, 1024, 512);
+    at_step.set_carrier(375, 1024, 2, kick); // the pulse stands on step 2 at the cursor
+    std::array<float, 256> on_step{}, struck_at_step_pcm{};
+    assert(at_step.render_audio(on_step.data(), 256));
+    at_step_struck.strike({{"mode:earth", kick[0]}});
+    assert(at_step_struck.render_audio(struck_at_step_pcm.data(), 128));
+    at_step_struck.strike({{"mode:earth", kick[0]}});
+    assert(at_step_struck.render_audio(struck_at_step_pcm.data() + 128, 128));
+    assert(on_step == struck_at_step_pcm);
+    kept.set_carrier(375, 1024, 0.5, kick); resent.set_carrier(375, 1024, 0.5, kick);
+    std::array<float, 512> straight{}, resent_pcm{};
+    assert(kept.render_audio(straight.data(), 512) && resent.render_audio(resent_pcm.data(), 192));
+    resent.set_carrier(375, 1024, 0.5, kick); // step 2 falls at the cursor, 1216
+    assert(resent.render_audio(resent_pcm.data() + 192, 320));
+    assert(straight == resent_pcm && kept.amplitude(0) == resent.amplitude(0));
     std::cout << "{\"schema\":\"ql.continuous-acceptance/v1\",\"analytic_error_48k\":" << error48
               << ",\"analytic_error_96k\":" << error96
               << ",\"equal_modes_cancel\":true,\"stable_samples\":true,\"mute_continues\":true,"
                  "\"partition_independent\":true,\"independent_subjects\":true,\"exact_replay\":true,"
                  "\"shape_replacement_keeps_state_and_pcm\":true,\"played_strike_sounds_and_continues\":true,"
-                 "\"strike_lands_at_its_sample\":true}\n";
+                 "\"strike_lands_at_its_sample\":true,\"pulse_drives_the_body_at_its_steps\":true}\n";
 }

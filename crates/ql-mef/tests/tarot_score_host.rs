@@ -36,6 +36,7 @@ fn open(instance: &str) -> FieldHost {
         }),
         material: None,
         reception: None,
+        torus: None,
     })
     .unwrap();
     let config: ql_mef::continuous::scene_field::SceneConfig =

@@ -286,6 +286,56 @@ fn a_strike_at_a_later_sample_is_admitted_now_and_moves_nothing_until_it_lands()
     }
 }
 
+/// O-I 850: the Torus's Carrier sets the M1′ pulse's drive of the body. It is a
+/// performance setting: the generation, clock, cursor and body stay; the pulse's
+/// later steps move the body in the render, never the setting itself.
+#[test]
+fn setting_the_carrier_keeps_the_generation_and_moves_nothing() {
+    let (_, _, guard, mut receipt) = fixture();
+    receipt["samples_elapsed"] = json!("512");
+    let drive = |anchor: Value, impulses: Value| {
+        json!({"operation":"set-carrier","steps_per_second":240.0,"anchor_samples":anchor,
+            "anchor_steps":3.5,"impulses":impulses})
+    };
+    let request = drive(json!("512"), json!([[0.0004, 0.0]]));
+    guard.validate(&request, Some(&receipt), &receipt).unwrap();
+    for (path, moved) in [
+        ("/generation", json!("2")),
+        ("/samples_elapsed", json!("513")),
+        ("/amplitudes_metres/0/0", json!(0.0054)),
+        ("/targets/0/position/0", json!(0.0054)),
+        ("/clock/inscription/turns", json!("0")),
+    ] {
+        let mut bad = receipt.clone();
+        *bad.pointer_mut(path).unwrap() = moved;
+        assert!(
+            guard.validate(&request, Some(&receipt), &bad).is_err(),
+            "setting the carrier moved {path}"
+        );
+    }
+    for bad_request in [
+        drive(json!("513"), json!([[0.0004, 0.0]])),
+        drive(json!("0512"), json!([[0.0004, 0.0]])),
+        drive(json!(512), json!([[0.0004, 0.0]])),
+        drive(json!("512"), json!([])),
+        drive(json!("512"), json!([[0.0004, 0.0], [0.0, 0.0]])),
+        drive(json!("512"), json!([[2e6, 0.0]])),
+        drive(json!("512"), json!([[0.0004]])),
+        json!({"operation":"set-carrier","steps_per_second":-1.0,"anchor_samples":"0",
+            "anchor_steps":0.0,"impulses":[[0.0,0.0]]}),
+        json!({"operation":"set-carrier","steps_per_second":2.5,"anchor_samples":"0",
+            "anchor_steps":-1.0,"impulses":[[0.0,0.0]]}),
+        json!({"operation":"set-carrier"}),
+    ] {
+        assert!(
+            guard
+                .validate(&bad_request, Some(&receipt), &receipt)
+                .is_err(),
+            "accepted {bad_request}"
+        );
+    }
+}
+
 #[test]
 fn exact_cursor_strings_reject_aliases_and_overflow_without_panicking() {
     for text in [

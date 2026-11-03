@@ -100,7 +100,7 @@
         "#3-0",
         "#3-5-5/0"
       ],
-      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock. Original M1\u2013M3 laws and GPU particle integration remain separate owners.",
+      "rationale": "Unit-bearing supplied modal continuation and source-identified target projection using the actual native clock; the M1′ pulse's drive of the body between strikes (the Torus's Carrier, O-I #850) lands each step as a strike at its sample would. Original M1\u2013M3 laws and GPU particle integration remain separate owners.",
       "tests": [
         "cpp/tests/continuous_field.cpp",
         "scripts/test-k8-continuous.py"
@@ -996,7 +996,7 @@
         "#2-5",
         "#2-1"
       ],
-      "rationale": "The integrated scene played on the M1 torus: each map-tuned planet of the dated sky is a surface mode at its ecliptic degree (theta = lambda), sounded through the coupled sky bus, with the M2 Vimarsha Chladni skin; host operations re-read the event per determinant.",
+      "rationale": "The integrated scene played on the M1 torus: each map-tuned planet of the dated sky is a surface mode at its ecliptic degree (theta = lambda), sounded through the coupled sky bus, with the M2 Vimarsha Chladni skin; host operations re-read the event per determinant. A new Torus opens under Logic unless a saved sound names its settings, and the Carrier's drive follows the session's pulse.",
       "tests": [
         "crates/ql-mef/tests/scene_instrument.rs",
         "crates/ql-mef/tests/scene_nara_reception.rs",

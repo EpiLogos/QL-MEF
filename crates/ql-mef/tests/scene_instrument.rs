@@ -22,13 +22,16 @@ fn sky() -> Value {
     .unwrap()
 }
 
+/// These tests read the sky's own voices, so the scene opens with a saved sound
+/// under Sky; a new Torus opens under Logic (tests/scene_tuning.rs).
 fn config() -> SceneConfig {
     let sky = sky();
     let request: ql_mef::scene::WorldRequest = serde_json::from_value(json!({
         "schema": ql_mef::scene::WORLD_REQUEST, "instance_ref": "test:scene",
         "event_ref":sky["snapshot_ref"],"subject_ref":"person:controlled-scene-instrument",
         "texture": [64, 64], "units_per_metre": 1.0, "sky": sky,
-        "geometry": {"longitude_samples": 32, "latitude_samples": 16, "metres_per_unit": 1.0, "attachment": 1}
+        "geometry": {"longitude_samples": 32, "latitude_samples": 16, "metres_per_unit": 1.0, "attachment": 1},
+        "torus": {"tuning": "sky"}
     })).unwrap();
     let binding = ql_mef::scene::world(request).unwrap()["binding"].clone();
     assert_eq!(

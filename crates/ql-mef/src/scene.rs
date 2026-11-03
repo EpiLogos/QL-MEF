@@ -85,6 +85,9 @@ pub struct WorldRequest {
     pub geometry: Option<crate::continuous::scene_field::SceneGeometry>,
     #[serde(default)]
     pub material: Option<crate::continuous::scene_field::SceneMaterial>,
+    /// A saved Torus sound to open with (`SceneConfig::torus`); absent, a new Torus.
+    #[serde(default)]
+    pub torus: Option<crate::m1_prime::SettingsEdit>,
 }
 
 /// One source-owned constructor: never a copy of the embedded demonstration
@@ -249,6 +252,7 @@ pub fn world(request: WorldRequest) -> Result<Value, String> {
         geometry: request.geometry,
         material: request.material,
         reception: None,
+        torus: request.torus.clone(),
     })?;
     Ok(
         json!({"schema": WORLD, "instance_ref": request.instance_ref,
