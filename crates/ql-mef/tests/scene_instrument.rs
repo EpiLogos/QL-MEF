@@ -5,7 +5,9 @@
 use std::path::PathBuf;
 use std::time::Duration;
 
-use ql_mef::continuous::scene_field::{PLANETS, STRIKE_AT_RECEIPT, SceneConfig, SceneInstrument};
+use ql_mef::continuous::scene_field::{
+    OCTET, PLANETS, STRIKE_AT_RECEIPT, SceneConfig, SceneInstrument,
+};
 use ql_mef::continuous::{StrikeAtInput, StrikeInput};
 use serde_json::{Value, json};
 
@@ -334,7 +336,8 @@ fn a_played_strike_sounds_through_the_production_path_and_renders_a_wav() {
         seed["amplitudes_metres"].as_array().unwrap(),
         struck["amplitudes_metres"].as_array().unwrap(),
     );
-    assert_eq!(seed_amplitudes.len(), PLANETS.len());
+    // The sky's nine, then the octet resting resident after them (O-I #850).
+    assert_eq!(seed_amplitudes.len(), PLANETS.len() + OCTET);
     for (i, (before, after)) in seed_amplitudes.iter().zip(struck_amplitudes).enumerate() {
         if i == 3 {
             assert_ne!(before, after, "the struck voice did not move");
@@ -530,12 +533,14 @@ fn a_played_strike_through_the_host_is_subject_scoped_and_cursor_exact() {
     assert_eq!(unknown["field"], reread["field"]);
 }
 
-/// The resident modal amplitudes a native receipt carries: `[re, im]` per voice.
+/// The sky voices' modal amplitudes a native receipt carries: `[re, im]` per
+/// voice. The octet rests resident after them (O-I #850) and is not struck here.
 fn resident(field: &Value) -> Vec<[f64; 2]> {
     field["amplitudes_metres"]
         .as_array()
         .unwrap()
         .iter()
+        .take(PLANETS.len())
         .map(|a| [a[0].as_f64().unwrap(), a[1].as_f64().unwrap()])
         .collect()
 }
@@ -1158,12 +1163,23 @@ fn scene_damping_is_acknowledged_without_a_strike_shape_or_clock_reset() {
     // evaluations. Bound grows with the actual operation count, not a relaxed
     // semantic expectation. Native exact zero elapsed checks above stay exact.
     let roundoff = 64.0 * 4096.0 * f64::EPSILON;
-    assert_eq!(fa["amplitudes_metres"].as_array().unwrap().len(), 9);
+    // The sky's nine sound; the octet rests resident after them, unexcited.
+    assert_eq!(fa["amplitudes_metres"].as_array().unwrap().len(), 9 + OCTET);
+    for resting in &fa["amplitudes_metres"].as_array().unwrap()[9..] {
+        assert!(
+            resting
+                .as_array()
+                .unwrap()
+                .iter()
+                .all(|v| v.as_f64() == Some(0.0))
+        );
+    }
     for (x, y) in fa["amplitudes_metres"]
         .as_array()
         .unwrap()
         .iter()
         .zip(fb["amplitudes_metres"].as_array().unwrap())
+        .take(9)
     {
         let ax = x[0].as_f64().unwrap().hypot(x[1].as_f64().unwrap());
         let ay = y[0].as_f64().unwrap().hypot(y[1].as_f64().unwrap());

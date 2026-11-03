@@ -11,18 +11,26 @@
 //! conjugate axis. The fifths basis enters only as a second traversal/address
 //! overlay over the same twelve classes, never as a second surface geometry.
 //!
-//! Not here: a key's point on the torus. The surface names each key's helix
-//! (`whole_tone_row_family`: WT₀ bimba, WT₁ pratibimba) and position
-//! (`coordinate`), and the scene body strikes the torus at any point it is
-//! given (`scene_field::ShapeBasis::strike_at`); the sources do not yet fix the
-//! angle of a position on its arc or the second arc's place across the 720°
-//! cover, so no `point` is published (figure §4a, "Standing of the placement").
+//! A key's point on the torus (PROGRAMME R34; figure §4a): the key stands at
+//! one place of its helix — helix h (`whole_tone_row_family`) and position p
+//! (`coordinate`) — and that place is the arc 6h + p of the spanda ring of
+//! twelve, the arcs `spanda_field::codon_advance` reads (helix = arc ≥ 6,
+//! position = arc mod 6). Twelve arcs make the 720° cover, six to a 360°
+//! sheet (`RING_HALF`), so the second helix takes the second sheet. The torus
+//! turns with the pulse, one arc a step, and carries the place across the
+//! surface: at cover angle α = 60°·(arc + steps) the point is φ = α mod 360°
+//! round the ring and θ = α/2 round the tube — the spinor half-angle of
+//! `m1::Clock::spinor`, which changes sign after one sheet and returns after
+//! two. A semitone (the next row, the other helix) is the half-turn across the
+//! tube at the same ring place. [`JankoSurface::point`] is that law; the scene
+//! body strikes whatever point it is given (`scene_field::ShapeBasis::strike_at`).
 //!
 //! Provenance boundary (figure §0): the 3:3 / 4:2 white/black colour counts
 //! are the historical instrument's own facts and their QL reading is a
 //! project-level Figure; neither enters this projection's mathematics.
 
 use ql_core::{QlCoordinate, QlFace, QlPosition};
+use serde::{Deserialize, Serialize};
 
 use crate::LensId;
 use crate::music::{MusicalBasis, PitchClass, pitch_at_lens, pitch_name};
@@ -33,7 +41,8 @@ fn position(value: u8) -> QlPosition {
 
 /// One physical key of the six-row surface. Columns are unbounded; the
 /// projection is periodic with a six-column period (one helix traversal).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct JankoKey {
     /// 0..6. Even rows carry the direct whole-tone family, odd rows the
     /// conjugate (semitone-shifted complementary) family.
@@ -51,6 +60,39 @@ pub const ROWS: u8 = 6;
 /// Positions per helix traversal: one column period of every row.
 pub const COLUMN_PERIOD: u16 = 6;
 pub const TOUCH_POINTS: u8 = 3;
+
+/// The law of a key's moving point, carried with every point disclosed.
+pub const POINT_LAW: &str = "a key stands at one place of its helix: arc = 6·helix + position of the spanda ring of twelve (spanda_field::codon_advance: helix = arc ≥ 6, position = arc mod 6); twelve arcs are the 720° cover, six to a sheet, so the second helix takes the second sheet; the torus turns one arc a step and carries the place: α = 60°·(arc + steps), φ = α mod 360° round the ring, θ = α/2 mod 360° round the tube (the spinor half-angle, m1::Clock::spinor); a semitone is the half-turn across the tube at the same ring place (PROGRAMME R34; Jankó figure §4a)";
+
+/// The place of a key on its helix: it never moves.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+pub struct HelixPlace {
+    /// 0 bimba (WT₀), 1 pratibimba (WT₁).
+    pub helix: u8,
+    /// 0..6 along the helix.
+    pub position: u8,
+    /// 0..12 on the spanda ring: 6·helix + position.
+    pub arc: u8,
+    /// Its place on the 720° cover, in whole degrees.
+    pub cover_degrees: u16,
+}
+
+/// Where a key's place stands on the turning torus after `pulse_steps`.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+pub struct KeyPoint {
+    pub place: HelixPlace,
+    pub pulse_steps: f64,
+    /// The place carried by the pulse, degrees on the 720° cover.
+    pub cover_degrees: f64,
+    /// 0 or 1: which 360° sheet of the cover the point stands on.
+    pub sheet: u8,
+    /// The ring arc (0..12) the point stands on now.
+    pub arc: u8,
+    /// Round the tube (poloidal), radians in [0, 2π).
+    pub theta: f64,
+    /// Round the ring (toroidal), radians in [0, 2π).
+    pub phi: f64,
+}
 
 /// What one key means: the figure's §2 controller-neutral projection
 /// contract, filled entirely from the accepted musical state.
@@ -103,6 +145,45 @@ impl JankoSurface {
         let touch_point = usize::from(key.row / 2);
         let index = (usize::from(key.column) + touch_point) % usize::from(COLUMN_PERIOD);
         QlCoordinate::new(position(index as u8), Self::face(key.row))
+    }
+
+    /// The key's place on its helix: helix, position and its ring arc.
+    pub fn helix_place(key: JankoKey) -> HelixPlace {
+        let helix = key.row % 2;
+        let position = Self::coordinate(key).position.value();
+        let arc = helix * crate::spanda_field::RING_HALF + position;
+        HelixPlace {
+            helix,
+            position,
+            arc,
+            cover_degrees: u16::from(arc) * 60,
+        }
+    }
+
+    /// The key's moving point after `pulse_steps` of the pulse ([`POINT_LAW`]).
+    /// The place is the key's own; only the torus has turned.
+    pub fn point(&self, key: JankoKey, pulse_steps: f64) -> KeyPoint {
+        let place = Self::helix_place(key);
+        let ring = f64::from(crate::spanda_field::RING_SIZE);
+        let half = f64::from(crate::spanda_field::RING_HALF);
+        // Arcs on the cover, in [0, 12); `rem_euclid` can round up to 12.
+        let mut arcs = (f64::from(place.arc) + pulse_steps).rem_euclid(ring);
+        if arcs >= ring {
+            arcs = 0.0;
+        }
+        let sheet_arcs = arcs.rem_euclid(half);
+        let sheet_arcs = if sheet_arcs >= half { 0.0 } else { sheet_arcs };
+        let pi = std::f64::consts::PI;
+        KeyPoint {
+            place,
+            pulse_steps,
+            cover_degrees: arcs * 60.0,
+            sheet: u8::from(arcs >= half),
+            arc: (arcs.floor() as u8) % crate::spanda_field::RING_SIZE,
+            // Half the cover angle round the tube; the cover angle mod 360° round the ring.
+            theta: arcs * (pi / half),
+            phi: sheet_arcs * (pi / (half / 2.0)),
+        }
     }
 
     pub fn project(&self, key: JankoKey) -> JankoSurfaceProjection {

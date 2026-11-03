@@ -52,6 +52,13 @@ pub(crate) mod number {
         let [a, b] = <[Number; 2]>::deserialize(deserializer)?;
         Ok([finite(&a)?, finite(&b)?])
     }
+
+    /// An optional finite number, absent or `null` as `None`.
+    pub fn option<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<f64>, D::Error> {
+        Option::<Number>::deserialize(deserializer)?
+            .map(|number| finite(&number))
+            .transpose()
+    }
 }
 
 /// Reading the text a host is handed (a request line on stdin, a config file).

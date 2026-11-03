@@ -46,6 +46,7 @@ fn input() -> CoupledInput {
         condition_frequency_bindings: vec![],
         sky_frequency_bindings: vec![],
         source_receipts: vec![json!({"standing":"controlled fixture, not a live provider"})],
+        fundamental_hz: None,
     }
 }
 

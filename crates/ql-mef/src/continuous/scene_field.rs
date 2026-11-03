@@ -14,6 +14,16 @@
 //! - a planet's motion, or a changed quartet or 72-address, re-reads the shapes
 //!   of the SAME voices through the explicit K8 shape replacement.
 //!
+//! - the Torus's tuning (O-I #850; DLW manual §21.2) chooses which resident
+//!   voices sound: Sky, the planets above; Logic, Vimarśā's octet
+//!   (`m2.vimarsha.reading.audio_octet_hz`), the four sounding places of each
+//!   helix between its two boundaries (`nodal_quartet`, positions 0 and 5),
+//!   which shape the body as the voices' nodal numbers and are never voices;
+//!   Maqām, the M2 condition's maqām (`m2.condition.musical.pitches_hz`) when
+//!   the event admits it. Every group is resident in the one modal owner from
+//!   open, so a tuning switch moves no native state: strikes reach only the
+//!   group in force, and every voice is one ratio over the Fundamental.
+//!
 //! Scale, damping, strike amplitude and output gain have no source table. They
 //! are declared material policy with that standing, never presented as source.
 use std::f64::consts::PI;
@@ -24,13 +34,16 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
 use super::coupled::{
-    CoupledBasis, CoupledFieldSession, CoupledInput, SKY_ROOT_HZ, SkyFrequencyBinding,
+    ConditionFrequencyBinding, CoupledBasis, CoupledFieldSession, CoupledInput, FrequencyBinding,
+    SKY_ROOT_HZ, SkyFrequencyBinding,
 };
 use super::{
     ClockInput, FieldInput, FieldSample, FieldUnits, LiftInput, STRIKE_CAP_METRES, StrikeAtInput,
     StrikeInput,
 };
 use crate::m1_engine::M1Engine;
+use crate::m1_prime;
+pub use crate::m1_prime::Tuning;
 use crate::m2_engine::{
     CarrierWeight, ContinuousMode, MaterialFibre, PhysicalParameter, ResonatorState,
 };
@@ -50,8 +63,15 @@ pub const PLANETS: [&str; 9] = [
     "#2-5-0/1", "#2-5-2", "#2-5-3", "#2-5-4", "#2-5-5", "#2-5-6", "#2-5-7", "#2-5-8", "#2-5-9",
 ];
 pub const VOICES: usize = PLANETS.len();
+/// Vimarśā's octet and the condition's maqām: eight voices each.
+pub const OCTET: usize = 8;
+/// The most voices one scene holds resident: the sky's nine, the octet's
+/// eight and the maqām's eight (the native modal basis is fixed at open).
+pub const RESIDENT_MAX: usize = VOICES + 2 * OCTET;
 const CONSTITUENT: &str = "#1-5-1";
-const MAX_SAMPLES: usize = 262_144 / VOICES;
+const MAX_SAMPLES: usize = 262_144 / RESIDENT_MAX;
+/// The standing of the octet's and the maqām's places on the body.
+const GROUP_PLACE_STANDING: &str = "declared-instrument-mapping: octet slot k stands at the k mod 4 + 1 sounding place of helix k div 4 (the manual's 'four sounding places of each helix'; read_seed raises slots 4..8 by the conjugate helix's semitone), anchored on the ring at that place's arc and taking the nodal numbers of the nearer boundary of its own helix (nodal_quartet positions 0 and 5); the maqām's eight take the same places; the sources place neither group on a longitude (O-I #850)";
 const MATERIAL_STANDING: &str = "declared-material-policy: no source table fixes presentation scale, damping, strike amplitude or output gain (QL-MEF #135)";
 
 /// Sampling of the one torus surface (declared; PPS §3 gives 128×64 as a typical render mesh).
@@ -110,6 +130,10 @@ pub struct SceneConfig {
 /// One voice's source-read surface term.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Voice {
+    /// The tuning this voice sounds under.
+    pub tuning: Tuning,
+    /// The planet a Sky voice sounds; empty for the octet and the maqām.
+    #[serde(skip_serializing_if = "str::is_empty")]
     pub planet_ref: &'static str,
     /// The native material mode this voice sounds through; the played strike
     /// address. One spelling, owned by `voice_mode_ref`.
@@ -141,6 +165,20 @@ pub const SCENE_PLAYED_STANDING: &str = "declared-instrument-mapping: a played k
 const STRIKE_AT_LAW: &str = "each standing voice receives amplitude × χ(voice, φ, θ): the voice's own M2′ double-Fourier Chladni term at the struck point, with the weight the body's mode shapes already carry (frequency over the highest frequency, decision D21) and the voice's anchor at its planet's longitude; summed over the points of one act, so a chord is the sum of its single strikes; no other weighting. The sampled sheet is θ, φ ∈ [0, 2π). The same χ fills the native owner's mode_shapes, so touching a sampled point excites each voice by the shape the owner holds there.";
 /// The standing of a strike at points: what it is and what it does not decide.
 const STRIKE_AT_STANDING: &str = "performance act, not a determinant: pitch, material, clocks and every source reading are unchanged and the owner's influence reading stays current (QL-MEF #281); lowered to the one native strike of the named voices, one generation per act. The placement of a key on the torus is not decided here — the caller names the point.";
+
+/// An acknowledged field's exact sample cursor.
+fn samples_of(field: &Value) -> u64 {
+    field["samples_elapsed"]
+        .as_str()
+        .and_then(|text| text.parse().ok())
+        .unwrap_or(0)
+}
+
+/// The chromatic class of a lens's tonic: the mode's place for a tritone crossing.
+fn tonic(lens12: u8) -> u8 {
+    let lens = crate::LensId::ALL[usize::from(lens12 % 12)];
+    crate::music::lens_anchor(crate::music::MusicalBasis::Chromatic, lens).pitch % 12
+}
 
 /// The chromatic class nearest a frequency over C3, and the signed cents offset.
 fn nearest_class(frequency_hz: f64) -> (u8, f64) {
@@ -209,11 +247,34 @@ fn voice_mode_ref(planet_ref: &str) -> String {
     format!("scene:planet/{planet_ref}")
 }
 
+/// The material-mode spelling of the octet's (Logic) or the maqām's slot `k`.
+fn group_mode_ref(tuning: Tuning, k: usize) -> String {
+    format!("scene:{}/{k}", tuning.code())
+}
+
+/// One of the four boundaries of the Vimarśā reading: a helix's two ends
+/// (positions 0 and 5). It reaches the body as its voices' nodal numbers and
+/// carries no mode of its own.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+pub struct Boundary {
+    pub ql_position: u8,
+    pub helix: &'static str,
+    pub m: u8,
+    pub n: u8,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct ShapeBasis {
     pub shape_ref: String,
     pub address72: u8,
+    /// The Sky's voices, the dated sky's planets in scalar-degree order.
     pub voices: [Voice; VOICES],
+    /// Logic's voices, Vimarśā's octet in slot order.
+    pub octet: Vec<Voice>,
+    /// Maqām's voices, the condition's maqām; empty when the event admits none.
+    pub maqam: Vec<Voice>,
+    /// The four boundaries, `nodal_quartet` in order.
+    pub boundaries: Vec<Boundary>,
 }
 
 fn finite_positive(value: f64, label: &str) -> Result<(), String> {
@@ -362,6 +423,7 @@ impl ShapeBasis {
             };
             let (sounding_class, class_error_cents) = nearest_class(hz[i]);
             voices.push(Voice {
+                tuning: Tuning::Sky,
                 planet_ref: planet,
                 mode_ref: voice_mode_ref(planet),
                 longitude_radians: longitude.to_radians(),
@@ -378,11 +440,126 @@ impl ShapeBasis {
             // Whole degrees: a planet moving within its degree keeps its shape.
             shape_ref.push_str(&format!(":{m}x{n}@{}", longitude.floor() as i64));
         }
+        let boundaries = quartet
+            .iter()
+            .map(|node| {
+                let small = |key: &str| node[key].as_u64().filter(|v| (1..=12).contains(v));
+                Ok(Boundary {
+                    ql_position: node["ql_position"].as_u64().unwrap_or(0) as u8,
+                    helix: match node["helix"].as_str() {
+                        Some("bimba") => "bimba",
+                        Some("pratibimba") => "pratibimba",
+                        _ => return Err("unknown Vimarśā helix".to_string()),
+                    },
+                    m: small("m").ok_or("nodal m outside 1..12")? as u8,
+                    n: small("n").ok_or("nodal n outside 1..12")? as u8,
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        let modes = basis
+            .m2_input
+            .resonator
+            .as_ref()
+            .map(|r| r.modes.as_slice())
+            .unwrap_or_default();
+        let group = |tuning: Tuning| -> Result<Vec<Voice>, String> {
+            let hz: Vec<f64> = (0..OCTET)
+                .map_while(|k| {
+                    let mode_ref = group_mode_ref(tuning, k);
+                    modes
+                        .iter()
+                        .find(|mode| mode.mode_ref == mode_ref)
+                        .map(|mode| mode.frequency_hz)
+                })
+                .collect();
+            if hz.is_empty() {
+                return Ok(Vec::new());
+            }
+            if hz.len() != OCTET || hz.iter().any(|f| !f.is_finite() || *f <= 0.0) {
+                return Err(format!(
+                    "the scene's {} voices are incomplete",
+                    tuning.code()
+                ));
+            }
+            let max = hz.iter().cloned().fold(0.0, f64::max);
+            Ok(hz
+                .iter()
+                .enumerate()
+                .map(|(k, frequency)| {
+                    let helix = (k / 4) as u8;
+                    let position = (k % 4) as u8 + 1;
+                    let boundary = boundaries[usize::from(helix) * 2 + usize::from(position >= 3)];
+                    let (sounding_class, class_error_cents) = nearest_class(*frequency);
+                    Voice {
+                        tuning,
+                        planet_ref: "",
+                        mode_ref: group_mode_ref(tuning, k),
+                        // The place's ring arc: (6·helix + position) mod 6 sixths of a turn.
+                        longitude_radians: f64::from(position) * PI / 3.0,
+                        frequency_hz: *frequency,
+                        m: boundary.m,
+                        n: boundary.n,
+                        helix: boundary.helix,
+                        ql_position: position,
+                        weight: frequency / max,
+                        phase_radians: f64::from(u16::from(address72) + k as u16 + 1) * PI / 36.0,
+                        sounding_class,
+                        class_error_cents,
+                    }
+                })
+                .collect())
+        };
         Ok(Self {
             shape_ref,
             address72,
             voices: voices.try_into().map_err(|_| "voice count")?,
+            octet: group(Tuning::Logic)?,
+            maqam: group(Tuning::Maqam)?,
+            boundaries,
         })
+    }
+
+    /// The voices of one tuning, in strike order.
+    pub fn group(&self, tuning: Tuning) -> &[Voice] {
+        match tuning {
+            Tuning::Sky => &self.voices,
+            Tuning::Logic => &self.octet,
+            Tuning::Maqam => &self.maqam,
+        }
+    }
+
+    /// The voices that sound under `tuning`.
+    pub fn sounding(&self, tuning: Tuning) -> impl Iterator<Item = &Voice> {
+        self.group(tuning).iter()
+    }
+
+    /// Whether this scene holds `tuning`'s voices at all.
+    pub fn resident(&self, tuning: Tuning) -> bool {
+        !self.group(tuning).is_empty()
+    }
+
+    /// Every resident voice, in the native owner's mode order.
+    pub fn resident_voices(&self) -> impl Iterator<Item = &Voice> {
+        self.voices.iter().chain(&self.octet).chain(&self.maqam)
+    }
+
+    /// The same body: every shape-bearing term equal (weights to 1e-12, since
+    /// one ratio over all voices keeps each weight); frequency alone may differ.
+    fn same_body(&self, other: &Self) -> bool {
+        self.shape_ref == other.shape_ref
+            && self.address72 == other.address72
+            && self.boundaries == other.boundaries
+            && self.resident_voices().count() == other.resident_voices().count()
+            && self
+                .resident_voices()
+                .zip(other.resident_voices())
+                .all(|(a, b)| {
+                    a.mode_ref == b.mode_ref
+                        && a.longitude_radians == b.longitude_radians
+                        && (a.m, a.n) == (b.m, b.n)
+                        && a.phase_radians == b.phase_radians
+                        && (a.weight - b.weight).abs() < 1e-12
+                })
     }
 
     /// Nodal lines depend on mode numbers and 72-address only; frequency moves
@@ -392,8 +569,7 @@ impl ShapeBasis {
             .map(|(_, phi, theta)| {
                 let (_, normal) = surface(theta, phi)?;
                 Ok(self
-                    .voices
-                    .iter()
+                    .resident_voices()
                     .map(|voice| {
                         let x = chi(voice, phi, theta);
                         // Dimensionless coefficients travel at 1e-6, far below
@@ -420,9 +596,26 @@ impl ShapeBasis {
     /// outside the material policy, or the summed impulse on any voice would
     /// pass the declared 1.0 metre cap.
     pub fn strike_at(&self, points: &[StrikeAtInput]) -> Result<Vec<StrikeInput>, String> {
+        self.strike_at_tuned(points, Tuning::Sky)
+    }
+
+    /// [`Self::strike_at`] over the voices of `tuning` only: the others are
+    /// resident and are not struck. Refused in words when this scene holds no
+    /// voices for `tuning`.
+    pub fn strike_at_tuned(
+        &self,
+        points: &[StrikeAtInput],
+        tuning: Tuning,
+    ) -> Result<Vec<StrikeInput>, String> {
         StrikeAtInput::validate_act(points)?;
-        let mut impulses: Vec<StrikeInput> = self
-            .voices
+        let voices = self.group(tuning);
+        if voices.is_empty() {
+            return Err(format!(
+                "this scene holds no {} voices: its event admits none",
+                tuning.code()
+            ));
+        }
+        let mut impulses: Vec<StrikeInput> = voices
             .iter()
             .map(|voice| StrikeInput {
                 mode_ref: voice.mode_ref.clone(),
@@ -430,7 +623,7 @@ impl ShapeBasis {
             })
             .collect();
         for point in points {
-            for (impulse, voice) in impulses.iter_mut().zip(&self.voices) {
+            for (impulse, voice) in impulses.iter_mut().zip(voices) {
                 let shape = chi(voice, point.phi, point.theta);
                 impulse.amplitude[0] += point.amplitude[0] * shape;
                 impulse.amplitude[1] += point.amplitude[1] * shape;
@@ -457,9 +650,12 @@ impl ShapeBasis {
         json!({
             "schema": STRIKE_AT_RECEIPT,
             "points": points,
-            "voices": self.voices.iter().zip(impulses).map(|(voice, impulse)| json!({
+            "voices": impulses.iter().filter_map(|impulse| self.resident_voices()
+                .find(|voice| voice.mode_ref == impulse.mode_ref)
+                .map(|voice| (voice, impulse))).map(|(voice, impulse)| json!({
                 "mode_ref": voice.mode_ref,
                 "planet_ref": voice.planet_ref,
+                "tuning": voice.tuning,
                 "coupling": points.iter().map(|point| chi(voice, point.phi, point.theta)).collect::<Vec<_>>(),
                 "amplitude": impulse.amplitude,
             })).collect::<Vec<_>>(),
@@ -490,8 +686,52 @@ fn resonator(
     input: &CoupledInput,
     material: &SceneMaterial,
     fibre: MaterialFibre,
+    tuning: Tuning,
+    maqam: bool,
 ) -> ResonatorState {
     let first = (fibre.index() * 18) as u8;
+    // The condition fixes the element; no carrier within its fibre is
+    // preferred by source, so the weight is spread evenly over all 18.
+    let carriers = || -> Vec<CarrierWeight> {
+        (0..18)
+            .map(|c| CarrierWeight {
+                carrier: first + c,
+                weight: 1.0 / 18.0,
+            })
+            .collect()
+    };
+    // Only the voices in force are excited by an event; the others rest.
+    let amplitude = |group: Tuning| {
+        if group == tuning {
+            [material.strike_metres, 0.0]
+        } else {
+            [0.0, 0.0]
+        }
+    };
+    let groups: &[(Tuning, &str)] = if maqam {
+        &[(Tuning::Logic, "#2-1"), (Tuning::Maqam, "#2-4")]
+    } else {
+        &[(Tuning::Logic, "#2-1")]
+    };
+    let octets = groups.iter().flat_map(|&(group, coordinate)| {
+        (0..OCTET).map(move |k| ContinuousMode {
+            mode_ref: group_mode_ref(group, k),
+            source_coordinate: coordinate.into(),
+            material_fibre: fibre,
+            carrier_weights: carriers(),
+            // Bound by the coupled composer; never sounded as 1 Hz.
+            frequency_hz: 1.0,
+            amplitude: amplitude(group),
+            excitation: [0.0, 0.0],
+            damping_per_second: material.damping_per_second,
+            nodal_state_ref: format!(
+                "scene:{}/{k}/boundary/{}",
+                group.code(),
+                (k / 4) * 2 + usize::from(k % 4 >= 2)
+            ),
+            antinodal_state_ref: format!("scene:{}/{k}/place/{}", group.code(), k % 4 + 1),
+        })
+    });
     ResonatorState {
         stamp: input.m2.stamp.clone(),
         provider_ref: PROVIDER.into(),
@@ -512,22 +752,16 @@ fn resonator(
                 mode_ref: voice_mode_ref(PLANETS[i]),
                 source_coordinate: PLANETS[i].into(),
                 material_fibre: fibre,
-                // The condition fixes the element; no carrier within its fibre is
-                // preferred by source, so the weight is spread evenly over all 18.
-                carrier_weights: (0..18)
-                    .map(|c| CarrierWeight {
-                        carrier: first + c,
-                        weight: 1.0 / 18.0,
-                    })
-                    .collect(),
+                carrier_weights: carriers(),
                 // Bound to the sky by the coupled composer; never sounded as 1 Hz.
                 frequency_hz: 1.0,
-                amplitude: [material.strike_metres, 0.0],
+                amplitude: amplitude(Tuning::Sky),
                 excitation: [0.0, 0.0],
                 damping_per_second: material.damping_per_second,
                 nodal_state_ref: format!("scene:planet/{}/nodal-quartet/{}", PLANETS[i], i % 4),
                 antinodal_state_ref: format!("scene:planet/{}/sky", PLANETS[i]),
             })
+            .chain(octets)
             .collect(),
     }
 }
@@ -540,17 +774,56 @@ pub fn complete(
     event: &CoupledInput,
     material: &SceneMaterial,
     hint: MaterialFibre,
+    tuning: Tuning,
 ) -> Result<(CoupledInput, CoupledBasis), String> {
-    let mut input = event.clone();
-    input.sky_frequency_bindings = PLANETS
-        .iter()
-        .map(|planet| SkyFrequencyBinding {
-            mode_ref: voice_mode_ref(planet),
-            planet_ref: (*planet).into(),
-        })
-        .collect();
-    input.m2.resonator = Some(resonator(&input, material, hint));
-    let first = input.compose()?;
+    let voiced = |maqam: bool, fibre: MaterialFibre| {
+        let mut input = event.clone();
+        input.sky_frequency_bindings = PLANETS
+            .iter()
+            .map(|planet| SkyFrequencyBinding {
+                mode_ref: voice_mode_ref(planet),
+                planet_ref: (*planet).into(),
+            })
+            .collect();
+        input.frequency_bindings = (0..OCTET)
+            .map(|k| FrequencyBinding {
+                mode_ref: group_mode_ref(Tuning::Logic, k),
+                octet_index: k as u8,
+            })
+            .collect();
+        input.condition_frequency_bindings = if maqam {
+            (0..OCTET)
+                .map(|k| ConditionFrequencyBinding {
+                    mode_ref: group_mode_ref(Tuning::Maqam, k),
+                    pitch_index: k as u8,
+                })
+                .collect()
+        } else {
+            Vec::new()
+        };
+        input.m2.resonator = Some(resonator(&input, material, fibre, tuning, maqam));
+        input
+    };
+    // The maqām is resident only where the event's own condition admits its
+    // eight pitches (a v2/v3 event with a source path and a supported tuning);
+    // otherwise the scene holds the sky and the octet, and Maqām is refused by
+    // name when chosen.
+    let admits_maqam = event.schema != super::coupled::REQUEST;
+    let (mut maqam, mut input) = (admits_maqam, voiced(admits_maqam, hint));
+    let first = match input.compose() {
+        Ok(basis) => basis,
+        Err(_) if maqam => {
+            maqam = false;
+            input = voiced(false, hint);
+            input.compose()?
+        }
+        Err(error) => return Err(error),
+    };
+    if tuning == Tuning::Maqam && !maqam {
+        return Err(
+            "this scene holds no maqam voices: its event's M2 condition admits none".into(),
+        );
+    }
     let fibre: MaterialFibre = serde_json::from_value(
         first.m2["condition"]["source_path"]["material_fibre"].clone(),
     )
@@ -560,7 +833,7 @@ pub fn complete(
     if fibre == hint {
         return Ok((input, first));
     }
-    input.m2.resonator = Some(resonator(&input, material, fibre));
+    let input = voiced(maqam, fibre);
     let basis = input.compose()?;
     Ok((input, basis))
 }
@@ -592,6 +865,11 @@ pub struct BindingRequest {
     /// Optional Nara constitution for a personal reception of this event.
     #[serde(default)]
     pub reception: Option<PersonalConstitution>,
+}
+
+/// QL's default starting event: the dated scene the binding opens on.
+pub fn default_event() -> Result<CoupledInput, String> {
+    serde_json::from_str(DEFAULT_EVENT).map_err(|e| e.to_string())
 }
 
 /// 64×64 resolves the highest nodal order (m, n ≤ 12: at most 12 crossings a
@@ -778,7 +1056,12 @@ pub fn binding(request: BindingRequest) -> Result<Value, String> {
     };
     config.validate()?;
     // Compose once here so an unusable event is refused before any owner opens.
-    let (_, basis) = complete(&config.basis, &config.material, MaterialFibre::Earth)?;
+    let (_, basis) = complete(
+        &config.basis,
+        &config.material,
+        MaterialFibre::Earth,
+        Tuning::Sky,
+    )?;
     let sky = config
         .basis
         .source_receipts
@@ -879,6 +1162,19 @@ pub struct StrikeAtOutcome {
     pub receipt: Value,
 }
 
+/// The receipt of one played Torus act (`torus-play`).
+pub const TORUS_PLAY_RECEIPT: &str = "ql.torus-play/v1";
+/// The standing of a played note's own cell.
+const NOTE_CELL_STANDING: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental. Disclosed per note; the native owner sounds the resident voices of the tuning in force at the struck point, so a per-note voice bank sounding each cell's own eight is not built (QL-MEF #287 packet A)";
+
+/// What a played Torus act did: the field, the notes and the strike.
+#[derive(Debug, Clone)]
+pub struct TorusPlayOutcome {
+    pub field: Value,
+    pub receipt: Value,
+    pub strike_at: Value,
+}
+
 /// One live scene instrument over one native coupled owner.
 pub struct SceneInstrument {
     instance_ref: String,
@@ -888,12 +1184,21 @@ pub struct SceneInstrument {
     shape: ShapeBasis,
     event: CoupledInput,
     personal: Option<PersonalFieldInstance>,
+    /// The Torus's M1′ session: its pulse runs on this owner's sample clock.
+    torus: m1_prime::Session,
 }
 
 impl SceneInstrument {
     pub fn open(worker: &Path, config: SceneConfig, timeout: Duration) -> Result<Self, String> {
         config.validate()?;
-        let (input, basis) = complete(&config.basis, &config.material, MaterialFibre::Earth)?;
+        // The scene opens under Sky: the DLW scene's own voices.
+        let tuning = Tuning::Sky;
+        let (input, basis) = complete(
+            &config.basis,
+            &config.material,
+            MaterialFibre::Earth,
+            tuning,
+        )?;
         let shape = ShapeBasis::from_basis(&basis)?;
         let field = FieldInput {
             subject_ref: config.field.subject_ref.clone(),
@@ -908,7 +1213,10 @@ impl SceneInstrument {
                 position: "m".into(),
                 audio: "linear".into(),
             },
-            audio_gains: vec![config.material.audio_gain_per_metre; VOICES],
+            audio_gains: vec![
+                config.material.audio_gain_per_metre;
+                shape.resident_voices().count()
+            ],
             samples: shape.samples(&config.geometry)?,
             shape_ref: Some(shape.shape_ref.clone()),
         };
@@ -916,7 +1224,17 @@ impl SceneInstrument {
             .reception
             .map(PersonalFieldInstance::new)
             .transpose()?;
+        let sample_rate = config.field.sample_rate;
         let session = CoupledFieldSession::open(worker, input.clone(), field, timeout)?;
+        let opened = samples_of(session.last_field());
+        let torus = m1_prime::Session::open(
+            m1_prime::Settings {
+                tuning,
+                ..m1_prime::Settings::default()
+            },
+            sample_rate,
+            opened,
+        )?;
         Ok(Self {
             instance_ref: config.instance_ref,
             geometry: config.geometry,
@@ -925,7 +1243,173 @@ impl SceneInstrument {
             shape,
             event: input,
             personal,
+            torus,
         })
+    }
+
+    /// The tuning in force: which resident voices a strike reaches.
+    pub fn tuning(&self) -> Tuning {
+        self.torus.settings().tuning
+    }
+
+    /// The Torus's M1′ session.
+    pub fn torus(&self) -> &m1_prime::Session {
+        &self.torus
+    }
+
+    /// The owner's acknowledged sample cursor.
+    fn samples_now(&self) -> u64 {
+        samples_of(self.session.last_field())
+    }
+
+    /// The Torus's disclosure at the owner's cursor: every setting, the band,
+    /// the pulse, the shape, the comma, the notes and the resident tunings.
+    pub fn torus_reading(&self) -> Value {
+        let map_hz = self.event.map_hz().unwrap_or(SKY_ROOT_HZ);
+        let mut reading = self.torus.reading(self.samples_now(), map_hz);
+        reading["resident_tunings"] = json!(
+            Tuning::ALL
+                .iter()
+                .filter(|tuning| self.shape.resident(**tuning))
+                .collect::<Vec<_>>()
+        );
+        reading["sounding_voices"] = json!(self.shape.group(self.tuning()).len());
+        reading
+    }
+
+    /// One edit of the Torus session (`torus-set`). Session settings move no
+    /// native state; a Fundamental change is one modes continuation of the
+    /// SAME resident voices, every voice one ratio over the new Fundamental.
+    /// A refused edit changes nothing. Returns the field when the owner moved.
+    pub fn torus_set(&mut self, edit: &m1_prime::SettingsEdit) -> Result<Option<Value>, String> {
+        if edit.is_empty() {
+            return Err("a Torus edit names at least one setting".into());
+        }
+        let mut next = self.torus.clone();
+        let moved = next.edit(edit, self.samples_now())?;
+        if !self.shape.resident(next.settings().tuning) {
+            return Err(format!(
+                "this scene holds no {} voices: its event admits none",
+                next.settings().tuning.code()
+            ));
+        }
+        let field = if moved.contains(&"fundamental") {
+            let hz = match next.settings().fundamental {
+                m1_prime::Fundamental::Map => None,
+                m1_prime::Fundamental::Hz { hz } => Some(hz),
+            };
+            Some(self.set_fundamental(hz)?)
+        } else {
+            None
+        };
+        self.torus = next;
+        Ok(field)
+    }
+
+    /// The Fundamental on the SAME resident voices: one modes continuation,
+    /// no strike and no reshape (one ratio keeps every weight).
+    fn set_fundamental(&mut self, hz: Option<f64>) -> Result<Value, String> {
+        let mut event = self.event();
+        event.fundamental_hz = hz;
+        let event = next_generation(&event, self.event.m2.stamp.identity.profile_generation)?;
+        let (input, basis) = complete(&event, &self.material, self.fibre(), self.tuning())?;
+        let shape = ShapeBasis::from_basis(&basis)?;
+        if !shape.same_body(&self.shape) {
+            return Err("a Fundamental edit cannot change the scene's shapes".into());
+        }
+        let field = self.session.replace_field_state(input.clone(), false)?;
+        self.event = input;
+        self.shape = shape;
+        Ok(field)
+    }
+
+    /// A played Torus act (`torus-play`): each key strikes its moving point
+    /// (`janko::JankoSurface::point` at the pulse) on the voices of the tuning
+    /// in force, as one strike at points; each key is a new note, and past
+    /// Polyphony the oldest make way. The receipt names every note's place,
+    /// point and own cell. A refused act changes nothing.
+    pub fn torus_play(
+        &mut self,
+        keys: &[crate::janko::JankoKey],
+        amplitude: [f64; 2],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<TorusPlayOutcome, String> {
+        if keys.is_empty() || keys.len() > usize::from(m1_prime::POLYPHONY_MAX) {
+            return Err(format!(
+                "a Torus act strikes 1 to {} keys",
+                m1_prime::POLYPHONY_MAX
+            ));
+        }
+        if keys.iter().any(|key| key.row >= crate::janko::ROWS) {
+            return Err("a Jankó key's row is 0 to 5".into());
+        }
+        let at = at_samples_elapsed.unwrap_or_else(|| self.samples_now());
+        let steps = self.torus.steps_at(at);
+        let surface = crate::janko::JankoSurface::new();
+        let points: Vec<crate::janko::KeyPoint> =
+            keys.iter().map(|key| surface.point(*key, steps)).collect();
+        let strikes: Vec<StrikeAtInput> = points
+            .iter()
+            .map(|point| StrikeAtInput {
+                theta: point.theta,
+                phi: point.phi,
+                amplitude,
+            })
+            .collect();
+        let seed: crate::m2_vimarsha::VimarshaSeed = serde_json::from_value(
+            self.session.current_basis().m2["vimarsha"]["reading"]["seed"].clone(),
+        )
+        .map_err(|_| "the event carries no Vimarśā seed to read a note's cell from")?;
+        let map_hz = self.event.map_hz()?;
+        let scale = self.torus.fundamental_hz(map_hz) / map_hz;
+        let cells = points
+            .iter()
+            .map(|point| {
+                let reading = crate::m2_vimarsha::read_seed(crate::m2_vimarsha::VimarshaSeed {
+                    tick12: point.arc,
+                    ..seed
+                })?;
+                Ok(json!({
+                    "tick12": point.arc,
+                    "voices_hz": reading.audio_octet_hz.iter().map(|hz| f64::from(*hz) * scale).collect::<Vec<_>>(),
+                    "boundaries": reading.nodal_quartet,
+                    "standing": NOTE_CELL_STANDING,
+                }))
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        let outcome = self.strike_at_when(&strikes, at_samples_elapsed)?;
+        let admission = self.torus.strike(keys, at);
+        let notes: Vec<Value> = admission
+            .admitted
+            .iter()
+            .zip(points.iter().zip(&cells))
+            .map(|(note, (point, cell))| {
+                json!({"id": note.id, "key": note.key, "place": point.place,
+                    "point": point, "cell": cell})
+            })
+            .collect();
+        let receipt = json!({
+            "schema": TORUS_PLAY_RECEIPT,
+            "notes": notes,
+            "made_way": admission.made_way,
+            "polyphony": self.torus.settings().polyphony,
+            "tuning": self.tuning(),
+            "pulse": self.torus.pulse(at),
+            "at_samples_elapsed": outcome.receipt["at_samples_elapsed"],
+            "law": crate::janko::POINT_LAW,
+        });
+        Ok(TorusPlayOutcome {
+            field: outcome.field,
+            receipt,
+            strike_at: outcome.receipt,
+        })
+    }
+
+    /// Releases keys from the count of notes (`torus-release`). The body rings
+    /// on — a released note keeps its tail for as long as Damping lets it — so
+    /// no native state moves.
+    pub fn torus_release(&mut self, keys: &[crate::janko::JankoKey]) -> Vec<m1_prime::Note> {
+        self.torus.release(keys)
     }
 
     /// The element the voices currently sound in.
@@ -995,6 +1479,8 @@ impl SceneInstrument {
         let mut event = self.event.clone();
         event.m2.resonator = None;
         event.sky_frequency_bindings.clear();
+        event.frequency_bindings.clear();
+        event.condition_frequency_bindings.clear();
         event
     }
 
@@ -1002,7 +1488,8 @@ impl SceneInstrument {
     /// a re-read nodal quartet/72-address reshapes the same voices explicitly.
     pub fn replace(&mut self, event: &CoupledInput, strike: bool) -> Result<Value, String> {
         let event = next_generation(event, self.event.m2.stamp.identity.profile_generation)?;
-        let (mut input, basis) = complete(&event, &self.material, self.fibre())?;
+        let (mut input, basis) = complete(&event, &self.material, self.fibre(), self.tuning())?;
+        let before = tonic(self.event.m1.lens12);
         // The applied command batch is consumed: its effects and receipts live
         // in the composed basis, and a retained command would replay its
         // already-stale generation check on the next composition. The event's
@@ -1015,10 +1502,17 @@ impl SceneInstrument {
         let shape = ShapeBasis::from_basis(&basis)?;
         let mut field = self.session.replace_field_state(input.clone(), strike)?;
         self.event = input;
-        if shape.shape_ref != self.shape.shape_ref || shape.voices != self.shape.voices {
-            let shapes = shape.shapes(&self.geometry)?;
-            field = self.session.replace_shapes(&shape.shape_ref, shapes)?;
+        if shape != self.shape {
+            if !shape.same_body(&self.shape) {
+                let shapes = shape.shapes(&self.geometry)?;
+                field = self.session.replace_shapes(&shape.shape_ref, shapes)?;
+            }
             self.shape = shape;
+        }
+        // The mode crossing a tritone shows the Klein bottle for one step
+        // (DLW manual §21.2 Shape; M1′ seed lines 506–508).
+        if (tonic(self.event.m1.lens12) + 12 - before) % 12 == 6 {
+            self.torus.cross_tritone(self.samples_now());
         }
         Ok(field)
     }
@@ -1036,7 +1530,7 @@ impl SceneInstrument {
             &self.event(),
             self.event.m2.stamp.identity.profile_generation,
         )?;
-        let (input, basis) = complete(&event, &material, self.fibre())?;
+        let (input, basis) = complete(&event, &material, self.fibre(), self.tuning())?;
         if ShapeBasis::from_basis(&basis)? != self.shape {
             return Err("a damping edit cannot change the scene shape or voices".into());
         }
@@ -1071,8 +1565,7 @@ impl SceneInstrument {
         for act in strikes {
             if !self
                 .shape
-                .voices
-                .iter()
+                .resident_voices()
                 .any(|voice| voice.mode_ref == act.mode_ref)
                 || !seen.insert(&act.mode_ref)
             {
@@ -1112,7 +1605,7 @@ impl SceneInstrument {
         points: &[StrikeAtInput],
         at_samples_elapsed: Option<u64>,
     ) -> Result<StrikeAtOutcome, String> {
-        let impulses = self.shape.strike_at(points)?;
+        let impulses = self.shape.strike_at_tuned(points, self.tuning())?;
         let mut receipt = self.shape.strike_at_receipt(points, &impulses);
         let lands = match at_samples_elapsed {
             Some(at) => json!(at.to_string()),
@@ -1184,8 +1677,13 @@ impl SceneInstrument {
             "m3_generation": basis.m3["identity"]["profile_generation"],
             "shape_ref": self.shape.shape_ref,
             "address72": self.shape.address72,
-            "voices": self.shape.voices,
-            "played_addresses": played_addresses(&self.shape.voices, basis.input.m1.lens12),
+            "tuning": self.tuning(),
+            "voices": self.shape.group(self.tuning()),
+            "boundaries": self.shape.boundaries,
+            "resident_tunings": Tuning::ALL.iter().filter(|t| self.shape.resident(**t)).collect::<Vec<_>>(),
+            "group_place_standing": GROUP_PLACE_STANDING,
+            "fundamental_hz": self.torus.fundamental_hz(self.event.map_hz().unwrap_or(SKY_ROOT_HZ)),
+            "played_addresses": played_addresses(self.shape.group(self.tuning()), basis.input.m1.lens12),
             "geometry": self.geometry,
             "material": self.material,
             "material_standing": MATERIAL_STANDING,
@@ -1221,6 +1719,12 @@ impl SceneInstrument {
                  "units":"torus units × metres_per_unit", "range":"|x|,|y| ≤ 25/9, |z| ≤ 1", "timing":"fixed per instance",
                  "consumer":"K8 rest samples → GPU targets",
                  "warrant":"source-defined (KERNEL-M1-ENGINE-CONTRACT)"},
+                {"determinant":"the Torus's Tuning and Fundamental (O-I #850)",
+                 "through":"resident groups: Sky the planets, Logic m2.vimarsha.reading.audio_octet_hz, Maqām m2.condition.musical.pitches_hz; × Fundamental / the map's 1:1",
+                 "effect":"which resident voices a strike reaches, and every voice's frequency as one ratio over the Fundamental",
+                 "units":"tuning; Hz", "range":"Logic · Maqām · Sky; 20..2000 Hz or the map's 1:1", "timing":"tuning: no native state moves; Fundamental: one modes continuation",
+                 "consumer":"K8 modal owner",
+                 "warrant":"DLW manual §21.2; the octet's and maqām's places are declared (group_place_standing)"},
                 {"determinant":"material policy",
                  "through":"damping, strike, gain, metres_per_unit",
                  "effect":"decay, loudness and visible amplitude",
@@ -1238,6 +1742,7 @@ mod tests {
 
     fn voice(m: u8, n: u8, weight: f64, phase: f64) -> Voice {
         Voice {
+            tuning: Tuning::Sky,
             planet_ref: "#2-5-0/1",
             mode_ref: voice_mode_ref("#2-5-0/1"),
             longitude_radians: 0.0,
@@ -1315,6 +1820,9 @@ mod tests {
             shape_ref: "t".into(),
             address72: 0,
             voices: std::array::from_fn(|_| voice(1, 2, 1.0, 0.0)),
+            octet: Vec::new(),
+            maqam: Vec::new(),
+            boundaries: Vec::new(),
         };
         let samples = basis.samples(&geometry).unwrap();
         assert_eq!(samples.len(), 32);
@@ -1355,6 +1863,9 @@ mod tests {
             shape_ref: "t".into(),
             address72: 0,
             voices: std::array::from_fn(|_| voice(m, n, 1.0, 0.7)),
+            octet: Vec::new(),
+            maqam: Vec::new(),
+            boundaries: Vec::new(),
         };
         assert_ne!(
             shape(2, 3).shapes(&geometry).unwrap(),
@@ -1370,6 +1881,7 @@ mod scene_tests {
     #[test]
     fn a_voice_is_anchored_at_its_planets_longitude() {
         let base = Voice {
+            tuning: Tuning::Sky,
             planet_ref: "#2-5-4",
             mode_ref: voice_mode_ref("#2-5-4"),
             longitude_radians: 0.0,

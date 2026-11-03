@@ -210,6 +210,7 @@ pub fn world(request: WorldRequest) -> Result<Value, String> {
         condition_frequency_bindings: vec![],
         sky_frequency_bindings: vec![],
         source_receipts: vec![request.sky.clone()],
+        fundamental_hz: None,
     };
     scene_field::attach_sky(&mut event, &request.sky)?;
     // Derive the active MEF/Vimarsha through the coupled owner before admitting

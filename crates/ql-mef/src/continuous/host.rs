@@ -118,6 +118,32 @@ pub enum HostOperation {
     /// live field identity; refuses by name when no score has been resolved
     /// on this host, and discloses a stale basis instead of re-deriving.
     ScoreState {},
+    /// scene only: the Torus's M1′ session (O-I #850) — every setting, the
+    /// band beside the rate, the pulse, the shape, the comma and the notes.
+    /// Read-only: the field does not advance.
+    TorusState {},
+    /// scene only: one edit of the Torus session. Rate, Carrier, Shape,
+    /// Tuning, Polyphony and the set's tempo move no native state; the
+    /// Fundamental is one modes continuation of the same resident voices.
+    TorusSet {
+        edit: Box<crate::m1_prime::SettingsEdit>,
+    },
+    /// scene only: keys of the Jankó surface strike their moving points on
+    /// the voices of the tuning in force (one strike at points); each key is a
+    /// new note and past Polyphony the oldest make way. A performance act, not
+    /// a determinant; `at_samples_elapsed` as for `strike`.
+    TorusPlay {
+        keys: Vec<crate::janko::JankoKey>,
+        #[serde(deserialize_with = "super::number::pair")]
+        amplitude: [f64; 2],
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        at_samples_elapsed: Option<String>,
+    },
+    /// scene only: release keys from the count of notes. The body rings on,
+    /// so no native state moves.
+    TorusRelease {
+        keys: Vec<crate::janko::JankoKey>,
+    },
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -425,7 +451,11 @@ impl FieldHost {
                 | HostOperation::ReceivePersonal { .. }
                 | HostOperation::Personal {}
                 | HostOperation::ScoreResolve { .. }
-                | HostOperation::ScoreState {},
+                | HostOperation::ScoreState {}
+                | HostOperation::TorusState {}
+                | HostOperation::TorusSet { .. }
+                | HostOperation::TorusPlay { .. }
+                | HostOperation::TorusRelease { .. },
                 _,
             ) => unreachable!("non-stage commands returned before stage dispatch"),
         };
@@ -525,6 +555,70 @@ impl FieldHost {
                     "unavailable"
                 };
                 self.response(Some(&request.request_id), status, Some(&error))
+            }
+        }
+    }
+
+    /// Dispatches the Torus's M1′ session operations (O-I #850). Scene-only.
+    /// Every answer carries the session reading as `torus`; a played act adds
+    /// its `torus_play` and `strike_at` receipts, and an edit its influence
+    /// reading (the tuning and the voices' frequencies the owner reports). An
+    /// operation that moves no native state answers with the last
+    /// acknowledged field, its generation unchanged.
+    fn torus_operation(&mut self, request: HostRequest) -> Value {
+        let Owner::Scene(instrument) = &mut self.session else {
+            return self.response(
+                Some(&request.request_id),
+                "refused",
+                Some("the Torus belongs to a provider-composed scene owner"),
+            );
+        };
+        let mut extra = serde_json::Map::new();
+        let outcome: Result<Option<Value>, String> = match request.command {
+            HostOperation::TorusState {} => Ok(None),
+            HostOperation::TorusSet { edit } => instrument.torus_set(&edit).inspect(|_| {
+                extra.insert("influence".into(), instrument.influence());
+            }),
+            HostOperation::TorusPlay {
+                keys,
+                amplitude,
+                at_samples_elapsed,
+            } => landing(at_samples_elapsed.as_deref())
+                .and_then(|at| instrument.torus_play(&keys, amplitude, at))
+                .map(|outcome| {
+                    extra.insert("torus_play".into(), outcome.receipt);
+                    extra.insert("strike_at".into(), outcome.strike_at);
+                    Some(outcome.field)
+                }),
+            HostOperation::TorusRelease { keys } => {
+                let released = instrument.torus_release(&keys);
+                extra.insert("released".into(), json!(released));
+                Ok(None)
+            }
+            _ => unreachable!("only Torus operations reach the Torus dispatch"),
+        };
+        let torus = instrument.torus_reading();
+        match outcome {
+            Ok(field) => {
+                let mut response = self.response(Some(&request.request_id), "ok", None);
+                if let Some(field) = field {
+                    response["field"] = field;
+                }
+                response["torus"] = torus;
+                for (key, value) in extra {
+                    response[key] = value;
+                }
+                response
+            }
+            Err(error) => {
+                let status = if self.available() {
+                    "refused"
+                } else {
+                    "unavailable"
+                };
+                let mut response = self.response(Some(&request.request_id), status, Some(&error));
+                response["torus"] = torus;
+                response
             }
         }
     }
@@ -655,6 +749,15 @@ impl FieldHost {
         ) {
             return self.score_operation(&request);
         }
+        if matches!(
+            &request.command,
+            HostOperation::TorusState {}
+                | HostOperation::TorusSet { .. }
+                | HostOperation::TorusPlay { .. }
+                | HostOperation::TorusRelease { .. }
+        ) {
+            return self.torus_operation(request);
+        }
         // A scene determinant event answers with its new influence reading, so a
         // consumer needs no second exchange while its audio waits.
         let determinant = matches!(
@@ -744,7 +847,11 @@ impl FieldHost {
                 | HostOperation::StageBind { .. }
                 | HostOperation::StageUnbind { .. }
                 | HostOperation::ScoreResolve { .. }
-                | HostOperation::ScoreState {},
+                | HostOperation::ScoreState {}
+                | HostOperation::TorusState {}
+                | HostOperation::TorusSet { .. }
+                | HostOperation::TorusPlay { .. }
+                | HostOperation::TorusRelease { .. },
                 _,
             ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };

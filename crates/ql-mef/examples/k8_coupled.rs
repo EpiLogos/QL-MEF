@@ -140,6 +140,7 @@ fn run() -> Result<(), String> {
         condition_frequency_bindings: condition_bindings,
         sky_frequency_bindings: vec![],
         source_receipts: vec![event["sky"].clone()],
+        fundamental_hz: None,
     };
     let original = serde_json::to_value(&input).unwrap();
     let out = Path::new(&args[4]);

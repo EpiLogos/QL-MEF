@@ -598,7 +598,23 @@
    ],
    "rationale": "The Jankó controller projection of the accepted #31 musical object (docs/music/JANKO-QL-INSTRUMENT-FIGURE.md): six rows are the kernel's direct/conjugate whole-tone helices held three times as repeated touch-points, the neighbouring interleaved row is the semitone-shifted complementary collection through the basis's own conjugate axis, and the fifths basis enters only as a second traversal over the same Z12 substrate. The surface holds no pitch table and introduces no musical semantics: the controller reads the accepted derivation, it does not author it (figure §5.7).",
    "tests": [
-    "crates/ql-mef/tests/janko_surface.rs"
+    "crates/ql-mef/tests/janko_surface.rs",
+    "crates/ql-mef/tests/m1_prime_session.rs"
+   ],
+   "kind": "computational"
+  },
+  {
+   "path": "crates/ql-mef/src/m1_prime.rs",
+   "stratum": "rust",
+   "disposition": "cross-coordinate",
+   "coordinates": [
+    "#1-3",
+    "#1-5-1"
+   ],
+   "rationale": "The Torus's M1′ played session (O-I #850; DLW manual §21.2; M1′ seed §2.M1-1′): the rate of the one pulse round the spanda ring of twelve (#1-3) and its five bands with phase continuity, Free and Sync, the Fundamental over the map's 1:1, the Carrier held as a setting, the Shape with its Auto figures, the Tuning, Polyphony with the oldest note making way, and one Pythagorean comma (six epogdoons over the octave) per full 720° return of the M1 torus (#1-5-1), from nothing at open. It holds no oscillator and no field: the scene owner keeps the body.",
+   "tests": [
+    "crates/ql-mef/tests/m1_prime_session.rs",
+    "crates/ql-mef/tests/torus_host.rs"
    ],
    "kind": "computational"
   },
