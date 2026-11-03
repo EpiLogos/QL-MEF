@@ -140,6 +140,12 @@ pub struct CoupledInput {
     /// The sky bus. Empty is omitted, so earlier inputs replay unchanged.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub sky_frequency_bindings: Vec<SkyFrequencyBinding>,
+    /// The Fundamental (O-I #850; DLW manual §21.2): the frequency the map's
+    /// 1:1 stands on, 20 to 2,000 Hz. Every bound voice of every bus is the
+    /// same ratio over it. Absent is the map's own 1:1 — the root M1's harmonic
+    /// ratio scales — and is omitted, so earlier inputs replay unchanged.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fundamental_hz: Option<f64>,
     /// Complete host-admitted receipts. V3 consumes QL's accepted
     /// `ql.vak-performance-event/v1`, which itself retains the Factory owner
     /// snapshot. Retention is not authentication or permission to disclose.
@@ -264,7 +270,43 @@ impl CoupledInput {
         out
     }
 
+    /// The harmonic ratio M1 lays on the root, as the composer selects it.
+    fn harmonic_ratio(&self) -> Result<crate::m1::RatioEvidence, String> {
+        Ok(match self.harmonic_source {
+            HarmonicSource::SelectedSourceRow => crate::m1::source_ratio(
+                self.m1.family,
+                self.m1.row12,
+            )?
+            .ok_or(
+                "selected M1 row has no admitted harmonic ratio; choose an explicit native basis",
+            )?,
+            HarmonicSource::CanonicalBasis { index } => crate::m1::ratio_basis()?
+                .get(usize::from(index))
+                .cloned()
+                .ok_or("harmonic basis index outside the native eight")?,
+        })
+    }
+
+    /// The map's 1:1 in Hz: the root (`SKY_ROOT_HZ`) times M1's harmonic
+    /// ratio — the frequency the map gives the Sun, which the Fundamental's
+    /// Map stands on.
+    pub fn map_hz(&self) -> Result<f64, String> {
+        let ratio = self.harmonic_ratio()?.ratio;
+        Ok(SKY_ROOT_HZ * f64::from(ratio[0]) / f64::from(ratio[1]))
+    }
+
     pub fn compose(&self) -> Result<CoupledBasis, String> {
+        if let Some(hz) = self.fundamental_hz
+            && !(hz.is_finite()
+                && (crate::m1_prime::FUNDAMENTAL_MIN..=crate::m1_prime::FUNDAMENTAL_MAX)
+                    .contains(&hz))
+        {
+            return Err(format!(
+                "the Fundamental is the map's 1:1 or {:.0} to {:.0} Hz",
+                crate::m1_prime::FUNDAMENTAL_MIN,
+                crate::m1_prime::FUNDAMENTAL_MAX
+            ));
+        }
         if !matches!(self.schema.as_str(), REQUEST | REQUEST_V2 | REQUEST_V3)
             || (self.schema == REQUEST && !self.condition_frequency_bindings.is_empty())
             || self.m3_commands.len() > 64
@@ -312,19 +354,7 @@ impl CoupledInput {
             // They are not guessed targets and do not cancel the valid basis.
             receipts.push(serde_json::to_value(receipt).map_err(|e| e.to_string())?);
         }
-        let ratio = match self.harmonic_source {
-            HarmonicSource::SelectedSourceRow => crate::m1::source_ratio(
-                self.m1.family,
-                self.m1.row12,
-            )?
-            .ok_or(
-                "selected M1 row has no admitted harmonic ratio; choose an explicit native basis",
-            )?,
-            HarmonicSource::CanonicalBasis { index } => crate::m1::ratio_basis()?
-                .get(usize::from(index))
-                .cloned()
-                .ok_or("harmonic basis index outside the native eight")?,
-        };
+        let ratio = self.harmonic_ratio()?;
         let ratio16 = [
             u16::try_from(ratio.ratio[0]).map_err(|_| "harmonic numerator exceeds M2 input")?,
             u16::try_from(ratio.ratio[1]).map_err(|_| "harmonic denominator exceeds M2 input")?,
@@ -395,6 +425,10 @@ impl CoupledInput {
             .ok_or("missing joined Vimarsha reading")?
             .reading
             .audio_octet_hz;
+        // The Fundamental: one uniform ratio over the map's 1:1. Absent, the
+        // scale is exactly 1, so every bound frequency is bit-for-bit unchanged.
+        let map_hz = SKY_ROOT_HZ * f64::from(ratio16[0]) / f64::from(ratio16[1]);
+        let scale = self.fundamental_hz.map_or(1.0, |hz| hz / map_hz);
         let mut seen = BTreeSet::new();
         for binding in &self.frequency_bindings {
             let frequency = *audio
@@ -411,7 +445,7 @@ impl CoupledInput {
                 .iter_mut()
                 .find(|m| m.mode_ref == binding.mode_ref)
                 .ok_or("frequency binding does not name an existing material mode")?;
-            mode.frequency_hz = f64::from(frequency);
+            mode.frequency_hz = f64::from(frequency) * scale;
         }
         for binding in &self.condition_frequency_bindings {
             let condition = initial
@@ -440,7 +474,7 @@ impl CoupledInput {
                 .iter_mut()
                 .find(|m| m.mode_ref == binding.mode_ref)
                 .ok_or("condition frequency binding does not name an existing material mode")?;
-            mode.frequency_hz = frequency;
+            mode.frequency_hz = frequency * scale;
         }
         let mut sky_voices = Vec::new();
         if !self.sky_frequency_bindings.is_empty() {
@@ -455,7 +489,8 @@ impl CoupledInput {
                     .ok_or("the map states no just ratio for this planet")?;
                 let frequency = SKY_ROOT_HZ * f64::from(ratio16[0]) / f64::from(ratio16[1])
                     * f64::from(ratio[0])
-                    / f64::from(ratio[1]);
+                    / f64::from(ratio[1])
+                    * scale;
                 if !seen.insert(&binding.mode_ref) {
                     return Err(
                         "duplicate material-mode frequency binding across musical buses".into(),
@@ -503,6 +538,13 @@ impl CoupledInput {
                 "just_ratio_source":"M2-5 m_2_5_interval_from_root, fixtures/kernel/m2-sky-v1.json",
                 "sky_revision":crate::m2_sky::sky().map_content_sha256,
                 "standing":"owner-ruled tuning target (#254 D13); root and scaling are tunable (D30)"
+            });
+        }
+        if let Some(hz) = self.fundamental_hz {
+            derivation["fundamental"] = json!({
+                "hz": hz, "map_hz": map_hz, "scale": scale,
+                "law": "every bound voice of every bus × Fundamental / the map's 1:1 (root × M1 harmonic ratio); one uniform ratio, so every voice keeps its ratio over the Fundamental (DLW manual §21.2)",
+                "standing": "performer setting (O-I #850); Map, the default, is the map's own 1:1 and leaves every frequency exactly as composed"
             });
         }
         let played = self.played_addresses();

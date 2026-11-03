@@ -74,6 +74,12 @@ function setup(options = {}) {
         current.generation = String(BigInt(current.generation) + 1n);
         current.amplitudes_metres[0][0] += 0.01;
         current.targets[0].position[2] += 0.25;
+      } else if (request.command.operation === 'torus-play' || (request.command.operation === 'torus-set' &&
+        request.command.edit?.fundamental !== undefined && port.fundamentalMoves !== false)) {
+        // Controlled protocol case (host.rs torus_operation): a played Torus act
+        // is one strike at points; a Fundamental edit one modes continuation.
+        current.generation = String(BigInt(current.generation) + (port.torusStep ?? 1n));
+        current.amplitudes_metres[0][0] += 0.01;
       } else if (request.command.operation === 'stage-evaluate') {
         // Controlled protocol case: the host's own compiled plan applies 1..N
         // admitted applications in one envelope, so the generation moves by
@@ -100,6 +106,12 @@ function setup(options = {}) {
         reply.current = port.scoreCurrent ?? true;
         reply.resolved_event_ref = port.scoreEventRef ?? current.event_ref;
       }
+      if (['torus-state', 'torus-set', 'torus-play', 'torus-release'].includes(request.command.operation))
+        reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [] };
+      if (request.command.operation === 'torus-set')
+        reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
+      if (request.command.operation === 'torus-play')
+        reply.torus_play = { schema: 'ql.torus-play/v1', notes: request.command.keys.map((key, id) => ({ id, key })), made_way: [] };
       if (port.effect) reply = port.effect(reply);
       if (port.delay) await port.delay;
       return reply;
@@ -691,5 +703,45 @@ test('the Tarot score admits only its two reads, and only on an idle admitted ow
   assert.equal(calls.length, 0, 'refused before any exchange');
   session.hold('controlled hold');
   await assert.rejects(session.score({ operation: 'score-state' }), /idle admitted owner/);
+  session.dispose();
+});
+
+test('the Torus session: a read, edits that move no native state, and a Fundamental that moves one generation', async () => {
+  const { session, calls } = setup();
+  const state = await session.torusState();
+  assert.equal(state.schema, 'ql.m1-prime-session/v1');
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-state' });
+  assert.equal(session.reading.acknowledged.generation, '1', 'the session reading does not advance the owner');
+  assert.ok(!session.journal().acts.some(act => act.operation === 'torus-state'), 'a read is not an owner act');
+  await session.torusSet({ rate: { mode: 'free', steps_per_second: 440 }, tuning: 'logic' });
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-set',
+    edit: { rate: { mode: 'free', steps_per_second: 440 }, tuning: 'logic' } });
+  assert.equal(session.reading.acknowledged.generation, '1', 'a session edit moves no native state');
+  assert.equal(session.lastTorus.schema, 'ql.m1-prime-session/v1');
+  assert.equal(session.lastInfluence.tuning, 'logic', 'an edit answers with the voices the owner reports');
+  await session.torusSet({ fundamental: { source: 'hz', hz: 261.6 } });
+  assert.equal(session.reading.acknowledged.generation, '2', 'a Fundamental edit is one modes continuation');
+  await assert.rejects(session.torusSet({}), /at least one setting/);
+  session.dispose();
+});
+
+test('a played Torus act is one generation and keeps its receipt; a release moves nothing', async () => {
+  const { session, calls, port } = setup();
+  await session.torusPlay([{ row: 2, column: 1 }, { row: 3, column: 1 }], { amplitude: [0.1, 0] });
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-play',
+    keys: [{ row: 2, column: 1 }, { row: 3, column: 1 }], amplitude: [0.1, 0] });
+  assert.equal(session.reading.acknowledged.generation, '2', 'a chord of keys is one strike at points');
+  assert.equal(session.lastTorusPlay.notes.length, 2);
+  await session.torusRelease([{ row: 2, column: 1 }]);
+  assert.equal(session.reading.acknowledged.generation, '2', 'the body rings on: no native state moves');
+  assert.deepEqual(session.journal().acts.map(act => act.operation), ['torus-play', 'torus-release']);
+  // Refused before any exchange: a key off the six rows, an impulse past the policy.
+  const sent = calls.length;
+  await assert.rejects(session.torusPlay([{ row: 6, column: 0 }]), /row \(0\.\.5\)/);
+  await assert.rejects(session.torusPlay([{ row: 0, column: 0 }], { amplitude: [1.5, 0] }), /within 1\.0/);
+  assert.equal(calls.length, sent);
+  // A host whose play did not move the cursor disagrees with the law.
+  port.torusStep = 0n;
+  await assert.rejects(session.torusPlay([{ row: 0, column: 0 }]), /disagree/);
   session.dispose();
 });

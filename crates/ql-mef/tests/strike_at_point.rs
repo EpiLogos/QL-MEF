@@ -8,7 +8,7 @@
 use std::f64::consts::{PI, TAU};
 
 use ql_mef::continuous::scene_field::{
-    PLANETS, STRIKE_AT_RECEIPT, SceneConfig, ShapeBasis, VOICES, Voice, complete,
+    PLANETS, STRIKE_AT_RECEIPT, SceneConfig, ShapeBasis, Tuning, VOICES, Voice, complete,
 };
 use ql_mef::continuous::{MAX_STRIKE_POINTS, StrikeAtInput, StrikeInput};
 use ql_mef::m2_engine::MaterialFibre;
@@ -32,6 +32,7 @@ fn synthetic_voice(i: usize, phase: f64) -> Voice {
     // (the highest frequency: weight = hz / max, decision D21).
     let weight = (VOICES - i) as f64 / VOICES as f64;
     Voice {
+        tuning: Tuning::Sky,
         planet_ref: PLANETS[i],
         mode_ref: format!("scene:planet/{}", PLANETS[i]),
         longitude_radians: 0.1 * i as f64,
@@ -52,6 +53,9 @@ fn synthetic(phase: f64) -> ShapeBasis {
         shape_ref: "test:synthetic-body".into(),
         address72: 0,
         voices: std::array::from_fn(|i| synthetic_voice(i, phase)),
+        octet: Vec::new(),
+        maqam: Vec::new(),
+        boundaries: Vec::new(),
     }
 }
 
@@ -91,7 +95,13 @@ fn config() -> SceneConfig {
 /// reading's own mode numbers, phases and the planets' longitudes.
 fn scene_shape() -> (SceneConfig, ShapeBasis) {
     let config = config();
-    let (_, basis) = complete(&config.basis, &config.material, MaterialFibre::Earth).unwrap();
+    let (_, basis) = complete(
+        &config.basis,
+        &config.material,
+        MaterialFibre::Earth,
+        Tuning::Sky,
+    )
+    .unwrap();
     let shape = ShapeBasis::from_basis(&basis).unwrap();
     (config, shape)
 }

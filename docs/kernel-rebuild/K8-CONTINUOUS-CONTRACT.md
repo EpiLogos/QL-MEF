@@ -145,3 +145,47 @@ the last known basis with unavailable/unknown standing, never an automatic retry
 or silent new owner. See [acknowledgement admission](K8-ACKNOWLEDGEMENT-CONTRACT.md)
 for exact refusal/re-entry semantics, controlled fault tests and the shared AW94
 profile registration. The numerical and retained-GPU owners above are unchanged.
+
+## The Torus's M1′ session, tuning and Fundamental (O-I #850)
+
+The scene owner (`continuous/scene_field.rs`) holds the Torus's M1′ session
+(`m1_prime.rs`, `ql.m1-prime-session/v1`): the rate of the one pulse (Free, one
+step a year to 40,000 steps a second; Sync, one step per note length of 1/64 to
+8 bars at the set's tempo) with its band beside it (Cosmic < 0.001, Breath to
+0.5, Rhythm to 20, Pitch to 20,000, Beyond), the Fundamental, the Carrier, the
+Shape, the Tuning, Polyphony 1–32 and the comma. The pulse runs on the owner's
+own sample clock and keeps its phase across any change of rate. The comma is one
+Pythagorean comma (531441:524288, six of QL's 9:8 epogdoons over the octave,
+`m1::ratio_basis`) per full return of twelve steps; it starts from nothing when
+the owner opens and grows only as its samples run.
+
+Every tuning group is resident in the one modal basis from open, since the
+native basis is fixed at open: the sky's nine planets (`scene:planet/…`, the
+sky bus), Vimarśā's octet (`scene:logic/0..8`, `m2.vimarsha.reading.audio_octet_hz`)
+and, where the event's own M2 condition admits its eight pitches (a v2/v3 event
+whose tuning the map supplies pitches for), the maqām (`scene:maqam/0..8`,
+`m2.condition.musical.pitches_hz`). The Tuning chooses the group a strike
+reaches; the others rest and keep any tail. An event excites only the group in
+force. The four boundaries (`nodal_quartet`) reach the body as the voices'
+nodal numbers and are disclosed as `boundaries`, never as voices.
+
+The Fundamental (`CoupledInput.fundamental_hz`, 20–2,000 Hz, absent = the map's
+1:1, `CoupledInput::map_hz`) scales every bound voice of every bus by one ratio,
+so each voice keeps its ratio over it. Absent, the scale is exactly 1 and every
+earlier input composes bit-for-bit as before.
+
+| Host operation | Native effect | Generation |
+|---|---|---|
+| `torus-state {}` | none: the session reading as `torus` | unchanged |
+| `torus-set {edit}` | Rate, Carrier, Shape, Tuning, Polyphony, tempo: none. Fundamental: one modes continuation of the same resident voices, no strike, no reshape | unchanged, or +1 for a Fundamental change |
+| `torus-play {keys, amplitude, at_samples_elapsed?}` | each key's moving point at the pulse (`janko::JankoSurface::point`) struck on the tuning in force: one `strike-at` | +1 |
+| `torus-release {keys}` | none: the body rings on | unchanged |
+
+Every answer carries `torus`; `torus-set` adds `influence` (its `tuning`,
+sounding `voices`, `boundaries`, `resident_tunings`, `fundamental_hz`);
+`torus-play` adds `torus_play` (`ql.torus-play/v1`: each note's place, point and
+own cell) and `strike_at` (`ql.strike-at/v1`). Not built, and disclosed as such
+in every reading: the Carrier's drive of the body between strikes (the value is
+held and read back with `drive: "unbuilt"`) and a per-note voice bank sounding
+each note's own cell (QL-MEF #287 packet A). Tests:
+`crates/ql-mef/tests/{m1_prime_session,scene_tuning,torus_host}.rs`.
