@@ -187,6 +187,15 @@ pub enum Figure {
     KleinBottle,
 }
 
+/// The shape Auto shows in a band between returns and crossings.
+fn band_figure(band: Band) -> Figure {
+    match band {
+        Band::Pitch | Band::Beyond => Figure::Torus,
+        Band::Rhythm => Figure::FigureEight,
+        Band::Breath | Band::Cosmic => Figure::Spiral,
+    }
+}
+
 /// What the voices sound (manual §21.2): Vimarśā's octet, the condition's
 /// maqām, or the dated sky's planets.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -448,14 +457,31 @@ impl Session {
                 Some(if returning || crossing {
                     Figure::KleinBottle
                 } else {
-                    match self.band() {
-                        Band::Pitch | Band::Beyond => Figure::Torus,
-                        Band::Rhythm => Figure::FigureEight,
-                        Band::Breath | Band::Cosmic => Figure::Spiral,
-                    }
+                    band_figure(self.band())
                 })
             }
         }
+    }
+
+    /// The figure law Auto runs (O-I #851), so that a reader holding one
+    /// reading names the shape at any later sample of the same settings
+    /// exactly as [`Self::figure`] does: the band's shape, the Klein bottle
+    /// for `klein_for_steps` at each return of `return_steps`, and until the
+    /// step a tritone crossing named.
+    pub fn figure_law(&self) -> Value {
+        let mut by_band = serde_json::Map::new();
+        for band in Band::ALL {
+            if let Value::String(name) = json!(band) {
+                by_band.insert(name, json!(band_figure(band)));
+            }
+        }
+        json!({
+            "return_steps": RETURN_STEPS,
+            "klein_for_steps": 1.0,
+            "klein_until_steps": self.klein_until_steps,
+            "by_band": by_band,
+            "law": "Auto: the band's shape (pitch and beyond the torus, rhythm the figure-eight, breath and cosmic the spiral); the Klein bottle for one step at each return and until klein_until_steps after a tritone crossing (seed render modes, lines 474–479, 506–508)",
+        })
     }
 
     /// The pulse's anchor: `(samples, steps)`, from which [`Self::steps_at`] runs at the rate.
@@ -589,6 +615,7 @@ impl Session {
             "map_hz": map_hz,
             "pulse": pulse,
             "figure": self.figure(samples),
+            "figure_law": self.figure_law(),
             "comma_cents": self.comma_cents(samples),
             "comma": {"per_return": PYTHAGOREAN_COMMA, "cents_per_return": pythagorean_comma_cents(),
                 "law": "one Pythagorean comma for each full return of the pulse (twelve steps, the 720° cover), from nothing when the Torus opens; it grows only as the scene's samples run (M1′ seed lines 500, 524, 696)"},
