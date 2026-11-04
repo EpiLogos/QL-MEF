@@ -727,6 +727,17 @@
    "kind": "computational"
   },
   {
+   "path": "crates/ql-mef/src/form_instrument/body.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "A form made a body for the native field owner (O-I #852, DLW manual §21.2 The body): a fold, codon, hexagram or glyph is compiled through the form owners' own types into a creased lattice whose modes are solved, held where the hinges cross, heard at the free tip and damped by pi f/Q. It claims no coordinate: the forms' coordinates stay with their owners, and the field it feeds stays K8's.",
+   "tests": [
+    "crates/ql-mef/tests/form_body.rs"
+   ],
+   "kind": "computational"
+  },
+  {
    "path": "crates/ql-mef/src/form_recipe.rs",
    "stratum": "rust",
    "disposition": "infrastructural",

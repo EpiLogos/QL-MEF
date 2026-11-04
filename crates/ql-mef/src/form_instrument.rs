@@ -35,6 +35,9 @@ use crate::form_samples::SampleBody;
 use crate::form_samples::{SamplePreparation, prepare_samples};
 use crate::form_sequence::{FORM_PROGRESS_CONTRACT, FoldProgress};
 
+/// A form made a body: the points, hold, modes, strike and pickup K8 rings.
+pub mod body;
+
 pub const FORM_INSTRUMENT_CONTRACT: &str = "ql.psg-form-instrument/v1";
 pub const RESIDENT_GEOMETRY_CONTRACT: &str = "ql.psg-resident-geometry/v1";
 pub const RESIDENT_OBSERVATION_CONTRACT: &str = "ql.psg-resident-observation/v1";
