@@ -352,3 +352,84 @@ fn a_tuning_change_hands_over_its_own_voices_and_a_waiting_setting_is_refused() 
     let landed = d.ok(json!({"operation":"torus-native"}));
     assert_eq!(landed["torus_native"]["keys"]["strike"], 0.25);
 }
+
+/// A fold made a body (QL-MEF form_body.rs's controlled fold), prepared for the scene `field` names (as torus_host.rs `fold`).
+fn fold(field: &Value) -> Value {
+    json!({
+        "schema": "ql.form-body-request/v1",
+        "event_ref": field["event_ref"], "subject_ref": field["subject_ref"], "source_generation": 7,
+        "form": {"kind": "fold", "form_ref": "m3-prime:fold/valley-mountain-valley", "source_ref": "ql.psg-fold-progress/v1:controlled"},
+        "samples": {"schema": "ql.psg-form-samples/v1", "prep_ref": "ta-onta:psg:fold-body", "treatment": "sheet-carrier",
+            "layers": [{"layer_ref": "form:sheet", "rest_depth_w": 0.5}], "resolution": 12,
+            "units": {"extent_units": 2.0, "depth_units": 0.1, "metres_per_unit": 0.25}},
+        "crease_deg10": [900, -450, 0],
+        "material": {"fibre": "earth", "q_factor": 40.0, "strike_share": 0.7, "source_ref": "declared"},
+        "modes": 8, "sample_rate": 48000,
+    })
+}
+
+/// O-I #849 with #376/#852: while a form's body rings, the Torus is handed over as that body — the continuation of the
+/// form's modes as they stand — and with no key law, refused in words: a key strikes the form's sample nearest its point
+/// (the body's exciter law), which the handed-over torus law does not play. Every act the owner lands on the body names
+/// those modes, so a host strikes the owner's own impulses; choosing the torus again hands the torus law over again.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_form_body_is_handed_over_as_its_modes_with_the_key_law_refused_in_words() {
+    let mut d = Driver::open();
+    d.ok(json!({"operation":"advance","frames":960,"muted":false}));
+    let request = fold(&d.current["field"]);
+    d.ok(json!({"operation":"torus-body","body":request}));
+    let reply = d.ok(json!({"operation":"torus-native"}));
+    let native = &reply["torus_native"];
+    assert_eq!(native["schema"], "ql.torus-native/v1", "{native}");
+    assert!(
+        native["keys"].is_null(),
+        "no key law for a form's body: {}",
+        native["keys"]
+    );
+    let refused = native["keys_refused"]
+        .as_str()
+        .expect("the key law is refused in words");
+    assert!(
+        refused.contains("body") && refused.contains("nearest"),
+        "{refused}"
+    );
+    assert_eq!(native["body"], "form");
+    let modes: Vec<&str> = native["continuation"]["modes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|m| m["mode_ref"].as_str().unwrap())
+        .collect();
+    assert!(
+        !modes.is_empty() && modes.iter().all(|m| m.contains("/body/")),
+        "{modes:?}"
+    );
+    assert_eq!(
+        native["at_samples_elapsed"],
+        reply["field"]["samples_elapsed"]
+    );
+    // The owner's act on the body names the handed-over modes, so a host strikes the owner's own impulses.
+    let struck = d.ok(
+        json!({"operation":"strike-at","points":[{"theta":0.7,"phi":2.2,"amplitude":[0.3,0.0]}]}),
+    );
+    let named: Vec<&str> = struck["strike_at"]["modes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|m| m["mode_ref"].as_str().unwrap())
+        .collect();
+    assert!(
+        !named.is_empty() && named.iter().all(|m| modes.contains(m)),
+        "{named:?} in {modes:?}"
+    );
+    // The torus chosen again is handed over with its law.
+    d.ok(json!({"operation":"torus-body","body":null}));
+    let torus = d.ok(json!({"operation":"torus-native"}));
+    assert_eq!(
+        torus["torus_native"]["keys"]["contract"],
+        "ql.torus-keys/v1"
+    );
+    assert_eq!(torus["torus_native"]["body"], "torus");
+    assert!(torus["torus_native"]["keys_refused"].is_null());
+}
