@@ -199,9 +199,23 @@ earlier input composes bit-for-bit as before.
 | Host operation | Native effect | Generation |
 |---|---|---|
 | `torus-state {}` | none: the session reading as `torus` | unchanged |
-| `torus-set {edit}` | Rate, Carrier, Shape, Tuning, Polyphony, tempo: no body state; the Carrier's drive follows the re-anchored pulse (`set-carrier`). Fundamental: one modes continuation of the same resident voices, no strike, no reshape | unchanged, or +1 for a Fundamental change |
+| `torus-set {edit, at_samples_elapsed?}` | Rate, Carrier, Shape, Tuning, Polyphony, tempo: no body state; the Carrier's drive follows the re-anchored pulse (`set-carrier`). Fundamental: one modes continuation of the same resident voices, no strike, no reshape. For a later sample it waits and moves nothing (`TORUS_SET_LANDING_LAW`) | unchanged, or +1 for a Fundamental made now |
+| `advance {frames, muted}` with settings waiting | the block runs to each waiting setting's sample, the setting is made there as above, and the block runs on; `torus_set_landed` names each (`at_samples_elapsed`, `edit`, `applied`, `moved`, or `refused`) with `torus` and `influence` | +1 for each Fundamental made in the block |
 | `torus-play {keys, amplitude, at_samples_elapsed?}` | each key's moving point at the pulse (`janko::JankoSurface::point`) struck on the tuning in force: one `strike-at` | +1 |
 | `torus-release {keys}` | none: the body rings on | unchanged |
+
+A strike for a later sample (`torus-play`, `strike-at`) reads the settings in
+force at its sample, the waiting ones before it made: its points, Strike,
+tuning and Polyphony. A setting that would land before a strike already played
+for a later sample is refused; at most `TORUS_SETS_WAITING_MAX` (64) wait, and
+`torus.waiting` lists them in the order of their samples.
+
+Strike is the body's share of every strike's velocity (manual §21.2): a key, a
+touch, a clip's note, a collision and a singlet all strike at points, and each
+voice receives amplitude × Strike × χ, with the Strike in force at the act's
+sample, taken once (`strike_at_when`). The receipt's `points` stand as they
+were struck and `strike_at.strike` names the share. A named-voice `strike` is
+not a strike at points and is not scaled.
 
 Every answer carries `torus`; `torus-set` adds `influence` (its `tuning`,
 sounding `voices`, `boundaries`, `resident_tunings`, `fundamental_hz`);

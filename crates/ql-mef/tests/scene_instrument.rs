@@ -607,16 +607,23 @@ fn a_struck_point_excites_every_voice_by_its_own_shape_and_a_chord_is_the_sum() 
         .zip(resident(&seed))
         .map(|(after, before)| [after[0] - before[0], after[1] - before[1]])
         .collect();
-    let given: Vec<[f64; 2]> = want.iter().map(|w| w.amplitude).collect();
+    // Strike, the body's share of the points' velocity, at its default 70 % (manual §21.2).
+    let strike = chord.torus().settings().strike;
+    assert_eq!(strike, 0.7);
+    let given: Vec<[f64; 2]> = want
+        .iter()
+        .map(|w| w.amplitude.map(|v| v * strike))
+        .collect();
     near(
         &moved,
         &given,
         1e-9,
         "the owner moved each voice by its impulse",
     );
-    // The receipt names the points and what each voice was given.
+    // The receipt names the points as struck, the share the body took, and what each voice was given.
     assert_eq!(outcome.receipt["schema"], STRIKE_AT_RECEIPT);
     assert_eq!(outcome.receipt["points"], json!([a, b]));
+    assert_eq!(outcome.receipt["strike"], json!(strike));
     for (i, voice) in outcome.receipt["voices"]
         .as_array()
         .unwrap()
@@ -624,7 +631,8 @@ fn a_struck_point_excites_every_voice_by_its_own_shape_and_a_chord_is_the_sum() 
         .enumerate()
     {
         assert_eq!(voice["mode_ref"], format!("scene:planet/{}", PLANETS[i]));
-        assert_eq!(voice["amplitude"], json!(given[i]));
+        let amplitude: [f64; 2] = serde_json::from_value(voice["amplitude"].clone()).unwrap();
+        near(&[amplitude], &[given[i]], 1e-12, "the receipt's voice");
     }
     // The same two points as two single strikes leave the body where the chord
     // did: the resident amplitudes add, one generation per act.

@@ -89,6 +89,7 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":440.0}}}),
         json!({"operation":"torus-set","edit":{"rate":{"mode":"sync","note":{"numerator":1,"denominator":4}},"tempo_bpm":90.0}}),
         json!({"operation":"torus-set","edit":{"tuning":"maqam","polyphony":4,"carrier":0.5,"shape":"figure-eight","fundamental":{"source":"hz","hz":261.6}}}),
+        json!({"operation":"torus-set","edit":{"polyphony":3},"at_samples_elapsed":"4800"}),
         json!({"operation":"torus-play","keys":[{"row":0,"column":2}],"amplitude":[0.1,0.0]}),
         json!({"operation":"torus-play","keys":[{"row":0,"column":2},{"row":3,"column":1}],"amplitude":[0.1,0.0],"at_samples_elapsed":"4800"}),
         json!({"operation":"torus-release","keys":[{"row":0,"column":2}]}),
@@ -108,6 +109,7 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
     for command in [
         json!({"operation":"torus-set","edit":{"drive":1.0}}),
         json!({"operation":"torus-set","edit":{"tuning":"equal"}}),
+        json!({"operation":"torus-set","edit":{"polyphony":3},"at":"4800"}),
         json!({"operation":"torus-play","keys":[{"row":0}],"amplitude":[0.1,0.0]}),
         json!({"operation":"torus-state","x":1}),
         json!({"operation":"torus-checkpoint","at":"0"}),
@@ -205,16 +207,85 @@ fn strike_is_the_share_of_a_keys_velocity_that_excites_the_body() {
     );
     assert_eq!(played["status"], "ok", "{played}");
     assert_eq!(played["torus_play"]["strike"], json!(0.45));
-    let excited = played["strike_at"]["points"][0]["amplitude"][0]
-        .as_f64()
-        .unwrap();
-    assert!((excited - 0.045).abs() < 1e-12, "{excited}");
+    // The key's point is struck at its velocity; the body takes its share once, at the strike (strike_at_when).
+    assert_eq!(played["strike_at"]["points"][0]["amplitude"][0], json!(0.1));
+    assert_eq!(played["strike_at"]["strike"], json!(0.45));
     let refused = d.send(json!({"operation":"torus-set","edit":{"strike":1.5}}));
     assert_eq!(refused["status"], "refused");
     assert!(
         refused["error"].as_str().unwrap().contains("Strike"),
         "{refused}"
     );
+}
+
+/// What each voice of a strike at points was given (the `ql.strike-at/v1` receipt's voices).
+fn given(reply: &Value) -> Vec<[f64; 2]> {
+    reply["strike_at"]["voices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|voice| serde_json::from_value(voice["amplitude"].clone()).unwrap())
+        .collect()
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn strike_is_the_bodys_share_of_every_strike_a_touch_a_collision_and_a_singlet_too() {
+    // Manual §21.2: Strike, "How strongly velocity excites the body", stands in the Body group with Damping, and under Body source
+    // Tattva the element sets both: it is the body's, so everything that strikes the Torus (a key, a touch, a clip's note, a collision,
+    // a singlet; "What strikes the Torus") excites it by that share. A strike at points takes it at its own sample, once.
+    let mut d = Driver::open();
+    let points = json!([{"theta": 0.8, "phi": 1.9, "amplitude": [0.2, 0.1]}]);
+    let share = d.send(json!({"operation":"strike-at","points":points}));
+    assert_eq!(share["status"], "ok", "{share}");
+    assert_eq!(
+        share["strike_at"]["strike"],
+        json!(0.7),
+        "the default Strike, 70%"
+    );
+    assert_eq!(
+        share["strike_at"]["points"], points,
+        "the receipt names the points as they were struck"
+    );
+    assert_eq!(
+        d.send(json!({"operation":"torus-set","edit":{"strike":1.0}}))["status"],
+        "ok"
+    );
+    let whole = d.send(json!({"operation":"strike-at","points":points}));
+    assert_eq!(whole["strike_at"]["strike"], json!(1.0));
+    let (part, full) = (given(&share), given(&whole));
+    assert_eq!(part.len(), full.len());
+    assert!(
+        full.iter().any(|v| *v != [0.0, 0.0]),
+        "the point reaches the voices"
+    );
+    for (part, full) in part.iter().zip(&full) {
+        for i in 0..2 {
+            assert!(
+                (part[i] - 0.7 * full[i]).abs() < 1e-12,
+                "{part:?} against {full:?}"
+            );
+        }
+    }
+    // A strike for a later sample takes the Strike in force there.
+    let from: u64 = d.current["field"]["samples_elapsed"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let waits = d.send(json!({"operation":"torus-set","edit":{"strike":0.25},"at_samples_elapsed":(from + 700).to_string()}));
+    assert_eq!(waits["status"], "ok", "{waits}");
+    let later = d.send(json!({"operation":"strike-at","points":points,"at_samples_elapsed":(from + 1000).to_string()}));
+    assert_eq!(later["status"], "ok", "{later}");
+    assert_eq!(later["strike_at"]["strike"], json!(0.25));
+    for (later, full) in given(&later).iter().zip(&full) {
+        for i in 0..2 {
+            assert!(
+                (later[i] - 0.25 * full[i]).abs() < 1e-12,
+                "{later:?} against {full:?}"
+            );
+        }
+    }
 }
 
 #[test]
@@ -719,4 +790,294 @@ fn a_take_renders_offline_from_its_checkpoint_as_the_owner_played_it() {
             standing["field"]["samples_elapsed"]
         );
     }
+}
+
+fn cursor(d: &Driver) -> u64 {
+    d.current["field"]["samples_elapsed"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap()
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_setting_lands_at_its_sample_inside_a_block_as_a_strike_does() {
+    // O-I 855: an edit of the M1′ session sent ahead for a later sample is made at that sample inside the block that reaches it,
+    // as a strike is, so the frame no longer waits for the cursor. Its sound is sample for sample the edit made between two blocks
+    // split at that sample, and the render of the same take; a strike for a later sample reads the settings in force there.
+    let edit = json!({"fundamental":{"source":"hz","hz":261.6},"carrier":0.5,"rate":{"mode":"free","steps_per_second":3.0}});
+    let strike = |at: u64| json!({"operation":"torus-play","keys":[{"row":2,"column":3}],"amplitude":[0.3,0.0],"at_samples_elapsed":at.to_string()});
+    let opened = || {
+        let mut d = Driver::open();
+        let played = d.send(
+            json!({"operation":"torus-play","keys":[{"row":0,"column":2}],"amplitude":[0.2,0.0]}),
+        );
+        assert_eq!(played["status"], "ok", "{played}");
+        render_frames(&mut d, 2048, 512);
+        d
+    };
+    let frames = 4096u64;
+    let mut timed = opened();
+    let from = cursor(&timed);
+    let kept = timed.send(json!({"operation":"torus-checkpoint"}))["torus_checkpoint"].clone();
+    // Inside the second block of 512, and a strike after it.
+    let (at, struck_at) = (from + 700, from + 1000);
+    let before = timed.generation();
+    let waits = timed
+        .send(json!({"operation":"torus-set","edit":edit,"at_samples_elapsed":at.to_string()}));
+    assert_eq!(waits["status"], "ok", "{waits}");
+    assert_eq!(
+        timed.generation(),
+        before,
+        "a setting for a later sample moves nothing yet"
+    );
+    assert_eq!(waits["field"]["samples_elapsed"], json!(from.to_string()));
+    assert_eq!(
+        waits["torus"]["settings"]["carrier"],
+        json!(0.0),
+        "the settings in force are still the ones before it"
+    );
+    assert_eq!(
+        waits["torus"]["waiting"],
+        json!([{"at_samples_elapsed": at.to_string(), "edit": edit}]),
+        "the reading names the setting that waits and its sample"
+    );
+    let played = timed.send(strike(struck_at));
+    assert_eq!(played["status"], "ok", "{played}");
+    let mut live = Vec::new();
+    let mut landings = Vec::new();
+    for _ in 0..frames / 512 {
+        let advanced = timed.send(json!({"operation":"advance","frames":512,"muted":false}));
+        assert_eq!(advanced["status"], "ok", "{advanced}");
+        live.extend(
+            advanced["field"]["audio"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_f64().unwrap()),
+        );
+        if advanced.get("torus_set_landed").is_some() {
+            landings.push(advanced);
+        }
+    }
+    assert_eq!(landings.len(), 1, "one block made the setting");
+    let landed = &landings[0];
+    assert_eq!(
+        landed["field"]["samples_elapsed"],
+        json!((from + 1024).to_string()),
+        "the block that reached its sample"
+    );
+    let made = &landed["torus_set_landed"][0];
+    assert_eq!(made["at_samples_elapsed"], json!(at.to_string()));
+    assert_eq!(made["applied"], json!(true), "{made}");
+    for moved in ["fundamental", "carrier", "rate"] {
+        assert!(
+            made["moved"].as_array().unwrap().contains(&json!(moved)),
+            "{moved}: {made}"
+        );
+    }
+    assert_eq!(landed["torus"]["settings"]["carrier"], json!(0.5));
+    assert_eq!(landed["torus"]["waiting"], json!([]));
+    assert!(
+        landed["influence"].is_object(),
+        "the voices' new frequencies come with it"
+    );
+    assert_eq!(
+        timed.generation(),
+        before + 2,
+        "the strike, and the Fundamental's one modes continuation where it landed"
+    );
+
+    // The split path: the same edit made between two blocks split at its sample, then the strike.
+    let mut split = opened();
+    assert_eq!(cursor(&split), from);
+    let mut heard = render_frames(&mut split, at - from, 512);
+    let set = split.send(json!({"operation":"torus-set","edit":edit}));
+    assert_eq!(set["status"], "ok", "{set}");
+    let played_after = split.send(strike(struck_at));
+    assert_eq!(played_after["status"], "ok", "{played_after}");
+    assert_eq!(
+        played["torus_play"]["notes"], played_after["torus_play"]["notes"],
+        "the strike read the settings in force at its sample: the same points, places and cells"
+    );
+    assert_eq!(
+        played["torus_play"]["pulse"],
+        played_after["torus_play"]["pulse"]
+    );
+    heard.extend(render_frames(&mut split, frames - (at - from), 512));
+    assert_eq!(
+        live, heard,
+        "sample for sample, the edit made at its sample"
+    );
+    assert_eq!(timed.generation(), split.generation());
+    assert_eq!(
+        timed.current["torus"]["settings"],
+        split.current["torus"]["settings"]
+    );
+    assert_eq!(
+        timed.current["torus"]["notes"],
+        split.current["torus"]["notes"]
+    );
+    assert_eq!(
+        timed.current["torus"]["pulse"],
+        split.current["torus"]["pulse"]
+    );
+
+    // Nothing moves before its sample: without the setting, the same strike sounds the same until it, and differs after.
+    let mut control = opened();
+    assert_eq!(control.send(strike(struck_at))["status"], "ok");
+    let unset = render_frames(&mut control, frames, 512);
+    let k = usize::try_from(at - from).unwrap();
+    assert_eq!(
+        live[..k],
+        unset[..k],
+        "before its sample the sound is the sound without it"
+    );
+    assert_ne!(
+        live[k..],
+        unset[k..],
+        "from its sample the setting is heard"
+    );
+
+    // A render of the same take from its checkpoint is the same sound.
+    let take = timed.send(json!({"operation":"torus-render","checkpoint":kept,"frames":frames,"acts":[
+        {"action":"set","at_samples_elapsed":at.to_string(),"edit":edit},
+        {"action":"strike","at_samples_elapsed":struck_at.to_string(),"keys":[{"row":2,"column":3}],"amplitude":[0.3,0.0]}]}));
+    assert_eq!(take["status"], "ok", "{take}");
+    assert_eq!(
+        audio(&take["torus_render"]),
+        live,
+        "the take renders as the owner played it"
+    );
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_setting_for_a_later_sample_is_refused_in_words_where_it_cannot_land() {
+    let mut d = Driver::open();
+    render_frames(&mut d, 1024, 512);
+    let now = cursor(&d);
+    let set = |at: String, edit: Value| json!({"operation":"torus-set","edit":edit,"at_samples_elapsed":at});
+    let refused = |d: &mut Driver, command: Value, words: &str| {
+        let standing = d.current.clone();
+        let answer = d.send(command.clone());
+        assert_eq!(answer["status"], "refused", "{command}: {answer}");
+        assert!(
+            answer["error"].as_str().unwrap().contains(words),
+            "{words}: {answer}"
+        );
+        assert_eq!(
+            answer["field"]["generation"],
+            standing["field"]["generation"]
+        );
+        assert_eq!(
+            answer["field"]["samples_elapsed"],
+            standing["field"]["samples_elapsed"]
+        );
+        assert_eq!(
+            answer["torus"]["waiting"], standing["torus"]["waiting"],
+            "{command}"
+        );
+    };
+    // A first read gives the reading the refusals are judged against.
+    assert_eq!(d.send(json!({"operation":"torus-state"}))["status"], "ok");
+    refused(
+        &mut d,
+        set((now - 1).to_string(), json!({"polyphony":3})),
+        "behind the owner's cursor",
+    );
+    refused(
+        &mut d,
+        set(format!("0{now}"), json!({"polyphony":3})),
+        "exact sample cursor",
+    );
+    refused(
+        &mut d,
+        set((now + 10).to_string(), json!({})),
+        "at least one setting",
+    );
+    refused(
+        &mut d,
+        set((now + 10).to_string(), json!({"polyphony":0})),
+        "Polyphony",
+    );
+
+    // At its own sample the setting is made now, as a strike at the cursor is.
+    let made = d.send(set(now.to_string(), json!({"polyphony":4})));
+    assert_eq!(made["status"], "ok", "{made}");
+    assert_eq!(made["torus"]["settings"]["polyphony"], json!(4));
+    assert_eq!(made["torus"]["waiting"], json!([]));
+
+    // A setting cannot land before a strike already played for a later sample: that strike read the settings before it.
+    let played = d.send(json!({"operation":"torus-play","keys":[{"row":0,"column":2}],"amplitude":[0.2,0.0],"at_samples_elapsed":(now + 2048).to_string()}));
+    assert_eq!(played["status"], "ok", "{played}");
+    refused(
+        &mut d,
+        set((now + 1000).to_string(), json!({"polyphony":3})),
+        "before the strike already played",
+    );
+    let after = d.send(set((now + 2048).to_string(), json!({"polyphony":3})));
+    assert_eq!(
+        after["status"], "ok",
+        "at the strike's own sample it lands after it: {after}"
+    );
+
+    // Settings wait in the order of their samples, however they were sent, and at most 64 of them.
+    for i in (0..63u64).rev() {
+        let answer = d.send(set(
+            (now + 3000 + i).to_string(),
+            json!({"polyphony": 2 + (i % 3) as u8}),
+        ));
+        assert_eq!(answer["status"], "ok", "{i}: {answer}");
+    }
+    let waiting = d.current["torus"]["waiting"].as_array().unwrap().clone();
+    assert_eq!(waiting.len(), 64);
+    let samples: Vec<u64> = waiting
+        .iter()
+        .map(|w| w["at_samples_elapsed"].as_str().unwrap().parse().unwrap())
+        .collect();
+    assert!(samples.windows(2).all(|w| w[0] <= w[1]), "{samples:?}");
+    refused(
+        &mut d,
+        set((now + 5000).to_string(), json!({"polyphony":3})),
+        "at most 64",
+    );
+
+    // A setting at the end of a block lands as the cursor reaches it; the rest land in their blocks, in order.
+    let mut landed = Vec::new();
+    for block in 1..=8u64 {
+        let advanced = d.send(json!({"operation":"advance","frames":512,"muted":false}));
+        assert_eq!(advanced["status"], "ok", "{advanced}");
+        let made = advanced["torus_set_landed"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default();
+        if block == 4 {
+            assert_eq!(
+                made.len(),
+                1,
+                "the setting at the block's end lands with it: {advanced}"
+            );
+            assert_eq!(advanced["torus"]["settings"]["polyphony"], json!(3));
+        }
+        landed.extend(made);
+    }
+    assert_eq!(landed.len(), 64);
+    let at: Vec<String> = landed
+        .iter()
+        .map(|l| l["at_samples_elapsed"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(at[0], (now + 2048).to_string());
+    assert!(
+        landed.iter().all(|l| l["applied"] == json!(true)),
+        "{landed:?}"
+    );
+    let state = d.send(json!({"operation":"torus-state"}));
+    assert_eq!(state["torus"]["waiting"], json!([]));
+    assert_eq!(
+        state["torus"]["settings"]["polyphony"],
+        json!(2 + (62 % 3)),
+        "the last made is in force"
+    );
 }
