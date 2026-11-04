@@ -324,3 +324,82 @@ fn the_carrier_drives_the_body_at_each_step_and_a_faster_pulse_does_not_drive_it
     assert_eq!(reading["carrier"]["drive"], "pulse");
     assert!((reading["carrier"]["step"].as_f64().unwrap() - 0.005).abs() < 1e-12);
 }
+
+/// O-I 855: a Live take begins again where it began. The session as it stands
+/// at a sample is kept (its settings, the pulse's steps, so its arc, cover and
+/// comma, the Klein bottle's steps left, and the sounding notes with how long
+/// ago each was struck) and set again at a later sample of the scene's clock:
+/// from there it runs on exactly as the kept one ran on from where it was kept.
+#[test]
+fn a_session_kept_at_a_sample_runs_on_from_a_later_one_as_it_would_have() {
+    let mut kept = open(free(7.0));
+    kept.strike(&[JankoKey { row: 0, column: 42 }], at(1.0));
+    kept.strike(&[JankoKey { row: 3, column: 45 }], at(2.5));
+    kept.cross_tritone(at(2.75));
+    let checkpoint = kept.checkpoint(at(3.0));
+    assert_eq!(checkpoint.steps, kept.steps_at(at(3.0)));
+    assert_eq!(checkpoint.notes.len(), 2);
+    assert_eq!(checkpoint.notes[0].struck_samples_ago, at(2.0));
+    let later = at(60.0);
+    let restored = Session::restore(&checkpoint, SR, later).unwrap();
+    assert_eq!(restored.settings(), kept.settings());
+    for offset in [0.0, 0.1, 1.0, 12.5] {
+        // The pulse runs on the same law from the same steps: equal to the rounding of a sum.
+        let (now, then) = (
+            restored.pulse(later + at(offset)),
+            kept.pulse(at(3.0) + at(offset)),
+        );
+        assert!(
+            (now.steps - then.steps).abs() < 1e-9,
+            "{offset}: {now:?} {then:?}"
+        );
+        assert_eq!((now.arc, now.returns), (then.arc, then.returns));
+        assert_eq!(
+            restored.comma_cents(later + at(offset)),
+            kept.comma_cents(at(3.0) + at(offset))
+        );
+        assert_eq!(
+            restored.figure(later + at(offset)),
+            kept.figure(at(3.0) + at(offset))
+        );
+    }
+    let notes: Vec<_> = restored
+        .sounding()
+        .iter()
+        .map(|n| (n.id, n.key, n.arc))
+        .collect();
+    let before: Vec<_> = kept
+        .sounding()
+        .iter()
+        .map(|n| (n.id, n.key, n.arc))
+        .collect();
+    assert_eq!(notes, before, "the same notes sound, by the same ids");
+    assert_eq!(restored.sounding()[1].struck_at_samples, later - at(0.5));
+    // The next note continues the count, as it would have.
+    let (mut a, mut b) = (kept.clone(), restored.clone());
+    let key = [JankoKey { row: 1, column: 43 }];
+    assert_eq!(
+        a.strike(&key, at(4.0)).admitted[0].id,
+        b.strike(&key, later + at(1.0)).admitted[0].id
+    );
+    // A checkpoint is read exactly: it round-trips, and one that cannot stand is refused in words.
+    let text = serde_json::to_value(&checkpoint).unwrap();
+    assert_eq!(
+        serde_json::from_value::<ql_mef::m1_prime::SessionCheckpoint>(text.clone()).unwrap(),
+        checkpoint
+    );
+    let mut bad = checkpoint.clone();
+    bad.steps = f64::NAN;
+    assert!(Session::restore(&bad, SR, later).is_err());
+    let mut bad = checkpoint.clone();
+    bad.settings.polyphony = 1;
+    assert!(
+        Session::restore(&bad, SR, later)
+            .unwrap_err()
+            .contains("more notes")
+    );
+    let mut bad = checkpoint.clone();
+    bad.next_note = 0;
+    assert!(Session::restore(&bad, SR, later).is_err());
+    assert!(Session::restore(&checkpoint, 0, later).is_err());
+}

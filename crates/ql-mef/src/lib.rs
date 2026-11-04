@@ -34,6 +34,7 @@ pub mod m2_body;
 pub mod m2_condition;
 pub mod m2_engine;
 pub mod m2_hours;
+pub mod m2_material;
 pub mod m2_sky;
 pub mod m2_vimarsha;
 pub mod m3_binding;
@@ -87,7 +88,7 @@ pub use coordinate::{MEF_ROTATION_VERSION, MefRotation, MefUnitFace};
 pub use error::MefError;
 pub use identity::{ClientRef, QlTarget};
 pub use janko::{
-    COLUMN_PERIOD, JankoKey, JankoSurface, JankoSurfaceProjection, ROWS, TOUCH_POINTS,
+    COLUMN_PERIOD, ClassPoint, JankoKey, JankoSurface, JankoSurfaceProjection, ROWS, TOUCH_POINTS,
 };
 pub use lens::{LensFace, LensId, LensRef, MEF_REGISTRY_REVISION, MEF_REGISTRY_VERSION, MefSquare};
 pub use m_map::{

@@ -51,6 +51,11 @@ pub const FUNDAMENTAL_MIN: f64 = 20.0;
 pub const FUNDAMENTAL_MAX: f64 = 2_000.0;
 pub const POLYPHONY_MAX: u8 = 32;
 pub const POLYPHONY_DEFAULT: u8 = 16;
+/// Strike's default share of a key's velocity (manual §21.2 Parameters: "Strike | 0 to 100% | 70%").
+pub const STRIKE_DEFAULT: f64 = 0.7;
+fn strike_default() -> f64 {
+    STRIKE_DEFAULT
+}
 /// Steps of one full return: the spanda ring of twelve places.
 pub const RETURN_STEPS: f64 = crate::spanda_field::RING_SIZE as f64;
 /// The comma: six epogdoons (9:8) over the octave, (9/8)^6 / 2.
@@ -230,6 +235,10 @@ pub struct Settings {
     pub polyphony: u8,
     /// The set's tempo, which Sync reads.
     pub tempo_bpm: f64,
+    /// 0..1: how strongly velocity excites the body, the share of a key's amplitude a played note strikes with (manual §21.2 Strike).
+    /// Under Body source Tattva the element of the M2 condition sets it (`m2_body::TABLE`); a saved sound without it opens at 70 %.
+    #[serde(default = "strike_default")]
+    pub strike: f64,
 }
 
 impl Default for Settings {
@@ -244,6 +253,7 @@ impl Default for Settings {
             tuning: Tuning::Logic,
             polyphony: POLYPHONY_DEFAULT,
             tempo_bpm: 120.0,
+            strike: STRIKE_DEFAULT,
         }
     }
 }
@@ -271,6 +281,9 @@ impl Settings {
         }
         if !self.carrier.is_finite() || !(0.0..=1.0).contains(&self.carrier) {
             return Err("the Carrier runs from 0 to 100 %".into());
+        }
+        if !self.strike.is_finite() || !(0.0..=1.0).contains(&self.strike) {
+            return Err("Strike runs from 0 to 100 %".into());
         }
         if !(1..=POLYPHONY_MAX).contains(&self.polyphony) {
             return Err(format!("Polyphony counts 1 to {POLYPHONY_MAX} notes"));
@@ -318,6 +331,12 @@ pub struct SettingsEdit {
         deserialize_with = "crate::continuous::number::option"
     )]
     pub tempo_bpm: Option<f64>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::continuous::number::option"
+    )]
+    pub strike: Option<f64>,
 }
 
 impl SettingsEdit {
@@ -334,6 +353,7 @@ impl SettingsEdit {
             tuning: self.tuning.unwrap_or(settings.tuning),
             polyphony: self.polyphony.unwrap_or(settings.polyphony),
             tempo_bpm: self.tempo_bpm.unwrap_or(settings.tempo_bpm),
+            strike: self.strike.unwrap_or(settings.strike),
         };
         next.validate()?;
         Ok(next)
@@ -371,6 +391,32 @@ pub struct Pulse {
     pub returns: u64,
 }
 
+/// A sounding note as a checkpoint keeps it: how long before the checkpoint it was struck.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CheckpointNote {
+    pub id: u64,
+    pub key: JankoKey,
+    pub arc: u8,
+    pub struck_samples_ago: u64,
+}
+
+/// The session as it stands at a sample (O-I 855: what a Live take keeps to begin again where
+/// it began): the settings, the pulse's continuous steps (so its arc, its place on the cover and
+/// the comma gathered), the Klein bottle's steps still to show, the sounding notes, and the next
+/// note's number. Times are kept as samples before the checkpoint, so it is set again at any
+/// later sample of the scene's clock (`Session::restore`).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SessionCheckpoint {
+    pub settings: Settings,
+    pub steps: f64,
+    pub opened_samples_ago: u64,
+    pub klein_steps_left: Option<f64>,
+    pub notes: Vec<CheckpointNote>,
+    pub next_note: u64,
+}
+
 /// The live M1′ session over one scene owner's sample clock.
 #[derive(Debug, Clone)]
 pub struct Session {
@@ -403,6 +449,91 @@ impl Session {
             klein_until_steps: None,
             notes: VecDeque::new(),
             next_note: 0,
+        })
+    }
+
+    /// The session as it stands at `samples` (O-I 855; `SessionCheckpoint`).
+    pub fn checkpoint(&self, samples: u64) -> SessionCheckpoint {
+        let steps = self.steps_at(samples);
+        SessionCheckpoint {
+            settings: self.settings,
+            steps,
+            opened_samples_ago: samples.saturating_sub(self.opened_at_samples),
+            klein_steps_left: self
+                .klein_until_steps
+                .filter(|until| *until > steps)
+                .map(|until| until - steps),
+            notes: self
+                .notes
+                .iter()
+                .map(|note| CheckpointNote {
+                    id: note.id,
+                    key: note.key,
+                    arc: note.arc,
+                    struck_samples_ago: samples.saturating_sub(note.struck_at_samples),
+                })
+                .collect(),
+            next_note: self.next_note,
+        }
+    }
+
+    /// The session a checkpoint kept, set again at `samples` of the scene's clock: from there
+    /// the pulse runs on from the kept steps by the kept settings, and the kept notes sound. A
+    /// checkpoint that cannot stand is refused in words.
+    pub fn restore(
+        checkpoint: &SessionCheckpoint,
+        sample_rate: u32,
+        samples: u64,
+    ) -> Result<Self, String> {
+        checkpoint.settings.validate()?;
+        if sample_rate == 0 {
+            return Err("the M1′ session needs the scene's sample rate".into());
+        }
+        if !checkpoint.steps.is_finite() || checkpoint.steps < 0.0 {
+            return Err("a checkpoint's pulse steps must be finite and not negative".into());
+        }
+        if checkpoint
+            .klein_steps_left
+            .is_some_and(|left| !left.is_finite() || left <= 0.0 || left > 1.0)
+        {
+            return Err("a checkpoint's Klein bottle shows for at most one step".into());
+        }
+        if checkpoint.notes.len() > usize::from(checkpoint.settings.polyphony) {
+            return Err(format!(
+                "a checkpoint keeps more notes ({}) than its Polyphony allows ({})",
+                checkpoint.notes.len(),
+                checkpoint.settings.polyphony
+            ));
+        }
+        let mut ids = std::collections::BTreeSet::new();
+        for note in &checkpoint.notes {
+            if note.arc >= 12 || note.id >= checkpoint.next_note || !ids.insert(note.id) {
+                return Err(
+                    "a checkpoint's notes each stand on an arc of twelve with their own number before the next"
+                        .into(),
+                );
+            }
+        }
+        Ok(Self {
+            settings: checkpoint.settings,
+            sample_rate,
+            opened_at_samples: samples.saturating_sub(checkpoint.opened_samples_ago),
+            anchor_samples: samples,
+            anchor_steps: checkpoint.steps,
+            klein_until_steps: checkpoint
+                .klein_steps_left
+                .map(|left| checkpoint.steps + left),
+            notes: checkpoint
+                .notes
+                .iter()
+                .map(|note| Note {
+                    id: note.id,
+                    key: note.key,
+                    arc: note.arc,
+                    struck_at_samples: samples.saturating_sub(note.struck_samples_ago),
+                })
+                .collect(),
+            next_note: checkpoint.next_note,
         })
     }
 
@@ -525,6 +656,7 @@ impl Session {
             ("tuning", before.tuning != next.tuning),
             ("polyphony", before.polyphony != next.polyphony),
             ("tempo", before.tempo_bpm != next.tempo_bpm),
+            ("strike", before.strike != next.strike),
         ] {
             if changed {
                 moved.push(name);

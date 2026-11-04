@@ -1009,6 +1009,19 @@
    "kind": "structural-index"
   },
   {
+   "path": "crates/ql-mef/src/m2_material.rs",
+   "stratum": "rust",
+   "disposition": "coordinate-bound",
+   "coordinates": [
+    "#2-1"
+   ],
+   "rationale": "M2-1′, the lens's material (M2′ seed §2.M2-1′ Lens Resonance Surface / Materializer; DLW manual §20.14 Modes: the lens in force gives the surface its material; O-I #854): one surface (colour and four magnitudes, each 0..1) for each of the 72 lens-position places, the same every time, the night twin Lx′ the mirror of its day lens Lx (seed invariant 2). No M2 table holds the magnitudes (the seed names the fields, not their values), so they are a declared policy disclosed as such (MATERIAL_STANDING). Display-only: no voice reads it.",
+   "tests": [
+    "crates/ql-mef/tests/m2_material.rs"
+   ],
+   "kind": "computational"
+  },
+  {
    "path": "providers/sky/hours.py",
    "stratum": "python",
    "disposition": "infrastructural",

@@ -336,6 +336,47 @@ fn setting_the_carrier_keeps_the_generation_and_moves_nothing() {
     }
 }
 
+/// O-I 855: the body as it rang at a checkpoint is set again: one resident state
+/// per mode, exactly as asked. One body act, one generation; the clock and the
+/// cursor stay. A state that does not name every mode, or is not finite and
+/// bounded, is refused, and so is a reply whose body is not the one asked for.
+#[test]
+fn setting_the_body_state_takes_one_generation_and_exactly_the_states_asked() {
+    let (_, _, guard, mut receipt) = fixture();
+    receipt["samples_elapsed"] = json!("512");
+    let request = json!({"operation":"set-state","amplitudes":[[0.0031, -0.0007]]});
+    let mut set = receipt.clone();
+    set["generation"] = json!("2");
+    set["amplitudes_metres"] = json!([[0.0031, -0.0007]]);
+    guard.validate(&request, Some(&receipt), &set).unwrap();
+    for (path, moved) in [
+        ("/generation", json!("1")),
+        ("/generation", json!("3")),
+        ("/samples_elapsed", json!("513")),
+        ("/amplitudes_metres/0/0", json!(0.0032)),
+        ("/clock/inscription/turns", json!("0")),
+    ] {
+        let mut bad = set.clone();
+        *bad.pointer_mut(path).unwrap() = moved;
+        assert!(
+            guard.validate(&request, Some(&receipt), &bad).is_err(),
+            "setting the body moved {path}"
+        );
+    }
+    for bad_request in [
+        json!({"operation":"set-state","amplitudes":[]}),
+        json!({"operation":"set-state","amplitudes":[[0.0031, -0.0007], [0.0, 0.0]]}),
+        json!({"operation":"set-state","amplitudes":[[2e6, 0.0]]}),
+        json!({"operation":"set-state","amplitudes":[[0.0031]]}),
+        json!({"operation":"set-state"}),
+    ] {
+        assert!(
+            guard.validate(&bad_request, Some(&receipt), &set).is_err(),
+            "accepted {bad_request}"
+        );
+    }
+}
+
 #[test]
 fn exact_cursor_strings_reject_aliases_and_overflow_without_panicking() {
     for text in [

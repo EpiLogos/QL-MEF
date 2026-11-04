@@ -46,7 +46,7 @@ function setup(options = {}) {
   let current = frame(), sequence = 0n;
   const initial = { schema: 'ql.field-host-receipt/v1', status: 'ready', available: true,
     instance_ref: 'controlled:instance', last_request_id: '0', request_id: null, field: current };
-  const port = { closed: false, effect: null, delay: null,
+  const port = { closed: false, effect: null, delay: null, renders: 0,
     async request(request) {
       calls.push(structuredClone(request));
       assert.equal(request.request_id, String(++sequence));
@@ -80,6 +80,11 @@ function setup(options = {}) {
         // is one strike at points; a Fundamental edit one modes continuation.
         current.generation = String(BigInt(current.generation) + (port.torusStep ?? 1n));
         current.amplitudes_metres[0][0] += 0.01;
+      } else if (request.command.operation === 'torus-restore') {
+        // Controlled protocol case (host.rs torus_operation): a restore is the event's modes (and shape) continuation when it
+        // moved, the damping when it moved, and the body's state: one to four generations, no samples and no PCM.
+        current.generation = String(BigInt(current.generation) + (port.restoreStep ?? 2n));
+        current.amplitudes_metres[0][0] = request.command.checkpoint.amplitudes?.[0]?.[0] ?? 0;
       } else if (request.command.operation === 'stage-evaluate') {
         // Controlled protocol case: the host's own compiled plan applies 1..N
         // admitted applications in one envelope, so the generation moves by
@@ -106,9 +111,21 @@ function setup(options = {}) {
         reply.current = port.scoreCurrent ?? true;
         reply.resolved_event_ref = port.scoreEventRef ?? current.event_ref;
       }
-      if (['torus-state', 'torus-set', 'torus-play', 'torus-release'].includes(request.command.operation))
+      if (['torus-state', 'torus-set', 'torus-play', 'torus-release', 'torus-checkpoint', 'torus-restore'].includes(request.command.operation))
         reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [] };
       if (request.command.operation === 'torus-set')
+        reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
+      if (request.command.operation === 'torus-checkpoint')
+        reply.torus_checkpoint = port.checkpointBody ?? { schema: 'ql.torus-checkpoint/v1', taken_at_samples: current.samples_elapsed,
+          sample_rate: 48000, amplitudes: [[0.25, -0.5]], voices: ['#3-0'] };
+      if (request.command.operation === 'torus-render') {
+        // Controlled protocol case (host.rs torus_operation): the render owner's sound, where it ended and its continuation.
+        const frames = request.command.frames;
+        reply.torus_render = port.renderBody ?? { schema: 'ql.torus-render/v1', from_samples: request.command.checkpoint?.taken_at_samples ?? '9600',
+          frames, sample_rate: 48000, audio: Array(frames).fill(0.25), made_way: request.command.acts.filter(act => act.action === 'strike').map(() => []),
+          checkpoint: { schema: 'ql.torus-checkpoint/v1', taken_at_samples: '0' }, continues: `render:${++port.renders}` };
+      }
+      if (request.command.operation === 'torus-restore')
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
       if (request.command.operation === 'torus-play')
         reply.torus_play = { schema: 'ql.torus-play/v1', notes: request.command.keys.map((key, id) => ({ id, key })), made_way: [] };
@@ -743,5 +760,123 @@ test('a played Torus act is one generation and keeps its receipt; a release move
   // A host whose play did not move the cursor disagrees with the law.
   port.torusStep = 0n;
   await assert.rejects(session.torusPlay([{ row: 0, column: 0 }]), /disagree/);
+  session.dispose();
+});
+
+test('an act that moves no native state presents nothing: a release enters the owner\'s count without claiming a presentation block', async () => {
+  // O-I #790: a dense clip at a fast tempo releases as often as it strikes. A release moves no native state (the body rings on),
+  // so it has no frame to present; if it claimed a block, a full presentation queue would refuse it and leave its note counted.
+  const { session, calls, context, field } = setup({ maxBlocks: 1 });
+  await session.pump();
+  assert.equal(session.reading.queued_blocks, 1, 'the presentation queue is full');
+  await assert.rejects(session.torusPlay([{ row: 0, column: 0 }]), /wait for bounded presentation capacity/,
+    'a played act moves the body, so it still waits for a block to present it');
+  for (let i = 0; i < 40; i++) await session.torusRelease([{ row: i % 6, column: i }]);
+  assert.equal(calls.filter(call => call.command.operation === 'torus-release').length, 40, 'every release reaches the owner');
+  assert.equal(session.reading.queued_blocks, 1, 'and none claims a presentation block');
+  assert.equal(session.journal().acts.filter(act => act.operation === 'torus-release').length, 40, 'each is an owner act in the journal');
+  // A session edit that moves no native state is the same; a Fundamental edit moves the owner and waits like any act that does.
+  await session.torusSet({ tuning: 'logic' });
+  assert.equal(session.reading.queued_blocks, 1);
+  await assert.rejects(session.torusSet({ fundamental: { source: 'hz', hz: 261.6 } }), /wait for bounded presentation capacity/);
+  // So are the stage's acts that move nothing.
+  await session.operate({ operation: 'stage-unbind', procedure_ref: 'ta-onta:stage:live-fold' });
+  assert.equal(session.reading.queued_blocks, 1);
+  // Once the block is heard the queue drains and the played act is admitted.
+  context.currentTime = session.reading.audio.target_context_seconds; session.present();
+  await session.torusPlay([{ row: 0, column: 0 }]);
+  assert.equal(field.last.generation, session.reading.acknowledged.generation, 'the played act presents its struck body');
+  assert.equal(session.reading.acknowledged.generation, '2', 'and is the one act of all these that moved the owner');
+  // A still act whose acknowledgement moved the owner disagrees with the law, as before.
+  const moved = setup();
+  moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
+  await assert.rejects(moved.session.torusRelease([{ row: 0, column: 0 }]), /native cursor disagree/);
+  session.dispose();
+});
+
+test('a Torus checkpoint is a read of the body as it rings, and a restore is one owner act that rings it again from there', async () => {
+  // O-I #855: a Live take is rendered (and replayed) from the body as it stood when it began. The checkpoint is the owner's
+  // ql.torus-checkpoint/v1 (course, form, forces, comma and seeds); restoring it is an act at the owner's own law.
+  const { session, calls, port, field } = setup();
+  const kept = await session.torusCheckpoint();
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-checkpoint' });
+  assert.equal(kept.schema, 'ql.torus-checkpoint/v1');
+  assert.equal(session.reading.acknowledged.generation, '1', 'a checkpoint does not advance the owner');
+  assert.ok(!session.journal().acts.some(act => act.operation === 'torus-checkpoint'), 'a read is not an owner act');
+  kept.amplitudes[0][0] = 9; // the caller's copy is its own
+  assert.equal((await session.torusCheckpoint()).amplitudes[0][0], 0.25);
+  const restoring = { ...kept, amplitudes: [[0.25, -0.5]] };
+  await session.torusRestore(restoring);
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-restore', checkpoint: restoring }, 'the checkpoint travels whole');
+  assert.equal(session.reading.acknowledged.generation, '3', 'the damping and the body: two generations');
+  assert.equal(session.lastTorus.schema, 'ql.m1-prime-session/v1');
+  assert.equal(session.lastInfluence.tuning, 'logic');
+  assert.deepEqual(session.journal().acts.map(act => act.operation), ['torus-restore'], 'the restore is an owner act');
+  session.present();
+  assert.equal(session.reading.queued_blocks, 1, 'the restored body is presented');
+  // The owner's restore moves one to four generations (event modes, its shape, damping, body); anything else disagrees.
+  for (const step of [0n, 5n]) {
+    const other = setup(); other.port.restoreStep = step;
+    await assert.rejects(other.session.torusRestore(restoring), /native cursor disagree/);
+  }
+  const four = setup(); four.port.restoreStep = 4n;
+  await four.session.torusRestore(restoring);
+  assert.equal(four.session.reading.acknowledged.generation, '5');
+  // Refused before any exchange: anything that is not a Torus checkpoint.
+  const sent = calls.length;
+  for (const bad of [null, [], 'checkpoint', { schema: 'ql.m1-prime-session/v1' }])
+    await assert.rejects(session.torusRestore(bad), /a Torus restore takes the owner's ql\.torus-checkpoint\/v1/);
+  assert.equal(calls.length, sent);
+  // A checkpoint reply without its checkpoint is not the owner's answer.
+  port.checkpointBody = null; port.effect = reply => { delete reply.torus_checkpoint; return reply; };
+  await assert.rejects(session.torusCheckpoint(), /no Torus checkpoint/);
+  // A refused restore is no act.
+  const refused = setup(); refused.port.refuseOperation = 'torus-restore';
+  await assert.rejects(refused.session.torusRestore(restoring), /controlled refusal/);
+  assert.equal(refused.session.journal().acts.length, 0);
+  assert.ok(field);
+  session.dispose();
+});
+
+test('a take renders offline as a read: the owner neither moves nor sounds, and the render comes back whole', async () => {
+  // O-I #855: Export Audio takes a Live take through the M1′ session offline, on a second owner of the scene (host.rs torus-render).
+  const { session, calls, port } = setup();
+  const checkpoint = await session.torusCheckpoint();
+  const acts = [
+    { action: 'strike', at_samples_elapsed: '4800', keys: [{ row: 2, column: 3 }], amplitude: [0.3, 0] },
+    { action: 'release', at_samples_elapsed: '9600', keys: [{ row: 2, column: 3 }] },
+    { action: 'set', at_samples_elapsed: '9600', edit: { polyphony: 2 } }];
+  const render = await session.torusRender({ checkpoint, acts, frames: 4800 });
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-render', checkpoint, acts, frames: 4800 }, 'the take travels whole');
+  assert.equal(render.schema, 'ql.torus-render/v1');
+  assert.equal(render.audio.length, 4800);
+  assert.equal(session.reading.acknowledged.generation, '1', 'a render does not advance the owner');
+  assert.ok(!session.journal().acts.some(act => act.operation === 'torus-render'), 'a read is not an owner act');
+  const next = await session.torusRender({ continues: render.continues, acts: [], frames: 2400 });
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-render', continues: 'render:1', acts: [], frames: 2400 });
+  assert.equal(next.audio.length, 2400);
+  // Refused before any exchange.
+  const sent = calls.length;
+  for (const [bad, words] of [
+    [{ acts: [], frames: 4800 }, /either a checkpoint or the render it continues/],
+    [{ checkpoint, continues: 'render:1', acts: [], frames: 4800 }, /either a checkpoint or the render it continues/],
+    [{ checkpoint: { schema: 'ql.m1-prime-session/v1' }, acts: [], frames: 4800 }, /ql\.torus-checkpoint\/v1/],
+    [{ continues: '', acts: [], frames: 4800 }, /continues names the render/],
+    [{ checkpoint, acts: [], frames: 0 }, /1 to 1048576 frames/],
+    [{ checkpoint, acts: [], frames: 2 ** 20 + 1 }, /1 to 1048576 frames/],
+    [{ checkpoint, acts: Array(4097).fill(acts[1]), frames: 4800 }, /at most 4096 acts/],
+    [{ checkpoint, acts: [{ ...acts[0], at_samples_elapsed: 4800 }], frames: 4800 }, /exact sample cursor/],
+    [{ checkpoint, acts: [{ ...acts[0], keys: [{ row: 6, column: 0 }] }], frames: 4800 }, /row \(0\.\.5\)/],
+    [{ checkpoint, acts: [{ ...acts[0], amplitude: [1.5, 0] }], frames: 4800 }, /within 1\.0/],
+    [{ checkpoint, acts: [{ action: 'hold', at_samples_elapsed: '0', keys: [] }], frames: 4800 }, /strike, release or set/],
+    [{ checkpoint, acts: [{ action: 'set', at_samples_elapsed: '0', edit: {} }], frames: 4800 }, /at least one setting/],
+  ]) await assert.rejects(session.torusRender(bad), words, JSON.stringify(bad).slice(0, 80));
+  assert.equal(calls.length, sent);
+  // A render whose answer is not the take's sound, or that moved the owner, is not the owner's answer.
+  port.renderBody = { schema: 'ql.torus-render/v1', audio: [0.25] };
+  await assert.rejects(session.torusRender({ checkpoint, acts: [], frames: 4800 }), /no render of the take/);
+  const moved = setup(); const kept = await moved.session.torusCheckpoint();
+  moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
+  await assert.rejects(moved.session.torusRender({ checkpoint: kept, acts: [], frames: 4800 }), /native cursor disagree|read advanced/);
   session.dispose();
 });

@@ -172,3 +172,42 @@ fn fifths_overlay_addresses_the_same_classes_over_one_substrate() {
         );
     }
 }
+
+#[test]
+fn each_class_stands_at_one_place_of_its_helix_and_the_pulse_carries_its_point() {
+    // O-I #851 (DLW §20.2: a symbol's voice is "the chord whose figure on the torus is the symbol's
+    // shape"): the twelve classes, each at the one place of its helix every touch-point of it shares,
+    // carried by the pulse as a key's point is (POINT_LAW).
+    let surface = JankoSurface::new();
+    for steps in [0.0, 0.25, 7.5] {
+        let classes = surface.class_points(steps);
+        assert_eq!(classes.len(), 12, "the twelve classes");
+        let mut arcs: Vec<u8> = classes.iter().map(|c| c.point.place.arc).collect();
+        for (i, class) in classes.iter().enumerate() {
+            assert_eq!(usize::from(class.pitch_class), i, "in class order");
+            assert_eq!(pitch(class.key), class.pitch_class);
+            assert_eq!(
+                class.point,
+                surface.point(class.key, steps),
+                "the key's own point"
+            );
+            let place = class.point.place;
+            assert_eq!(place.arc, 6 * place.helix + place.position);
+            // Every key of the class, on every row and column, stands at the same place.
+            for row in 0..ROWS {
+                for column in 0..2 * COLUMN_PERIOD {
+                    let key = JankoKey::new(row, column);
+                    if pitch(key) == class.pitch_class {
+                        assert_eq!(JankoSurface::helix_place(key), place);
+                    }
+                }
+            }
+        }
+        arcs.sort_unstable();
+        assert_eq!(
+            arcs,
+            (0..12).collect::<Vec<u8>>(),
+            "one class to each arc of the ring"
+        );
+    }
+}

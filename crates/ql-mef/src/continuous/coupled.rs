@@ -764,4 +764,8 @@ impl CoupledFieldSession {
         self.replace_field(input)?;
         Ok(self.snapshot())
     }
+    /// The body as it rang at a checkpoint, set again (`FieldSession::set_state`, O-I 855).
+    pub fn set_state_field(&mut self, amplitudes: &[[f64; 2]]) -> Result<Value, String> {
+        self.field.set_state(amplitudes)
+    }
 }

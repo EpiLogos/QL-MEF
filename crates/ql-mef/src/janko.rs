@@ -94,6 +94,18 @@ pub struct KeyPoint {
     pub phi: f64,
 }
 
+/// Where one of the twelve classes stands on the turning torus: the one place
+/// of its helix that every touch-point of it shares, and that place's point
+/// after the pulse has turned ([`POINT_LAW`]). `key` is the class's key on the
+/// first row of its family, in the first column period.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+pub struct ClassPoint {
+    pub pitch_class: PitchClass,
+    pub pitch_name: &'static str,
+    pub key: JankoKey,
+    pub point: KeyPoint,
+}
+
 /// What one key means: the figure's §2 controller-neutral projection
 /// contract, filled entirely from the accepted musical state.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -158,6 +170,27 @@ impl JankoSurface {
             arc,
             cover_degrees: u16::from(arc) * 60,
         }
+    }
+
+    /// The twelve classes in class order, each at its place and its point after
+    /// `pulse_steps` (O-I #851: a symbol's voice is the chord whose figure on
+    /// the torus is the symbol's shape, so a reader needs where each class
+    /// stands). The two family rows of one column period hold every class once.
+    pub fn class_points(&self, pulse_steps: f64) -> Vec<ClassPoint> {
+        let mut classes: Vec<ClassPoint> = (0..2)
+            .flat_map(|row| (0..COLUMN_PERIOD).map(move |column| JankoKey::new(row, column)))
+            .map(|key| {
+                let pitch_class = self.project(key).sounding_pitch_class;
+                ClassPoint {
+                    pitch_class,
+                    pitch_name: pitch_name(pitch_class),
+                    key,
+                    point: self.point(key, pulse_steps),
+                }
+            })
+            .collect();
+        classes.sort_by_key(|class| class.pitch_class);
+        classes
     }
 
     /// The key's moving point after `pulse_steps` of the pulse ([`POINT_LAW`]).

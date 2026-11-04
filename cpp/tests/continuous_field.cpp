@@ -322,6 +322,33 @@ int main() {
     resent.set_carrier(375, 1024, 0.5, kick); // step 2 falls at the cursor, 1216
     assert(resent.render_audio(resent_pcm.data() + 192, 320));
     assert(straight == resent_pcm && kept.amplitude(0) == resent.amplitude(0));
+    // The body as it rang, set again (O-I 855: a Live take's checkpoint): a field given another's resident states at the
+    // same cursor rings on as that one does, bit for bit, in one generation; the cursor stays. A state that does not
+    // name every mode, or is not finite and bounded, or a stale generation, is refused and changes nothing.
+    ql::ContinuousField rung_field(voiced), reset(voiced);
+    advance(rung_field, 1024, 512); advance(reset, 1024, 512);
+    rung_field.strike({{"mode:earth", {0.004, 0}}});
+    reset.strike({{"mode:earth", {0.0001, 0}}});
+    advance(rung_field, 512, 256); advance(reset, 512, 256);
+    const std::vector<Complex> rung{rung_field.amplitude(0), rung_field.amplitude(1)};
+    assert(reset.amplitude(0) != rung_field.amplitude(0));
+    const auto set_before = reset.receipt();
+    auto refused_state = [&](std::uint64_t generation, std::vector<Complex> states) {
+        const auto held = reset.amplitude(0);
+        bool no = false;
+        try { reset.set_state(generation, states); } catch (const std::invalid_argument &) { no = true; }
+        assert(no && reset.receipt().generation == set_before.generation && reset.amplitude(0) == held);
+    };
+    refused_state(set_before.generation, {rung[0]});
+    refused_state(set_before.generation, {rung[0], {std::nan(""), 0}});
+    refused_state(set_before.generation, {rung[0], {2e6, 0}});
+    refused_state(set_before.generation + 1, rung);
+    reset.set_state(set_before.generation, rung);
+    assert(reset.receipt().generation == set_before.generation + 1 && reset.receipt().samples_elapsed == set_before.samples_elapsed);
+    assert(reset.amplitude(0) == rung[0] && reset.amplitude(1) == rung[1]);
+    std::array<float, 512> rung_pcm{}, set_pcm{};
+    assert(rung_field.render_audio(rung_pcm.data(), 512) && reset.render_audio(set_pcm.data(), 512));
+    assert(rung_pcm == set_pcm && reset.amplitude(0) == rung_field.amplitude(0));
     std::cout << "{\"schema\":\"ql.continuous-acceptance/v1\",\"analytic_error_48k\":" << error48
               << ",\"analytic_error_96k\":" << error96
               << ",\"equal_modes_cancel\":true,\"stable_samples\":true,\"mute_continues\":true,"
