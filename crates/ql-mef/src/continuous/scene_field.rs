@@ -167,7 +167,7 @@ pub struct Voice {
 pub const SCENE_PLAYED_STANDING: &str = "declared-instrument-mapping: a played key sounds the scene voices whose own just-ratio pitch is nearest the key's chromatic class over C3; the sources define the voices' pitches and the surface's classes and define no routing between them, so this routing is declared, bounded and disclosed with each voice's cents offset (wayfinder §2.2); D13 keeps every sounding pitch the voice's own, never the key's equal-tempered class";
 
 /// The law of a strike at points, carried in every `ql.strike-at/v1` receipt.
-const STRIKE_AT_LAW: &str = "each standing voice receives amplitude × χ(voice, φ, θ): the voice's own M2′ double-Fourier Chladni term at the struck point, with the weight the body's mode shapes already carry (frequency over the highest frequency, decision D21) and the voice's anchor at its planet's longitude; summed over the points of one act, so a chord is the sum of its single strikes; no other weighting. The sampled sheet is θ, φ ∈ [0, 2π). The same χ fills the native owner's mode_shapes, so touching a sampled point excites each voice by the shape the owner holds there.";
+const STRIKE_AT_LAW: &str = "each standing voice receives amplitude × Strike × χ(voice, φ, θ): the point's velocity, the share of it that excites the body (the Torus's Strike in force at the act's sample, manual §21.2), and the voice's own M2′ double-Fourier Chladni term at the struck point, with the weight the body's mode shapes already carry (frequency over the highest frequency, decision D21) and the voice's anchor at its planet's longitude; summed over the points of one act, so a chord is the sum of its single strikes; no other weighting. The sampled sheet is θ, φ ∈ [0, 2π). The same χ fills the native owner's mode_shapes, so touching a sampled point excites each voice by the shape the owner holds there.";
 /// The standing of a strike at points: what it is and what it does not decide.
 const STRIKE_AT_STANDING: &str = "performance act, not a determinant: pitch, material, clocks and every source reading are unchanged and the owner's influence reading stays current (QL-MEF #281); lowered to the one native strike of the named voices, one generation per act. The placement of a key on the torus is not decided here — the caller names the point.";
 
@@ -1416,7 +1416,7 @@ pub struct TorusCheckpoint {
     pub law: String,
 }
 /// The law of the classes a Torus reading carries (O-I #851).
-pub const CLASS_SOUNDS_LAW: &str = "each of the twelve classes stands at the one place of its helix every touch-point of it shares, and the pulse carries that place's point across the surface (janko POINT_LAW); a class sounds every voice of the tuning in force by that voice's shape term at its point now: what a key of the class struck now gives the voice per unit of amplitude (strike_at_tuned). A symbol's voice is the chord of the classes its form covers where it stands (DLW §20.2)";
+pub const CLASS_SOUNDS_LAW: &str = "each of the twelve classes stands at the one place of its helix every touch-point of it shares, and the pulse carries that place's point across the surface (janko POINT_LAW); a class sounds every voice of the tuning in force by that voice's shape term at its point now: what a key of the class struck now gives the voice per unit of the amplitude the body takes, its velocity × Strike (strike_at_tuned). A symbol's voice is the chord of the classes its form covers where it stands (DLW §20.2)";
 /// The standing of a played note's own cell.
 const NOTE_CELL_STANDING: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental. Disclosed per note; the native owner sounds the resident voices of the tuning in force at the struck point, so a per-note voice bank sounding each cell's own eight is not built (QL-MEF #287 packet A)";
 
@@ -1878,9 +1878,9 @@ impl SceneInstrument {
         // The session as it will stand at the act's sample: a setting sent for a sample before it is in force there (O-I 855).
         let landing = self.torus_at(at);
         let steps = landing.steps_at(at);
-        // Strike: the share of the key's velocity that excites the body (manual §21.2; the element's under Body source Tattva).
+        // Strike, the share of the velocity that excites the body (manual §21.2; the element's under Body source Tattva), is taken
+        // at the strike itself (strike_at_when), as for every strike at points.
         let strike = landing.settings().strike;
-        let amplitude = [amplitude[0] * strike, amplitude[1] * strike];
         let surface = crate::janko::JankoSurface::new();
         let points: Vec<crate::janko::KeyPoint> =
             keys.iter().map(|key| surface.point(*key, steps)).collect();
@@ -2432,13 +2432,27 @@ impl SceneInstrument {
         points: &[StrikeAtInput],
         at_samples_elapsed: Option<u64>,
     ) -> Result<StrikeAtOutcome, String> {
-        // The tuning in force at the act's sample: a setting sent for a sample before it is in force there (O-I 855).
-        let tuning = match at_samples_elapsed {
-            Some(at) => self.torus_at(at).settings().tuning,
-            None => self.tuning(),
+        // The tuning and Strike in force at the act's sample: a setting sent for a sample before it is in force there (O-I 855).
+        let (tuning, strike) = match at_samples_elapsed {
+            Some(at) => {
+                let landing = self.torus_at(at);
+                (landing.settings().tuning, landing.settings().strike)
+            }
+            None => (self.tuning(), self.torus.settings().strike),
         };
-        let impulses = self.shape.strike_at_tuned(points, tuning)?;
+        // Strike is the body's share of every strike's velocity (manual §21.2: a key, a touch, a clip's note, a collision, a
+        // singlet all strike the Torus), taken once, here. The points are judged as they were struck.
+        StrikeAtInput::validate_act(points)?;
+        let struck: Vec<StrikeAtInput> = points
+            .iter()
+            .map(|point| StrikeAtInput {
+                amplitude: point.amplitude.map(|amplitude| amplitude * strike),
+                ..*point
+            })
+            .collect();
+        let impulses = self.shape.strike_at_tuned(&struck, tuning)?;
         let mut receipt = self.shape.strike_at_receipt(points, &impulses);
+        receipt["strike"] = json!(strike);
         let lands = match at_samples_elapsed {
             Some(at) => json!(at.to_string()),
             None => self.session.last_field()["samples_elapsed"].clone(),
