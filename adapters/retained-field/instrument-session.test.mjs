@@ -97,6 +97,10 @@ function setup(options = {}) {
         // is one strike at points; a Fundamental edit one modes continuation.
         current.generation = String(BigInt(current.generation) + (port.torusStep ?? 1n));
         current.amplitudes_metres[0][0] += 0.01;
+      } else if (request.command.operation === 'torus-body') {
+        // Controlled protocol case (host.rs torus_operation, O-I #852): choosing the body is one body act; it rings from rest.
+        current.generation = String(BigInt(current.generation) + (port.bodyStep ?? 1n));
+        current.amplitudes_metres[0][0] = 0;
       } else if (request.command.operation === 'torus-restore') {
         // Controlled protocol case (host.rs torus_operation): a restore is the event's modes (and shape) continuation when it
         // moved, the damping when it moved, and the body's state: one to four generations, no samples and no PCM.
@@ -130,6 +134,11 @@ function setup(options = {}) {
       }
       if (['torus-state', 'torus-set', 'torus-play', 'torus-singlet', 'torus-release', 'torus-checkpoint', 'torus-restore'].includes(request.command.operation))
         reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [] };
+      if (request.command.operation === 'torus-body') {
+        reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [],
+          body: request.command.body === null ? { kind: 'torus' } : { kind: 'form', prepared: { schema: 'ql.physical-body-preparation/v1' } } };
+        reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
+      }
       if (request.command.operation === 'torus-set')
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
       if (request.command.operation === 'torus-checkpoint')
@@ -908,14 +917,15 @@ test('a Torus checkpoint is a read of the body as it rings, and a restore is one
   assert.deepEqual(session.journal().acts.map(act => act.operation), ['torus-restore'], 'the restore is an owner act');
   session.present();
   assert.equal(session.reading.queued_blocks, 1, 'the restored body is presented');
-  // The owner's restore moves one to four generations (event modes, its shape, damping, body); anything else disagrees.
-  for (const step of [0n, 5n]) {
+  // The owner's restore moves one to six generations (back to the torus from a form, the event's modes and its shape, the
+  // damping, the form kept, the body's state); anything else disagrees.
+  for (const step of [0n, 7n]) {
     const other = setup(); other.port.restoreStep = step;
     await assert.rejects(other.session.torusRestore(restoring), /native cursor disagree/);
   }
-  const four = setup(); four.port.restoreStep = 4n;
-  await four.session.torusRestore(restoring);
-  assert.equal(four.session.reading.acknowledged.generation, '5');
+  const six = setup(); six.port.restoreStep = 6n;
+  await six.session.torusRestore(restoring);
+  assert.equal(six.session.reading.acknowledged.generation, '7');
   // Refused before any exchange: anything that is not a Torus checkpoint.
   const sent = calls.length;
   for (const bad of [null, [], 'checkpoint', { schema: 'ql.m1-prime-session/v1' }])
@@ -929,6 +939,41 @@ test('a Torus checkpoint is a read of the body as it rings, and a restore is one
   await assert.rejects(refused.session.torusRestore(restoring), /controlled refusal/);
   assert.equal(refused.session.journal().acts.length, 0);
   assert.ok(field);
+  session.dispose();
+});
+
+test('choosing the body is one owner act: a form made a body, or the torus by name', async () => {
+  // O-I #852 (DLW manual §21.2 Body): the owner prepares the form's ql.form-body-request/v1 and rings the scene's voices through
+  // it from the cursor; null is the torus. One body act, journaled; the answer carries the session reading with the body.
+  const { session, calls } = setup();
+  const fold = { schema: 'ql.form-body-request/v1', event_ref: 'event:a', subject_ref: 'person:a', modes: 8 };
+  await session.torusBody(fold);
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-body', body: fold }, 'the request travels whole');
+  assert.equal(session.reading.acknowledged.generation, '2', 'one body act');
+  assert.equal(session.lastTorus.body.kind, 'form');
+  assert.equal(session.lastInfluence.tuning, 'logic');
+  session.present();
+  assert.equal(session.reading.queued_blocks, 1, 'the chosen body is presented');
+  fold.modes = 64; // the caller's copy is its own
+  assert.equal(calls.at(-1).command.body.modes, 8);
+  await session.torusBody(null);
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-body', body: null });
+  assert.equal(session.lastTorus.body.kind, 'torus');
+  assert.deepEqual(session.journal().acts.map(act => act.operation), ['torus-body', 'torus-body'], 'each choice is an owner act');
+  // Refused before any exchange: anything that is not a form's body request, or the torus.
+  const sent = calls.length;
+  for (const bad of [undefined, [], 'fold', { schema: 'ql.torus-checkpoint/v1' }])
+    await assert.rejects(session.torusBody(bad), /a body is a form's ql\.form-body-request\/v1, or null for the torus/);
+  assert.equal(calls.length, sent);
+  // A choice that moved the owner by other than one body act disagrees with the law.
+  for (const step of [0n, 2n]) {
+    const other = setup(); other.port.bodyStep = step;
+    await assert.rejects(other.session.torusBody(fold), /native cursor disagree/);
+  }
+  // A refused choice is no act.
+  const refused = setup(); refused.port.refuseOperation = 'torus-body';
+  await assert.rejects(refused.session.torusBody(fold), /controlled refusal/);
+  assert.equal(refused.session.journal().acts.length, 0);
   session.dispose();
 });
 

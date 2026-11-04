@@ -668,4 +668,53 @@ impl FieldSession {
     pub fn read(&mut self) -> Result<Value> {
         self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))
     }
+    /// The body chosen for this continuation (O-I #852; DLW manual §21.2 "The body
+    /// is what rings"): `m2`'s resonator and `field`'s samples, gains and shapes,
+    /// as a body is opened with, for the same event, subject and sample rate under
+    /// the clock in force. One body act: one generation; the cursor and the clock
+    /// stand, the new voices ring from their supplied states, and nothing drives
+    /// them until the carrier is set again. A body that cannot continue this field
+    /// is refused here without transport; the worker re-validates it whole, and an
+    /// act still waiting for its sample is refused there.
+    pub fn replace_body(&mut self, m2: M2Request, field: FieldInput) -> Result<Value> {
+        let frame = m2.execute()?;
+        let frame = serde_json::to_value(frame).map_err(|e| e.to_string())?;
+        let mut next = ReceiptGuard::new(&frame, &field)?;
+        self.guard.chooses(&next)?;
+        if serde_json::to_value(&field.clock).map_err(|e| e.to_string())?
+            != clock_input_of(&self.receipt["clock"])
+        {
+            return Err(
+                "a body is chosen under the clock in force: choosing it moves no clock".into(),
+            );
+        }
+        let request = json!({"schema":"ql.field-control/v1", "operation":"replace-body",
+            "expected_generation":self.receipt["generation"],
+            "expected_samples_elapsed":self.receipt["samples_elapsed"],
+            "m2":frame, "field":field});
+        let receipt = self.worker.exchange(&request)?;
+        if let Err(error) = next.validate(&request, Some(&self.receipt), &receipt) {
+            return Err(self.worker.invalidate(&error));
+        }
+        next.adopted(&receipt);
+        self.guard = next;
+        self.receipt = receipt.clone();
+        self.current = m2;
+        Ok(receipt)
+    }
+    /// The clock in force as a field input names it: the acknowledged clock
+    /// without the references and the double cover the worker derives.
+    pub fn clock_in_force(&self) -> Result<ClockInput> {
+        serde_json::from_value(clock_input_of(&self.receipt["clock"]))
+            .map_err(|e| format!("the owner's clock is not a field clock: {e}"))
+    }
+}
+
+/// An acknowledged clock as a field input names it (`ClockInput`'s shape).
+fn clock_input_of(clock: &Value) -> Value {
+    let phase = |axis: &str| json!({"turns":clock[axis]["turns"], "half_degrees":clock[axis]["half_degrees"]});
+    json!({"inscription":phase("inscription"), "lensing":phase("lensing"),
+        "grid_origins":clock["grid_origins"], "rate_numerators":clock["rate_numerators"],
+        "rate_denominator":clock["rate_denominator"], "rate_remainders":clock["rate_remainders"],
+        "generation":clock["generation"]})
 }

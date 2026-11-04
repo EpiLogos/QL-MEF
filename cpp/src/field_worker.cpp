@@ -244,6 +244,18 @@ int main() {
                     std::vector<ql::Complex> states; states.reserve(field->source().modes.size());
                     for (std::size_t i = 0; i < field->source().modes.size(); ++i) states.push_back(pair(at(items, i)));
                     field->set_state(field->receipt().generation, states); committed = true;
+                } else if (op == "replace-body") {
+                    // The body chosen for this continuation (O-I #852): a whole M2 frame and field input, as initialize takes them,
+                    // for the same event and subject under the clock in force. Its voices ring from their supplied states.
+                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "m2", "field"});
+                    auto m2 = get(request.get(), "m2"), f = get(request.get(), "field");
+                    ql::require(text(get(get(m2, "identity"), "event_ref")) == field->source().event_ref,
+                        "a body is chosen for the same event");
+                    std::string next_ref;
+                    auto next = initialize(m2, f, next_ref);
+                    auto kept_gains = own(json_object_get(get(f, "audio_gains"))), kept_basis = own(json_object_get(m2));
+                    field->replace_body(field->receipt().generation, std::move(next));
+                    gains.swap(kept_gains); basis.swap(kept_basis); shape_ref.swap(next_ref); committed = true;
                 } else { keys(request.get(), {"schema", "operation"}); ql::require(op == "read", "unknown field operation"); }
             }
             auto output = own(response(*field, audio, true, 1));

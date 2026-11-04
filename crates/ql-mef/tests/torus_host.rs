@@ -105,6 +105,8 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-receiver","receiver":null}),
         json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0]}),
         json!({"operation":"torus-singlet","codon":8,"amplitude":[0.2,0.0],"at_samples_elapsed":"4800"}),
+        json!({"operation":"torus-body","body":null}),
+        json!({"operation":"torus-body","body":fold(&json!({"event_ref":"event:a","subject_ref":"person:a"}))}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_ok(),
@@ -132,6 +134,9 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-singlet","codon":300,"amplitude":[0.2,0.0]}),
         json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0],"arc":6}),
         json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0],"at":"4800"}),
+        json!({"operation":"torus-body","form":null}),
+        json!({"operation":"torus-body","body":{"schema":"ql.form-body-request/v1"}}),
+        json!({"operation":"torus-body","body":null,"at_samples_elapsed":"0"}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_err(),
@@ -1628,4 +1633,251 @@ fn one_performance_in_two_contexts_differs_only_as_declared_and_the_saved_sound_
     assert_eq!(body(&refused), standing_body);
     let (a, b) = block(&mut world, &mut mine);
     assert_eq!(a, b, "still the world's");
+}
+
+/// A fold made a body (QL-MEF form_body.rs's controlled fold), prepared for the scene `field` names: its event and subject.
+fn fold(field: &Value) -> Value {
+    json!({
+        "schema": "ql.form-body-request/v1",
+        "event_ref": field["event_ref"], "subject_ref": field["subject_ref"], "source_generation": 7,
+        "form": {"kind": "fold", "form_ref": "m3-prime:fold/valley-mountain-valley", "source_ref": "ql.psg-fold-progress/v1:controlled"},
+        "samples": {"schema": "ql.psg-form-samples/v1", "prep_ref": "ta-onta:psg:fold-body", "treatment": "sheet-carrier",
+            "layers": [{"layer_ref": "form:sheet", "rest_depth_w": 0.5}], "resolution": 12,
+            "units": {"extent_units": 2.0, "depth_units": 0.1, "metres_per_unit": 0.25}},
+        "crease_deg10": [900, -450, 0],
+        "material": {"fibre": "earth", "q_factor": 40.0, "strike_share": 0.7, "source_ref": "declared"},
+        "modes": 8, "sample_rate": 48000,
+    })
+}
+
+/// The modes the owner rings now, by the gains it hears them by (`torus-receiver` in the world's context; a read).
+fn ringing(d: &mut Driver) -> Vec<String> {
+    let reply = d.send(json!({"operation":"torus-receiver","receiver":null}));
+    assert_eq!(reply["status"], "ok", "{reply}");
+    heard(&reply).into_iter().map(|(mode, _)| mode).collect()
+}
+
+/// O-I #852 (DLW manual §21.2 "The body is what rings. It is the torus unless you choose a form"): a fold chosen as the
+/// body rings in the live scene. One body act at the cursor: the scene's resident voices ring through every mode of the
+/// fold, from rest, under the same event, clock, session and receiver; a named strike and the Carrier sound it; it is
+/// heard where the form says it is heard; a checkpoint keeps it, and a restore chooses it again. A body this scene cannot
+/// ring is refused in words and changes nothing, and the torus is chosen again by name.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_fold_chosen_as_the_body_rings_in_the_live_scene() {
+    let mut d = Driver::open();
+    let torus_modes = ringing(&mut d);
+    let torus_geometry = d.current["field"]["geometry_ref"].clone();
+    render(&mut d, 0.1);
+    let request = fold(&d.current["field"]);
+
+    // Refused in words, changing nothing.
+    let unchanged = body(&d.current);
+    let mut too_many = request.clone();
+    too_many["modes"] = json!(64);
+    too_many["samples"]["resolution"] = json!(16);
+    for (bad, words) in [
+        (json!({"event_ref":"event:another"}), "event"),
+        (json!({"subject_ref":"person:another"}), "subject"),
+        (json!({"sample_rate":44100}), "Hz"),
+        (too_many, "budget"),
+    ] {
+        let mut asked = request.clone();
+        for (key, value) in bad.as_object().unwrap() {
+            asked[key] = value.clone();
+        }
+        let refused = d.send(json!({"operation":"torus-body","body":asked}));
+        assert_eq!(refused["status"], "refused", "{bad}: {refused}");
+        assert!(
+            refused["error"].as_str().unwrap().contains(words),
+            "{bad}: {refused}"
+        );
+        assert_eq!(body(&refused), unchanged, "{bad}");
+    }
+
+    // One body act at the cursor, the clock in force.
+    let before = d.current.clone();
+    let chosen = d.send(json!({"operation":"torus-body","body":request}));
+    assert_eq!(chosen["status"], "ok", "{chosen}");
+    let field = &chosen["field"];
+    let generation: u64 = before["field"]["generation"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    assert_eq!(field["generation"], json!((generation + 1).to_string()));
+    assert_eq!(field["samples_elapsed"], before["field"]["samples_elapsed"]);
+    assert_eq!(field["clock"], before["field"]["clock"]);
+    let prepared = &chosen["torus"]["body"]["prepared"];
+    assert_eq!(chosen["torus"]["body"]["kind"], "form", "{chosen}");
+    assert_eq!(prepared["schema"], "ql.physical-body-preparation/v1");
+    assert_eq!(
+        field["geometry_ref"],
+        prepared["request"]["preparation_ref"]
+    );
+    assert_eq!(field["shape_ref"], prepared["request"]["state_ref"]);
+    let modes = ringing(&mut d);
+    assert_eq!(modes.len(), torus_modes.len() * 8);
+    for (k, mode) in modes.iter().enumerate() {
+        assert_eq!(mode, &format!("{}/body/{}", torus_modes[k / 8], k % 8));
+    }
+    assert!(
+        metres(&d.current["field"]["amplitudes_metres"])
+            .iter()
+            .all(|x| *x == 0.0),
+        "a chosen body rings from rest"
+    );
+    assert!(
+        render(&mut d, 0.1).iter().all(|x| *x == 0.0),
+        "nothing strikes it yet"
+    );
+
+    // A named strike rings its body modes; a torus voice is no mode of this body.
+    let refused = d.send(json!({"operation":"strike","strikes":[{"mode_ref":torus_modes[0],"amplitude":[0.05,0.0]}]}));
+    assert_eq!(refused["status"], "refused", "{refused}");
+    assert!(
+        refused["error"]
+            .as_str()
+            .unwrap()
+            .contains("no prepared mode"),
+        "{refused}"
+    );
+    let struck = d.send(json!({"operation":"strike","strikes":[{"mode_ref":modes[0],"amplitude":[0.05,0.0]},{"mode_ref":modes[3],"amplitude":[0.02,0.0]}]}));
+    assert_eq!(struck["status"], "ok", "{struck}");
+    let rung = render(&mut d, 0.2);
+    assert!(rms(&rung) > 0.0, "the fold rings");
+
+    // Heard where the form says it is heard: a receiver's place moves no gain while a form rings.
+    let declared = heard(&d.send(json!({"operation":"torus-receiver","receiver":null})));
+    let placed = d.send(json!({"operation":"torus-receiver","receiver":standing(1.5, 0.7)}));
+    assert_eq!(placed["status"], "ok", "{placed}");
+    assert_eq!(heard(&placed), declared);
+    assert!(
+        placed["torus_receiver"]["law"]
+            .as_str()
+            .unwrap()
+            .contains("pickup"),
+        "{placed}"
+    );
+    d.send(json!({"operation":"torus-receiver","receiver":null}));
+
+    // A form's body rings out by the Q factor it was prepared with: the scene's damping is the torus's.
+    let refused = d.send(json!({"operation":"set-damping","per_second":7.5}));
+    assert_eq!(refused["status"], "refused", "{refused}");
+    assert!(
+        refused["error"].as_str().unwrap().contains("Q factor"),
+        "{refused}"
+    );
+
+    // The Carrier drives it between strikes.
+    let carried = d.send(json!({"operation":"torus-set","edit":{"carrier":0.5}}));
+    assert_eq!(carried["status"], "ok", "{carried}");
+    assert_eq!(carried["torus"]["carrier"]["native"], true, "{carried}");
+
+    // A checkpoint keeps the body; the torus chosen again by name; a restore chooses the fold again and it rings on as it rang.
+    let kept = d.send(json!({"operation":"torus-checkpoint"}));
+    assert_eq!(kept["status"], "ok", "{kept}");
+    let checkpoint = kept["torus_checkpoint"].clone();
+    assert_eq!(checkpoint["body"]["request"], request, "{checkpoint}");
+    assert_eq!(checkpoint["body"]["prepared"], *prepared);
+    assert_eq!(metres(&checkpoint["amplitudes"]).len(), modes.len() * 2);
+    let then = render(&mut d, 0.2);
+    let torus = d.send(json!({"operation":"torus-body","body":null}));
+    assert_eq!(torus["status"], "ok", "{torus}");
+    assert_eq!(torus["torus"]["body"]["kind"], "torus");
+    assert_eq!(torus["field"]["geometry_ref"], torus_geometry);
+    assert_eq!(ringing(&mut d), torus_modes);
+    render(&mut d, 0.1);
+    let mut stale = checkpoint.clone();
+    stale["body"]["prepared"]["request"]["state_ref"] = json!("ql:form-body-state:another");
+    let refused = d.send(json!({"operation":"torus-restore","checkpoint":stale}));
+    assert_eq!(refused["status"], "refused", "{refused}");
+    assert!(
+        refused["error"].as_str().unwrap().contains("prepared"),
+        "{refused}"
+    );
+    let restored = d.send(json!({"operation":"torus-restore","checkpoint":checkpoint}));
+    assert_eq!(restored["status"], "ok", "{restored}");
+    assert_eq!(restored["torus"]["body"]["prepared"], *prepared);
+    assert_eq!(
+        metres(&restored["field"]["amplitudes_metres"]),
+        metres(&checkpoint["amplitudes"])
+    );
+    assert_eq!(render(&mut d, 0.2), then, "it rings on as it rang");
+
+    // The event moves while the fold rings: its voices take their new pitches through the same body modes, and an event's
+    // strike excites them where the body is heard.
+    for command in [
+        json!({"operation":"torus-set","edit":{"fundamental":{"source":"hz","hz":261.6}}}),
+        json!({"operation":"m1-advance","ticks":1}),
+    ] {
+        let generation = d.generation();
+        let moved = d.send(command.clone());
+        assert_eq!(moved["status"], "ok", "{command}: {moved}");
+        assert!(d.generation() > generation, "{command}");
+        assert_eq!(
+            moved["field"]["geometry_ref"],
+            prepared["request"]["preparation_ref"]
+        );
+        assert_eq!(ringing(&mut d), modes, "{command}");
+    }
+    assert!(
+        metres(&d.current["field"]["amplitudes_metres"])
+            .iter()
+            .any(|x| *x != 0.0),
+        "the event's strike rings the fold"
+    );
+    // Kept before the event moved, the fold comes back through the torus: the event first, then the fold, then its states.
+    let restored = d.send(json!({"operation":"torus-restore","checkpoint":checkpoint}));
+    assert_eq!(restored["status"], "ok", "{restored}");
+    assert_eq!(restored["torus"]["body"]["prepared"], *prepared);
+    assert_eq!(
+        metres(&restored["field"]["amplitudes_metres"]),
+        metres(&checkpoint["amplitudes"])
+    );
+    assert_eq!(render(&mut d, 0.2), then, "it rings on as it rang");
+}
+
+/// O-I #852, with a strike at points lowered onto the body that rings (the NOT-MINE `strike_at_when` hunk): a key of the
+/// Jankó surface and a touch strike a fold's body at the form's sample nearest their points, on the voices of the tuning in
+/// force, by the form's exciter law; the receipt names the body, the sample struck and each mode's impulse.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn keys_and_touches_strike_a_fold_where_they_land() {
+    let mut d = Driver::open();
+    let request = fold(&d.current["field"]);
+    let chosen = d.send(json!({"operation":"torus-body","body":request}));
+    assert_eq!(chosen["status"], "ok", "{chosen}");
+    let preparation = chosen["torus"]["body"]["prepared"]["request"]["preparation_ref"].clone();
+    let modes = ringing(&mut d);
+    let played = d.send(chord());
+    assert_eq!(played["status"], "ok", "{played}");
+    let receipt = &played["strike_at"];
+    assert_eq!(receipt["schema"], "ql.strike-at/v1");
+    assert_eq!(receipt["body"], preparation, "{receipt}");
+    assert_eq!(receipt["samples"].as_array().unwrap().len(), 3, "{receipt}");
+    let struck = receipt["modes"].as_array().unwrap();
+    assert!(
+        !struck.is_empty() && struck.len() < modes.len(),
+        "the voices of the tuning in force: {receipt}"
+    );
+    for impulse in struck {
+        assert!(
+            modes.contains(&impulse["mode_ref"].as_str().unwrap().to_owned()),
+            "{impulse}"
+        );
+    }
+    assert_eq!(played["torus_play"]["notes"].as_array().unwrap().len(), 3);
+    assert!(rms(&render(&mut d, 0.2)) > 0.0, "the keys ring the fold");
+    let touched = d.send(
+        json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}]}),
+    );
+    assert_eq!(touched["status"], "ok", "{touched}");
+    assert_eq!(touched["strike_at"]["body"], preparation);
+    assert_eq!(touched["strike_at"]["samples"].as_array().unwrap().len(), 1);
+    // A singlet an M3 event leaves strikes the fold at its codon's place too (torus-singlet, O-I #771).
+    let singlet = d.send(json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0]}));
+    assert_eq!(singlet["status"], "ok", "{singlet}");
+    assert_eq!(singlet["strike_at"]["body"], preparation, "{singlet}");
+    assert_eq!(singlet["torus_singlet"]["codon"], 5);
 }

@@ -176,6 +176,18 @@ impl ReceiptGuard {
         })
     }
 
+    /// A body chosen for this continuation (O-I #852) keeps its event, subject
+    /// and sample rate: the chosen body's guard must name them as this one does.
+    pub(super) fn chooses(&self, next: &ReceiptGuard) -> Result<()> {
+        for key in ["event_ref", "subject_ref", "sample_rate"] {
+            require(
+                self.fixed[key] == next.fixed[key],
+                "a body is chosen for the same event, subject and sample rate",
+            )?;
+        }
+        Ok(())
+    }
+
     pub(super) fn validate(
         &self,
         request: &Value,
@@ -311,6 +323,7 @@ impl ReceiptGuard {
         let operation = request["operation"].as_str().ok_or("missing operation")?;
         let changing = replacing
             || reshaping
+            || operation == "replace-body"
             || operation == "set-axis"
             || operation == "strike"
             || operation == "set-state";
@@ -452,6 +465,31 @@ impl ReceiptGuard {
                         require(
                             a.as_f64() == b.as_f64(),
                             "the body set is not the state asked for",
+                        )?;
+                    }
+                }
+            }
+            "replace-body" => {
+                // The body chosen for the continuation (O-I #852): this guard is the
+                // chosen body's, so its identity, voices and samples were judged
+                // above. Choosing it moves no clock, and its voices ring from the
+                // states its frame supplies.
+                require(
+                    request["m2"]["identity"] == self.m2_identity,
+                    "worker chose another body than the frame sent",
+                )?;
+                require(
+                    value["clock"] == previous["clock"],
+                    "choosing the body changed the clock",
+                )?;
+                for (state, mode) in array(&value["amplitudes_metres"], self.modes)?
+                    .iter()
+                    .zip(array(&request["m2"]["resonator"]["modes"], self.modes)?)
+                {
+                    for (a, b) in array(state, 2)?.iter().zip(array(&mode["amplitude"], 2)?) {
+                        require(
+                            a.as_f64() == b.as_f64(),
+                            "the chosen body does not ring from its supplied states",
                         )?;
                     }
                 }

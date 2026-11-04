@@ -67,7 +67,7 @@ pub const FORM_CONSTITUENT: &str = "#3-3";
 pub const IDENTITY_MASK: u64 = (1 << 53) - 1;
 pub const BODY_STANDING: &str = "proposed: the creased lattice is the body model this owner declares; no source table fixes a form's stiffness";
 
-const EXCITER_LAW: &str = "a struck point gives each voice's body mode amplitude × the voice's weight × the mode's shape at the sample nearest the point, summed over the act";
+pub const EXCITER_LAW: &str = "a struck point gives each voice's body mode amplitude × the voice's weight × the mode's shape at the sample nearest the point, summed over the act";
 const DAMPING_LAW: &str = "each mode rings out at π·f/Q";
 
 /// What the form is as a symbol.
@@ -574,6 +574,19 @@ impl FormBody {
 
     fn mode_ref(voice: &BodyVoice, k: usize) -> String {
         format!("{}/body/{k}", voice.mode_ref)
+    }
+
+    /// The modes the native owner rings for `voices`, in its order: each voice
+    /// through each body mode (`resonator`).
+    pub fn mode_refs(&self, voices: &[BodyVoice]) -> Vec<String> {
+        voices
+            .iter()
+            .flat_map(|voice| {
+                self.modes
+                    .iter()
+                    .map(|mode| Self::mode_ref(voice, mode.index))
+            })
+            .collect()
     }
 
     fn voices_valid(&self, voices: &[BodyVoice]) -> Result<(), String> {

@@ -382,11 +382,81 @@ int main() {
     std::array<float, 512> after_gain_refusals{}, declared_after{};
     assert(heard.render_audio(after_gain_refusals.data(), 512) && declared.render_audio(declared_after.data(), 512));
     for (std::size_t n = 0; n < 512; ++n) assert(after_gain_refusals[n] == declared_after[n] * 0.5f);
+    // The body chosen for the continuation (O-I #852; DLW manual §21.2 "The body is what rings"): the voices, their shapes and the
+    // geometry, material and model become the supplied ones, and ring from their supplied states; the event, subject, sample rate,
+    // clock, driver relation, cursor and last sample stand, one generation is stepped, and nothing drives or moves what is heard
+    // until the carrier and the gains are set again. Heard from then on, it is that body from those states: the same samples a body
+    // opened on them renders. A body is chosen for the same event, subject and rate, under the clock in force, while no act waits for
+    // its sample; anything else is refused and changes nothing.
+    ql::ContinuousField chosen(voiced);
+    advance(chosen, 1024, 512);
+    chosen.set_carrier(375, chosen.receipt().samples_elapsed, 0, {{0.001, 0}, {0.001, 0}});
+    chosen.set_gains({1.0, 1.0});
+    auto fold = voiced;
+    fold.geometry_ref = "fixture:fold"; fold.material_ref = "fixture:paper"; fold.model_ref = "model:creased-lattice/v1";
+    fold.clock = chosen.receipt().clock;
+    fold.modes = {{"mode:earth/body/0", "#2-2-2-5-5", 220, 2.0, {0.002, 0}, {0, 0}, 3.0},
+                  {"mode:earth/body/1", "#2-2-2-5-5", 571, 9.0, {-0.001, 0.0005}, {0, 0}, -1.5},
+                  {"mode:earth/body/2", "#2-2-2-5-5", 1093, 21.0, {0.0007, 0}, {0, 0}, 0.5}};
+    fold.samples = {{4, "#3-3", ql::ClockAttachment::Fixed, {0, 0, 0.01}, {{0, 0, 1}, {0, 0, -1}, {0, 0, 0.5}}},
+                    {9, "#3-3", ql::ClockAttachment::Fixed, {0.02, 0, 0}, {{0, 0, 0.2}, {0, 0, 1}, {0, 0, -1}}}};
+    const auto choosing = chosen.receipt();
+    auto refused_body = [&](std::uint64_t generation, ql::ContinuationInput next) {
+        const auto held_state = chosen.amplitude(0);
+        bool no = false;
+        try { chosen.replace_body(generation, std::move(next)); } catch (const std::invalid_argument &) { no = true; }
+        assert(no && chosen.receipt().generation == choosing.generation && chosen.source().modes.size() == 2 &&
+               chosen.source().geometry_ref == "fixture:mesh" && chosen.amplitude(0) == held_state);
+    };
+    refused_body(choosing.generation + 1, fold);
+    auto another = fold; another.subject_ref = "acceptance:nara-b"; refused_body(choosing.generation, another);
+    another = fold; another.event_ref = "acceptance:another-world"; refused_body(choosing.generation, another);
+    another = fold; another.sample_rate = 96000; refused_body(choosing.generation, another);
+    another = fold; another.clock = voiced.clock; refused_body(choosing.generation, another);
+    another = fold; another.driver_numerator = 720; refused_body(choosing.generation, another);
+    another = fold; another.modes[2].frequency_hz = 24000; refused_body(choosing.generation, another);
+    another = fold; another.samples[1].mode_shapes.pop_back(); refused_body(choosing.generation, another);
+    {
+        ql::ContinuousField waiting(voiced);
+        advance(waiting, 1024, 512);
+        waiting.strike({{"mode:earth", {0.001, 0}}}, waiting.receipt().samples_elapsed + 64);
+        auto next = fold; next.clock = waiting.receipt().clock;
+        bool no = false;
+        try { waiting.replace_body(waiting.receipt().generation, next); } catch (const std::invalid_argument &) { no = true; }
+        assert(no && waiting.source().modes.size() == 2 && waiting.pending_strikes() == 1);
+    }
+    chosen.replace_body(choosing.generation, fold);
+    const auto body_chosen = chosen.receipt();
+    assert(body_chosen.generation == choosing.generation + 1 && body_chosen.samples_elapsed == choosing.samples_elapsed &&
+           body_chosen.last_unmuted_sample == choosing.last_unmuted_sample);
+    assert(body_chosen.clock.inscription.turns == choosing.clock.inscription.turns &&
+           body_chosen.clock.inscription.half_degrees == choosing.clock.inscription.half_degrees &&
+           body_chosen.clock.lensing.half_degrees == choosing.clock.lensing.half_degrees &&
+           body_chosen.clock.generation == choosing.clock.generation &&
+           body_chosen.clock.rate_remainders[0] == choosing.clock.rate_remainders[0]);
+    assert(chosen.source().geometry_ref == "fixture:fold" && chosen.source().material_ref == "fixture:paper" &&
+           chosen.source().model_ref == "model:creased-lattice/v1" && chosen.source().modes.size() == 3 &&
+           chosen.samples().size() == 2 && chosen.samples()[1].identity == 9);
+    for (std::size_t i = 0; i < 3; ++i) assert(chosen.amplitude(i) == fold.modes[i].amplitude_metres);
+    ql::ContinuousField opened_on(fold);
+    std::array<float, 512> body_pcm{}, opened_pcm{};
+    std::array<float, 6> body_targets{}, opened_targets{};
+    assert(chosen.render_audio(body_pcm.data(), 512) && opened_on.render_audio(opened_pcm.data(), 512));
+    assert(body_pcm == opened_pcm && std::any_of(body_pcm.begin(), body_pcm.end(), [](float x) { return x != 0; }));
+    for (std::size_t i = 0; i < 3; ++i) assert(chosen.amplitude(i) == opened_on.amplitude(i));
+    assert(chosen.write_targets(body_targets.data(), 6) && opened_on.write_targets(opened_targets.data(), 6));
+    assert(body_targets == opened_targets);
+    assert(chosen.receipt().samples_elapsed == choosing.samples_elapsed + 512);
+    // The torus chosen again is one more body act, from the states it is supplied with.
+    auto torus_again = voiced; torus_again.clock = chosen.receipt().clock;
+    chosen.replace_body(chosen.receipt().generation, torus_again);
+    assert(chosen.source().modes.size() == 2 && chosen.source().geometry_ref == "fixture:mesh" &&
+           chosen.receipt().generation == body_chosen.generation + 1 && chosen.amplitude(1) == voiced.modes[1].amplitude_metres);
     std::cout << "{\"schema\":\"ql.continuous-acceptance/v1\",\"analytic_error_48k\":" << error48
               << ",\"analytic_error_96k\":" << error96
               << ",\"equal_modes_cancel\":true,\"stable_samples\":true,\"mute_continues\":true,"
                  "\"partition_independent\":true,\"independent_subjects\":true,\"exact_replay\":true,"
                  "\"shape_replacement_keeps_state_and_pcm\":true,\"played_strike_sounds_and_continues\":true,"
                  "\"strike_lands_at_its_sample\":true,\"pulse_drives_the_body_at_its_steps\":true,"
-                 "\"receiver_gains_move_only_what_is_heard\":true}\n";
+                 "\"receiver_gains_move_only_what_is_heard\":true,\"a_chosen_body_rings_on_the_same_continuation\":true}\n";
 }

@@ -680,14 +680,43 @@ impl CoupledFieldSession {
         input: CoupledInput,
         replace_state: bool,
     ) -> Result<Value, String> {
+        self.replace_field_lowered(input, replace_state, |basis| Ok(basis.m2_input.clone()))
+    }
+    /// As `replace_field_state`, with the composed M2 lowered by `lower` onto the
+    /// body that rings (O-I #852): the identity while the basis's own resonator
+    /// rings, the chosen body's resonator for the same voices while a form rings.
+    /// The whole basis is derived and lowered before any native act.
+    pub fn replace_field_lowered(
+        &mut self,
+        input: CoupledInput,
+        replace_state: bool,
+        lower: impl FnOnce(&CoupledBasis) -> Result<M2Request, String>,
+    ) -> Result<Value, String> {
         let next = input.compose()?;
         if next.m3["subject_ref"] != self.current.m3["subject_ref"] {
             return Err("cannot change subject during continuation".into());
         }
-        self.field
-            .replace_modes(next.m2_input.clone(), replace_state)?;
+        let m2 = lower(&next)?;
+        self.field.replace_modes(m2, replace_state)?;
         self.current = next;
         Ok(self.last_field().clone())
+    }
+    /// The body chosen for the continuation (`FieldSession::replace_body`, O-I #852):
+    /// the whole M1/M2/M3 basis stands, the event, its readings and its voices'
+    /// pitches, and `m2`, that basis's M2 lowered onto the chosen body's resonator,
+    /// rings in place of the one that rang, from the cursor and clock in force.
+    pub fn replace_body(&mut self, m2: M2Request, field: FieldInput) -> Result<Value, String> {
+        if self.current.m3["subject_ref"] != field.subject_ref {
+            return Err("a body is chosen for the same subject".into());
+        }
+        if m2.stamp.identity.event_ref != self.current.m2_input.stamp.identity.event_ref {
+            return Err("a body is chosen for the same event".into());
+        }
+        self.field.replace_body(m2, field)
+    }
+    /// The clock in force as a field input names it (`FieldSession::clock_in_force`).
+    pub fn clock_in_force(&self) -> Result<super::ClockInput, String> {
+        self.field.clock_in_force()
     }
     /// Played note: strikes the mode the declared inner-four scaffold routes
     /// this coordinate to. Refusals name their cause — a nodal outer-two
