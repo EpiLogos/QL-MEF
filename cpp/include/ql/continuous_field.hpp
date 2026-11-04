@@ -54,6 +54,31 @@ struct ContinuationReceipt {
     QL_CoupledClock clock;
     double last_unmuted_sample;
 };
+// An act admitted for a later sample and not yet landed, by prepared mode index, as a continuation hands it over.
+struct PendingAct {
+    std::uint64_t at_samples_elapsed;
+    std::vector<std::pair<std::size_t, Complex>> impulses;
+};
+// The M1′ pulse's drive of the body as `set_carrier` set it, and the whole steps it has landed (`reached`).
+struct CarrierDrive {
+    double steps_per_second = 0;
+    std::uint64_t anchor_samples = 0;
+    double anchor_steps = 0, reached = 0;
+    std::vector<Complex> impulses;
+};
+// The continuation as it stands, for a native audio host to continue it (O-I #849: the Torus in Live's one engine). The input
+// carries each mode's resident state as its amplitude and the output gain in force, the clock and the samples' shapes as they
+// stand; beside it the cursor, the driver's remainder, the Carrier's drive, the acts waiting for later samples and a receiver
+// move not yet reached. A field made from it renders, sample for sample, what the field it was taken from would have: it is the
+// same continuation, never a reseed. `handover()` takes it; `ContinuousField(Continuation)` continues it.
+struct Continuation {
+    ContinuationInput input;
+    std::uint64_t samples_elapsed = 0, driver_remainder = 0;
+    double last_unmuted_sample = 0;
+    CarrierDrive carrier;
+    std::vector<PendingAct> pending;
+    std::vector<double> heard_from;
+};
 // One played excitation act: an impulse added to a named resident mode. The
 // mode reference is the supplied M2 identity; the amplitude is modal metres.
 struct Strike {
@@ -169,10 +194,58 @@ public:
                     require(std::isfinite(x) && std::abs(x) <= 1e6, "invalid dimensionless shape coefficient");
         }
     }
+    // Continues a handed-over continuation at its cursor (O-I #849): every mode resumes from its resident state, the clock and the
+    // driver's remainder from where they stood, the Carrier's drive with the steps it landed, the acts waiting for later samples in
+    // their order and a receiver move not yet reached. Everything is judged before the field stands: one that is not a continuation
+    // of its own input (a remainder past the driver, an act at or behind the cursor, a basis of another size) is refused.
+    explicit ContinuousField(Continuation c) : ContinuousField(std::move(c.input)) {
+        const std::uint64_t denominator = std::uint64_t(source_.sample_rate) * source_.driver_denominator;
+        require(c.driver_remainder < denominator, "a continuation's driver remainder is past its driver");
+        require(std::isfinite(c.last_unmuted_sample), "a continuation's last sample is not finite");
+        const auto &drive = c.carrier;
+        require(std::isfinite(drive.steps_per_second) && drive.steps_per_second >= 0 &&
+                    drive.steps_per_second <= max_carrier_steps_per_sample * source_.sample_rate &&
+                    drive.anchor_samples <= c.samples_elapsed && std::isfinite(drive.anchor_steps) && drive.anchor_steps >= 0 &&
+                    drive.anchor_steps <= 9007199254740991.0 && std::isfinite(drive.reached) && drive.reached >= -1 &&
+                    drive.reached <= 9007199254740991.0 && (drive.impulses.empty() || drive.impulses.size() == modes_.size()),
+                "a continuation's Carrier is not a drive of this body");
+        for (const auto &impulse : drive.impulses)
+            require(finite(impulse) && std::abs(impulse) <= 1e6, "invalid carrier impulse");
+        require(c.pending.size() <= max_pending_strikes, "too many strikes wait for their samples");
+        for (std::size_t i = 0; i < c.pending.size(); ++i) {
+            const auto &act = c.pending[i];
+            require(act.at_samples_elapsed > c.samples_elapsed &&
+                        (i == 0 || c.pending[i - 1].at_samples_elapsed <= act.at_samples_elapsed),
+                    "a continuation's waiting acts stand after its cursor, in sample order");
+            require(!act.impulses.empty() && act.impulses.size() <= modes_.size(), "invalid strike count");
+            for (const auto &[mode, impulse] : act.impulses)
+                require(mode < modes_.size() && finite(impulse) && std::abs(impulse) <= 1e6,
+                        "a continuation's waiting act names no prepared mode or an invalid impulse");
+        }
+        require(c.heard_from.empty() || c.heard_from.size() == modes_.size(), "gain/mode basis mismatch");
+        for (double gain : c.heard_from) require(std::isfinite(gain) && std::abs(gain) <= 1e6, "nonfinite/excessive output gain");
+        elapsed_ = c.samples_elapsed;
+        driver_remainder_ = c.driver_remainder;
+        last_ = c.last_unmuted_sample;
+        carrier_ = {drive.steps_per_second, drive.anchor_steps, drive.anchor_samples, drive.reached, std::move(c.carrier.impulses)};
+        pending_.clear();
+        for (auto &act : c.pending) pending_.push_back({act.at_samples_elapsed, std::move(act.impulses)});
+        heard_from_ = std::move(c.heard_from);
+    }
     const ContinuationInput &source() const noexcept { return source_; }
     const std::vector<Sample> &samples() const noexcept { return source_.samples; }
     Complex amplitude(std::size_t i) const { return modes_.at(i).state; }
     ContinuationReceipt receipt() const noexcept { return {source_.generation, elapsed_, source_.clock, last_}; }
+    // The continuation as it stands (`Continuation`): a read, nothing moves. Off the audio thread: it copies the whole input.
+    Continuation handover() const {
+        Continuation c{source_, elapsed_, driver_remainder_, last_,
+                       {carrier_.steps_per_second, carrier_.anchor_samples, carrier_.anchor_steps, carrier_.reached, carrier_.impulses},
+                       {}, heard_from_};
+        for (std::size_t i = 0; i < modes_.size(); ++i) c.input.modes[i].amplitude_metres = modes_[i].state;
+        c.pending.reserve(pending_.size() - landed_);
+        for (std::size_t i = landed_; i < pending_.size(); ++i) c.pending.push_back({pending_[i].at, pending_[i].impulses});
+        return c;
+    }
     // Same material/sample topology only. Initial amplitude is not reapplied on
     // continuation: new frequency/drive/damping takes effect from resident state.
     // A deliberate state replacement is an explicit operation, never a reseed.
@@ -271,6 +344,33 @@ public:
     }
     // Strikes admitted for a later sample that have not landed yet.
     std::size_t pending_strikes() const noexcept { return pending_.size() - landed_; }
+    // The same act as `strike(strikes)` at the cursor, by prepared mode index (`impulses[i]`, modal metres, to mode `modes[i]`), for a
+    // native audio host's audio thread (O-I #849): noexcept and allocation-free. The same validation and render-budget preflight
+    // complete before any state moves; false refuses the act and the body stands exactly as it was. One generation.
+    bool strike_now(const std::size_t *modes, const Complex *impulses, std::size_t n) noexcept {
+        if (!modes || !impulses || n == 0 || n > modes_.size()) return false;
+        for (std::size_t i = 0; i < n; ++i) {
+            if (modes[i] >= modes_.size() || !finite(impulses[i]) || std::abs(impulses[i]) > 1e6) return false;
+            for (std::size_t j = 0; j < i; ++j)
+                if (modes[j] == modes[i]) return false;  // one strike act names a mode twice
+            const double bound = (std::abs(modes_[modes[i]].state) + std::abs(impulses[i])) * 1.000000001;
+            if (!std::isfinite(bound) || bound > 1e12) return false;
+        }
+        for (std::size_t i = 0; i < n; ++i) modes_[modes[i]].state += impulses[i];
+        ++source_.generation;
+        return true;
+    }
+    // Silence (Panic, O-I #849; manual §21.1 Rules "Panic releases all notes at once"): the body stilled at the cursor. Every
+    // voice's resident state is at rest and the acts waiting for later samples are dropped; the voices (with the drive their
+    // material supplies), their gains and shapes, the clock, the cursor and the Carrier's drive stand, so a body the pulse or its
+    // material drives is driven again from rest: silence stills what was struck, it does not change the body.
+    // A key's release moves no state (the body rings on with its own damping); silence is the one act that stills it. One body
+    // act: one generation. noexcept and allocation-free, so a native host calls it on its audio thread.
+    void silence() noexcept {
+        for (auto &m : modes_) m.state = Complex(0, 0);
+        landed_ = pending_.size();
+        ++source_.generation;
+    }
     // The body as it rang at a checkpoint, set again (O-I 855): every prepared mode's resident state
     // (modal metres) in mode order, at the cursor. The voices, their shapes, the clock, the cursor, the
     // drive and the acts admitted for later samples stay; the next render continues from these states.

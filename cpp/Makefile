@@ -20,21 +20,24 @@ endif
 
 LIB := $(C_ROOT)/build/libql-mef-c.a
 .PHONY: all test install
-all: $(BUILD_DIR)/ql-field-worker $(BUILD_DIR)/continuous-test
+all: $(BUILD_DIR)/ql-field-worker $(BUILD_DIR)/continuous-test $(BUILD_DIR)/torus-native-test
 $(BUILD_DIR):
 	mkdir -p $@
 $(LIB):
 	$(MAKE) -C $(C_ROOT) all
-$(BUILD_DIR)/ql-field-worker: src/field_worker.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
+$(BUILD_DIR)/ql-field-worker: src/field_worker.cpp src/handover_json.hpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(JSON_CFLAGS) $< $(LIB) $(JSON_LIBS) $(RPATH_FLAGS) -lm -o $@
 $(BUILD_DIR)/continuous-test: tests/continuous_field.cpp include/ql/continuous_field.hpp $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
+$(BUILD_DIR)/torus-native-test: tests/torus_native.cpp include/ql/continuous_field.hpp include/ql/torus_keys.hpp $(LIB) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
 test: all
 	$(BUILD_DIR)/continuous-test
+	$(BUILD_DIR)/torus-native-test
 install: all
 	$(MAKE) -C $(C_ROOT) install PREFIX=$(PREFIX) DESTDIR=$(DESTDIR)
 	install -d $(DESTDIR)$(PREFIX)/include/ql $(DESTDIR)$(PREFIX)/bin
-	install -m644 include/ql/continuous_field.hpp $(DESTDIR)$(PREFIX)/include/ql/
+	install -m644 include/ql/continuous_field.hpp include/ql/torus_keys.hpp $(DESTDIR)$(PREFIX)/include/ql/
 	install -m755 $(BUILD_DIR)/ql-field-worker $(DESTDIR)$(PREFIX)/bin/
 
 	install -d $(DESTDIR)$(PREFIX)/share/ql-mef-c/adapters/retained-field

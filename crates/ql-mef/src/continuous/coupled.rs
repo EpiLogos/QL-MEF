@@ -801,4 +801,8 @@ impl CoupledFieldSession {
     pub fn set_state_field(&mut self, amplitudes: &[[f64; 2]]) -> Result<Value, String> {
         self.field.set_state(amplitudes)
     }
+    /// The continuation as it stands, for a native audio host (`FieldSession::handover`, O-I #849).
+    pub fn handover_field(&mut self) -> Result<Value, String> {
+        self.field.handover()
+    }
 }

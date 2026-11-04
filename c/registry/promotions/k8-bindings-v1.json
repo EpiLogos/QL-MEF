@@ -108,6 +108,22 @@
       "kind": "computational"
     },
     {
+      "path": "cpp/include/ql/torus_keys.hpp",
+      "stratum": "cpp",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-5-1",
+        "#2-5",
+        "#2-1"
+      ],
+      "rationale": "The Torus's played-address law on a native host's audio thread (O-I #849): the same law as the scene owner's torus-play (janko.rs POINT_LAW, scene_field.rs strike_at_tuned and chi) made off the thread from the owner's ql.torus-native/v1 and played allocation-free through ContinuousField::strike_now. It adds no voice, pitch, place or weight; the owner holds the law.",
+      "tests": [
+        "cpp/tests/torus_native.cpp",
+        "crates/ql-mef/tests/torus_native.rs"
+      ],
+      "kind": "computational"
+    },
+    {
       "path": "cpp/src/field_worker.cpp",
       "stratum": "cpp",
       "disposition": "infrastructural",
@@ -115,6 +131,17 @@
       "rationale": "Bounded installed JSON management transport to the same typed C++ owner; no real-time provider or private authority inference.",
       "tests": [
         "scripts/test-k8-continuous.py"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "cpp/src/handover_json.hpp",
+      "stratum": "cpp",
+      "disposition": "infrastructural",
+      "coordinates": [],
+      "rationale": "The worker's handover answer (O-I #849): the typed continuation as ql.continuous-handover/v1 JSON at round-trip precision for a native host to continue exactly. Transport only; no numerical or authority owner.",
+      "tests": [
+        "crates/ql-mef/tests/torus_native.rs"
       ],
       "kind": "computational"
     },
@@ -411,6 +438,22 @@
       "tests": [
         "scripts/test-k8-host.py",
         "crates/ql-mef/src/continuous/host.rs"
+      ],
+      "kind": "computational"
+    },
+    {
+      "path": "crates/ql-mef/src/continuous/torus_native.rs",
+      "stratum": "rust",
+      "disposition": "cross-coordinate",
+      "coordinates": [
+        "#1-5-1",
+        "#2-5",
+        "#2-1"
+      ],
+      "rationale": "The Torus for a native audio host (O-I #849): the scene owner's continuation handed over as it stands, admitted only as the field the worker acknowledged, with the played-address law of the tuning in force by native mode and what release and silence do. A read of the existing owner: no second numerical owner, no new voice or law.",
+      "tests": [
+        "crates/ql-mef/tests/torus_native.rs",
+        "crates/ql-mef/src/continuous/torus_native.rs"
       ],
       "kind": "computational"
     },

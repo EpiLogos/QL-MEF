@@ -133,6 +133,8 @@ J *response(const ql::ContinuousField &field, const std::vector<float> &audio, b
     }
     put(o, "targets", points); put(o, "presentation_units_per_metre", json_object_new_double(scale)); return o;
 }
+// O-I #849: the continuation a native audio host takes over (`handover`).
+#include "handover_json.hpp"
 int main() {
     // Buffered, unsynchronised streams: a multi-megabyte control line must not
     // take a stdio lock per character. Framing and budgets are unchanged.
@@ -151,6 +153,7 @@ int main() {
         if (line.empty() && !std::cin) break;
         bool committed = false;
         try {
+            Json handed = own(nullptr);  // O-I #849
             auto tok = std::unique_ptr<json_tokener, decltype(&json_tokener_free)>(json_tokener_new_ex(64), json_tokener_free);
             json_tokener_set_flags(tok.get(), JSON_TOKENER_STRICT | JSON_TOKENER_VALIDATE_UTF8);
             auto request = own(json_tokener_parse_ex(tok.get(), line.c_str(), int(line.size())));
@@ -256,11 +259,17 @@ int main() {
                     auto kept_gains = own(json_object_get(get(f, "audio_gains"))), kept_basis = own(json_object_get(m2));
                     field->replace_body(field->receipt().generation, std::move(next));
                     gains.swap(kept_gains); basis.swap(kept_basis); shape_ref.swap(next_ref); committed = true;
+                } else if (op == "handover") {
+                    // O-I #849: the continuation as it stands, for a native audio host to continue sample for sample. A read at
+                    // the cursor: nothing moves, and the host's continuation and this field's are one from here.
+                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed"});
+                    handed = own(handover_output(field->handover()));
                 } else { keys(request.get(), {"schema", "operation"}); ql::require(op == "read", "unknown field operation"); }
             }
             auto output = own(response(*field, audio, true, 1));
             put(output.get(), "m2_identity", json_object_get(get(basis.get(), "identity")));
             string(output.get(), "shape_ref", shape_ref);
+            if (handed) put(output.get(), "handover", handed.release());  // O-I #849
             std::cout << json_object_to_json_string_ext(output.get(), JSON_C_TO_STRING_PLAIN) << '\n' << std::flush;
         } catch (const std::exception &error) {
             auto output = own(json_object_new_object()); string(output.get(), "schema", "ql.field-error/v1"); string(output.get(), "error", error.what());

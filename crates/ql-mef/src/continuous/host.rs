@@ -202,6 +202,10 @@ pub enum HostOperation {
     TorusBody {
         body: Option<Box<crate::form_instrument::body::BodyRequest>>,
     },
+    /// scene only: the Torus for a native audio host (O-I #849, `ql.torus-native/v1`): the
+    /// continuation as it stands at the cursor and the played-address law of the tuning in force,
+    /// with what release and silence do. A read: nothing moves.
+    TorusNative {},
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -524,7 +528,8 @@ impl FieldHost {
                 | HostOperation::TorusRestore { .. }
                 | HostOperation::TorusRender { .. }
                 | HostOperation::TorusReceiver { .. }
-                | HostOperation::TorusBody { .. },
+                | HostOperation::TorusBody { .. }
+                | HostOperation::TorusNative {},
                 _,
             ) => unreachable!("non-stage commands returned before stage dispatch"),
         };
@@ -714,6 +719,10 @@ impl FieldHost {
                     Some(field)
                 })
             }
+            HostOperation::TorusNative {} => instrument.torus_native().map(|native| {
+                extra.insert("torus_native".into(), native);
+                None
+            }),
             _ => unreachable!("only Torus operations reach the Torus dispatch"),
         };
         let torus = instrument.torus_reading();
@@ -880,6 +889,7 @@ impl FieldHost {
                 | HostOperation::TorusRender { .. }
                 | HostOperation::TorusReceiver { .. }
                 | HostOperation::TorusBody { .. }
+                | HostOperation::TorusNative {}
         ) {
             return self.torus_operation(request);
         }
@@ -991,7 +1001,8 @@ impl FieldHost {
                 | HostOperation::TorusRestore { .. }
                 | HostOperation::TorusRender { .. }
                 | HostOperation::TorusReceiver { .. }
-                | HostOperation::TorusBody { .. },
+                | HostOperation::TorusBody { .. }
+                | HostOperation::TorusNative {},
                 _,
             ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };
