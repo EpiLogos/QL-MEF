@@ -349,10 +349,44 @@ int main() {
     std::array<float, 512> rung_pcm{}, set_pcm{};
     assert(rung_field.render_audio(rung_pcm.data(), 512) && reset.render_audio(set_pcm.data(), 512));
     assert(rung_pcm == set_pcm && reset.amplitude(0) == rung_field.amplitude(0));
+    // Where the body is heard from (the Torus's receiver, O-I 856; QL-MEF #289): new output gains move what is heard and never the
+    // body. Its states, clock, cursor and generation stand; the next block reaches the new gains linearly, so a move of the receiver
+    // never clicks, and after it the sound is the same body under the new gains. Gains equal to those in force change no sample, and
+    // a set that does not name one finite, bounded gain per mode is refused and changes nothing.
+    ql::ContinuousField heard(voiced), declared(voiced), same(voiced);
+    for (auto *f : {&heard, &declared, &same}) { advance(*f, 1024, 512); f->strike({{"mode:earth", {0.004, 0}}}); }
+    const auto heard_before = heard.receipt();
+    heard.set_gains({1.0, 1.0}); // half the declared 2.0 of each mode
+    same.set_gains({2.0, 2.0});
+    assert(heard.receipt().generation == heard_before.generation && heard.receipt().samples_elapsed == heard_before.samples_elapsed &&
+           heard.amplitude(0) == declared.amplitude(0) && heard.amplitude(1) == declared.amplitude(1));
+    std::array<float, 512> reaching{}, at_declared{}, unmoved{};
+    assert(heard.render_audio(reaching.data(), 512) && declared.render_audio(at_declared.data(), 512) &&
+           same.render_audio(unmoved.data(), 512));
+    assert(unmoved == at_declared);
+    assert(reaching[511] == at_declared[511] * 0.5f && reaching[0] != at_declared[0] * 0.5f);
+    for (std::size_t n = 0; n < 512; ++n) // between the gains it left and the gains it reaches
+        assert(std::abs(reaching[n]) <= std::abs(at_declared[n]) && std::abs(reaching[n]) >= std::abs(at_declared[n]) * 0.5f - 1e-12f);
+    assert(heard.amplitude(0) == declared.amplitude(0) && heard.amplitude(1) == declared.amplitude(1));
+    std::array<float, 512> reached{}, still_declared{};
+    assert(heard.render_audio(reached.data(), 512) && declared.render_audio(still_declared.data(), 512));
+    for (std::size_t n = 0; n < 512; ++n) assert(reached[n] == still_declared[n] * 0.5f);
+    auto refused_gains = [&](std::vector<double> gains) {
+        bool no = false;
+        try { heard.set_gains(gains); } catch (const std::invalid_argument &) { no = true; }
+        assert(no);
+    };
+    refused_gains({1.0});
+    refused_gains({1.0, std::nan("")});
+    refused_gains({1.0, 2e6});
+    std::array<float, 512> after_gain_refusals{}, declared_after{};
+    assert(heard.render_audio(after_gain_refusals.data(), 512) && declared.render_audio(declared_after.data(), 512));
+    for (std::size_t n = 0; n < 512; ++n) assert(after_gain_refusals[n] == declared_after[n] * 0.5f);
     std::cout << "{\"schema\":\"ql.continuous-acceptance/v1\",\"analytic_error_48k\":" << error48
               << ",\"analytic_error_96k\":" << error96
               << ",\"equal_modes_cancel\":true,\"stable_samples\":true,\"mute_continues\":true,"
                  "\"partition_independent\":true,\"independent_subjects\":true,\"exact_replay\":true,"
                  "\"shape_replacement_keeps_state_and_pcm\":true,\"played_strike_sounds_and_continues\":true,"
-                 "\"strike_lands_at_its_sample\":true,\"pulse_drives_the_body_at_its_steps\":true}\n";
+                 "\"strike_lands_at_its_sample\":true,\"pulse_drives_the_body_at_its_steps\":true,"
+                 "\"receiver_gains_move_only_what_is_heard\":true}\n";
 }

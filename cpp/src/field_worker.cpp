@@ -226,6 +226,16 @@ int main() {
                         decimal<std::uint64_t>(get(request.get(), "anchor_samples")),
                         number(get(request.get(), "anchor_steps")), impulses);
                     committed = true;
+                } else if (op == "set-gains") {
+                    // Where the body is heard from (the Torus's receiver, O-I 856): one output gain per mode, in mode order. A
+                    // later replace-modes keeps them: they are the gains the body is heard by until the next set-gains.
+                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "audio_gains"});
+                    J *items = get(request.get(), "audio_gains");
+                    ql::require(count(items, 4096) == field->source().modes.size(), "gain/mode basis mismatch");
+                    std::vector<double> next; next.reserve(field->source().modes.size());
+                    for (std::size_t i = 0; i < field->source().modes.size(); ++i) next.push_back(number(at(items, i)));
+                    auto kept = own(json_object_get(items));
+                    field->set_gains(next); gains.swap(kept); committed = true;
                 } else if (op == "set-state") {
                     // The body as it rang at a checkpoint (O-I 855): one resident state per mode, in mode order.
                     keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "amplitudes"});

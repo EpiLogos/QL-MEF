@@ -764,6 +764,10 @@ impl CoupledFieldSession {
         self.replace_field(input)?;
         Ok(self.snapshot())
     }
+    /// Where the body is heard from (`FieldSession::set_gains`, O-I 856).
+    pub fn set_gains_field(&mut self, gains: &[f64]) -> Result<Value, String> {
+        self.field.set_gains(gains)
+    }
     /// The body as it rang at a checkpoint, set again (`FieldSession::set_state`, O-I 855).
     pub fn set_state_field(&mut self, amplitudes: &[[f64; 2]]) -> Result<Value, String> {
         self.field.set_state(amplitudes)

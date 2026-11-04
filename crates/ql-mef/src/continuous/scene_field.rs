@@ -1424,6 +1424,21 @@ const NOTE_CELL_STANDING: &str = "the note's own cell: the event's Vimarśā rea
 pub const TORUS_SETS_WAITING_MAX: usize = 64;
 pub const TORUS_SET_LANDING_LAW: &str = "a setting sent for a later sample waits for it and moves nothing until then; the block that reaches its sample runs to it, the setting is made there as `torus-set` makes it at the cursor, and the block runs on, so it is heard from that sample exactly, as a strike is. A Fundamental made there is the block's one modes continuation. Settings wait in the order of their samples and are judged when sent; one that cannot be made when its sample comes is named so with its reason, and the block runs on. A strike for a later sample reads the settings in force at its sample, so a setting may not land before a strike already played for a later sample";
 
+/// Where the Torus is heard from (`torus-receiver`, O-I 856; QL-MEF #289 packet N; DLW manual §21.2 View and Rules).
+pub const TORUS_RECEIVER: &str = "ql.torus-receiver/v1";
+pub const TORUS_RECEIVER_LAW: &str = "Receiver Off is the world's context: every voice is heard by the declared gain, wherever the camera stands, and a camera move asks nothing of the owner. Receiver On is the listener's own context: the body is heard where they stand. Each voice is heard by the declared gain × how strongly the surface near the listener moves in it against how strongly the whole surface does: the root mean square of its shape term χ (the term a strike meets and the picture draws along the normal) over the samples of the torus, each weighted by how near it stands to the listener (a Gaussian in its distance beyond the nearest, as wide as the listener stands from the surface and never narrower than the sampling's spacing), over its root mean square over every sample; and, beyond one tube radius of the surface, × the tube radius over the distance. The body is turned back by its clock attachment first. Far off, every voice is heard as declared, quieter by the distance; near, a voice the surface under you rings in is loudest, and one whose nodal line you stand on is heard least. Switching context is the explicit `torus-receiver` act. The place is read at each block's start, and the block reaches the gains it gives linearly from those it was heard by; the body, its clock, its event and its generation never move by it. The place is the listener's and is kept nowhere: not in the Torus's reading, a checkpoint, a render, a take or a receipt, and a take renders in the world's context";
+/// The farthest a receiver may stand from the scene's origin, in metres (the native owner's coordinate bound).
+pub const TORUS_RECEIVER_METRES_MAX: f64 = 1e6;
+
+/// The listener's place (`torus-receiver`): metres in the frame the owner's targets are drawn in, the scene's world, under
+/// which the body turns by its clock attachment.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReceiverInput {
+    #[serde(deserialize_with = "super::number::triple")]
+    pub at_metres: [f64; 3],
+}
+
 /// A Torus setting admitted for a later sample of the owner's clock (`torus-set` with `at_samples_elapsed`).
 #[derive(Debug, Clone)]
 struct WaitingSet {
@@ -1464,6 +1479,42 @@ pub struct SceneInstrument {
     waiting: Vec<WaitingSet>,
     /// The latest sample a strike that read the Torus's settings was played for.
     struck_through: u64,
+    /// Where the listener stands (`TORUS_RECEIVER_LAW`); `None` is the world's context. Never kept or disclosed.
+    receiver: Option<[f64; 3]>,
+    /// The output gains the native owner hears the voices by, in its mode order.
+    heard: Vec<f64>,
+    /// What a receiver hears the body by, made for the voices' shape terms now.
+    hearing: Option<Hearing>,
+}
+
+/// The torus's major radius in tube radii (m1::torus: R = 16/9, r = 1).
+const TORUS_MAJOR: f64 = 16.0 / 9.0;
+
+/// Each voice's shape terms, by which a receiver hears it: its place on the large circle, its mode numbers, phase and weight.
+fn shape_terms(shape: &ShapeBasis) -> Vec<[f64; 5]> {
+    shape
+        .resident_voices()
+        .map(|v| {
+            [
+                v.longitude_radians,
+                f64::from(v.m),
+                f64::from(v.n),
+                v.phase_radians,
+                v.weight,
+            ]
+        })
+        .collect()
+}
+
+/// What a receiver hears the body by (`TORUS_RECEIVER_LAW`), made once for the voices' shape terms: every sample's rest place on the
+/// torus in tube radii, each voice's χ² at every sample (sample-major), each voice's root mean square over the samples, and the
+/// sampling's spacing, the narrowest a listener's hearing is.
+struct Hearing {
+    terms: Vec<[f64; 5]>,
+    places: Vec<[f64; 3]>,
+    chi2: Vec<f64>,
+    rms: Vec<f64>,
+    spacing: f64,
 }
 
 /// An offline render's own owner, its continuation token and the sample (the live owner's
@@ -1544,7 +1595,11 @@ impl SceneInstrument {
             renders: 0,
             waiting: Vec::new(),
             struck_through: 0,
+            receiver: None,
+            heard: Vec::new(),
+            hearing: None,
         };
+        instrument.heard = instrument.declared_gains();
         instrument.sync_carrier()?;
         Ok(instrument)
     }
@@ -1784,6 +1839,7 @@ impl SceneInstrument {
             .checked_add(u64::from(frames))
             .ok_or("the block ends past the last sample")?;
         if self.waiting.first().is_none_or(|waiting| waiting.at > end) {
+            self.hear()?;
             return Ok((self.session.advance_field(frames, muted)?, Vec::new()));
         }
         let mut audio: Vec<Value> = Vec::with_capacity(frames as usize);
@@ -1799,6 +1855,7 @@ impl SceneInstrument {
             if to > cursor {
                 let part =
                     u32::try_from(to - cursor).map_err(|_| "a block part past the ceiling")?;
+                self.hear()?;
                 let field = self.session.advance_field(part, muted)?;
                 let block = field["audio"]
                     .as_array()
@@ -1816,6 +1873,160 @@ impl SceneInstrument {
         let mut field = self.session.last_field().clone();
         field["audio"] = Value::Array(audio);
         Ok((field, landed))
+    }
+
+    /// Every voice heard by the declared gain: the world's context.
+    fn declared_gains(&self) -> Vec<f64> {
+        vec![self.material.audio_gain_per_metre; self.shape.resident_voices().count()]
+    }
+
+    /// The clock angle the body's samples are turned by now (write_targets: 0 fixed, 1 inscription, 2 lensing).
+    fn turn(&self) -> Result<f64, String> {
+        let axis = match self.geometry.attachment {
+            0 => return Ok(0.0),
+            1 => "inscription",
+            _ => "lensing",
+        };
+        self.session.last_field()["clock"][axis]["half_degrees"]
+            .as_f64()
+            .map(|half| half * PI / 360.0)
+            .ok_or_else(|| "the owner reports no clock angle for the body's attachment".to_string())
+    }
+
+    /// The gains the voices are heard by from `receiver` at the body's `turn` (`TORUS_RECEIVER_LAW`): the declared gain in the
+    /// world's context; from a place, the declared gain × how strongly the surface near it moves in each voice against how strongly
+    /// the whole surface does, × the tube radius over the distance beyond one tube radius.
+    fn gains_from(&mut self, receiver: Option<[f64; 3]>, turn: f64) -> Vec<f64> {
+        let Some(place) = receiver else {
+            return self.declared_gains();
+        };
+        let gain = self.material.audio_gain_per_metre;
+        // Into the body's own frame (write_targets turns the body by +turn about z), in torus units.
+        let unit = self.geometry.metres_per_unit;
+        let (c, s) = (turn.cos(), turn.sin());
+        let q = [
+            (c * place[0] + s * place[1]) / unit,
+            (-s * place[0] + c * place[1]) / unit,
+            place[2] / unit,
+        ];
+        let beyond = (q[0].hypot(q[1]) - TORUS_MAJOR).hypot(q[2]) - 1.0;
+        let reach = if beyond > 1.0 { 1.0 / beyond } else { 1.0 };
+        let hearing = self.hearing();
+        let width = beyond.max(hearing.spacing);
+        let distances: Vec<f64> = hearing
+            .places
+            .iter()
+            .map(|p| (q[0] - p[0]).hypot(q[1] - p[1]).hypot(q[2] - p[2]))
+            .collect();
+        let nearest = distances.iter().copied().fold(f64::INFINITY, f64::min);
+        let voices = hearing.rms.len();
+        let (mut heard, mut total) = (vec![0.0; voices], 0.0);
+        for (sample, distance) in distances.iter().enumerate() {
+            let w = (-0.5 * ((distance - nearest) / width).powi(2)).exp();
+            total += w;
+            for (k, sum) in heard.iter_mut().enumerate() {
+                *sum += w * hearing.chi2[sample * voices + k];
+            }
+        }
+        heard
+            .iter()
+            .zip(&hearing.rms)
+            .map(|(sum, rms)| {
+                let near = if *rms > 0.0 {
+                    (sum / total).sqrt() / rms
+                } else {
+                    1.0
+                };
+                gain * near * reach
+            })
+            .collect()
+    }
+
+    /// What the receiver hears the body by (`Hearing`), made again when the voices' shape terms or the sampling change.
+    fn hearing(&mut self) -> &Hearing {
+        let terms = shape_terms(&self.shape);
+        if self.hearing.as_ref().is_none_or(|h| h.terms != terms) {
+            let geometry = &self.geometry;
+            let places: Vec<[f64; 3]> = angles(geometry)
+                .map(|(_, phi, theta)| {
+                    let radius = TORUS_MAJOR + theta.cos();
+                    [radius * phi.cos(), radius * phi.sin(), theta.sin()]
+                })
+                .collect();
+            let voices: Vec<&Voice> = self.shape.resident_voices().collect();
+            let chi2: Vec<f64> = angles(geometry)
+                .flat_map(|(_, phi, theta)| {
+                    voices
+                        .iter()
+                        .map(move |voice| chi(voice, phi, theta).powi(2))
+                })
+                .collect();
+            let samples = places.len().max(1) as f64;
+            let rms = (0..voices.len())
+                .map(|k| (chi2.iter().skip(k).step_by(voices.len()).sum::<f64>() / samples).sqrt())
+                .collect();
+            let spacing = (2.0 * PI * (TORUS_MAJOR + 1.0)
+                / f64::from(geometry.longitude_samples.max(1)))
+            .max(2.0 * PI / f64::from(geometry.latitude_samples.max(1)));
+            self.hearing = Some(Hearing {
+                terms,
+                places,
+                chi2,
+                rms,
+                spacing,
+            });
+        }
+        self.hearing.as_ref().expect("made above")
+    }
+
+    /// Gives the native owner the gains the voices are heard by now, when they differ from those it holds.
+    fn hear(&mut self) -> Result<(), String> {
+        if self.receiver.is_none() && self.heard == self.declared_gains() {
+            return Ok(());
+        }
+        let turn = self.turn()?;
+        let gains = self.gains_from(self.receiver, turn);
+        if gains != self.heard {
+            self.session.set_gains_field(&gains)?;
+            self.heard = gains;
+        }
+        Ok(())
+    }
+
+    /// Where the Torus is heard from (`torus-receiver`, `TORUS_RECEIVER_LAW`): a place is the listener's own context, `None` the
+    /// world's. Heard from the cursor on; refused in words, changing nothing, for a place past the owner's bounds. The answer
+    /// says the context and the gains each voice is heard by, never the place.
+    pub fn set_receiver(&mut self, receiver: Option<ReceiverInput>) -> Result<Value, String> {
+        let place = receiver.map(|r| r.at_metres);
+        if let Some(place) = place
+            && place
+                .iter()
+                .any(|x| !x.is_finite() || x.abs() > TORUS_RECEIVER_METRES_MAX)
+        {
+            return Err(format!(
+                "a receiver's place is three finite metres within {TORUS_RECEIVER_METRES_MAX:e} of the scene's origin"
+            ));
+        }
+        let turn = self.turn()?;
+        let gains = self.gains_from(place, turn);
+        if gains != self.heard {
+            self.session.set_gains_field(&gains)?;
+            self.heard = gains;
+        }
+        self.receiver = place;
+        Ok(self.receiver_reading())
+    }
+
+    /// The context the Torus is heard in and the gain each voice is heard by (`ql.torus-receiver/v1`).
+    pub fn receiver_reading(&self) -> Value {
+        json!({
+            "schema": TORUS_RECEIVER,
+            "context": if self.receiver.is_some() { "personal" } else { "world" },
+            "gains": self.shape.resident_voices().zip(&self.heard)
+                .map(|(voice, gain)| json!({"mode_ref": voice.mode_ref, "gain": gain}))
+                .collect::<Vec<_>>(),
+            "law": TORUS_RECEIVER_LAW,
+        })
     }
 
     /// Makes a waiting setting at the cursor, its sample, as `torus-set` makes one; names it.

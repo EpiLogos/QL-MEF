@@ -108,6 +108,9 @@ class ContinuousField {
     std::vector<Prepared> modes_;
     std::vector<Pending> pending_;
     Carrier carrier_;
+    // The output gains the receiver last moved from (O-I 856): the next rendered block reaches the gains in force from these,
+    // linearly, and then they are left. Empty while no move waits to be reached.
+    std::vector<double> heard_from_;
     std::size_t landed_ = 0;
     std::uint64_t elapsed_ = 0, driver_remainder_ = 0;
     double last_ = 0;
@@ -307,6 +310,25 @@ public:
         require(next.reached <= 9007199254740991.0, "carrier pulse beyond exact steps");
         std::swap(carrier_, next);
     }
+    // Where the body is heard from (the Torus's receiver, O-I 856; QL-MEF #289): one output gain per prepared mode, in mode order.
+    // A receiving setting, not a body act: the states, clock, cursor and generation stand, and so does every mode's dynamics. The
+    // next rendered block reaches the new gains linearly from those it was heard by, so a move never clicks; gains equal to those in
+    // force change no sample. Validation precedes the first mutation.
+    void set_gains(const std::vector<double> &gains) {
+        require(gains.size() == modes_.size(), "gain/mode basis mismatch");
+        for (double gain : gains) require(std::isfinite(gain) && std::abs(gain) <= 1e6, "nonfinite/excessive output gain");
+        std::vector<double> from(modes_.size());
+        for (std::size_t i = 0; i < modes_.size(); ++i)
+            from[i] = heard_from_.empty() ? modes_[i].input.audio_gain_per_metre : heard_from_[i];
+        bool moved = false;
+        for (std::size_t i = 0; i < modes_.size(); ++i) moved = moved || from[i] != gains[i];
+        for (std::size_t i = 0; i < modes_.size(); ++i) {
+            modes_[i].input.audio_gain_per_metre = gains[i];
+            source_.modes[i].audio_gain_per_metre = gains[i];
+        }
+        if (moved) heard_from_.swap(from);
+        else heard_from_.clear();
+    }
     // One buffer is one bounded block. Validation/preflight precedes mutation.
     // Audio gain is explicit linear output gain, not a claim of sound pressure.
     // Muting affects output only. Host must not integrate again per visual view.
@@ -351,15 +373,26 @@ public:
                 }
             }
             double value = 0;
-            for (auto &m : modes_) {
-                m.state = m.step * m.state + m.forcing;
-                value += m.state.real() * m.input.audio_gain_per_metre;
+            if (heard_from_.empty()) {
+                for (auto &m : modes_) {
+                    m.state = m.step * m.state + m.forcing;
+                    value += m.state.real() * m.input.audio_gain_per_metre;
+                }
+            } else {
+                // The block a receiver's move is reached in: each gain from the one it was heard by to the one in force.
+                const double reached = double(sample + 1) / double(frames);
+                for (std::size_t i = 0; i < modes_.size(); ++i) {
+                    auto &m = modes_[i];
+                    m.state = m.step * m.state + m.forcing;
+                    value += m.state.real() * (heard_from_[i] + (m.input.audio_gain_per_metre - heard_from_[i]) * reached);
+                }
             }
             last_ = value;
             output[sample] = muted ? 0.0f : static_cast<float>(value);
         }
         while (due < pending_.size() && pending_[due].at == end) land(pending_[due++]);
         landed_ = due;
+        heard_from_.clear();
         elapsed_ = end; source_.clock = next; driver_remainder_ = total % denominator;
         return true;
     }
