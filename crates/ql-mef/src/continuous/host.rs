@@ -27,6 +27,8 @@ pub struct HostConfig {
 pub enum HostOperation {
     Read {},
     Inspect {},
+    /// One block of the owner's sound. A scene's block names each part of it that reached a
+    /// receiver's gains in `torus_heard` (`TORUS_HEARD_LAW`).
     Advance {
         frames: u32,
         muted: bool,
@@ -912,15 +914,20 @@ impl FieldHost {
         let mut strike_at_receipt: Option<Value> = None;
         // A block that made Torus settings at their samples answers with their records.
         let mut torus_set_landed: Option<Value> = None;
+        // A block whose parts reached a receiver's gains names them (`TORUS_HEARD_LAW`).
+        let mut torus_heard: Option<Value> = None;
         let result = match (request.command, &mut self.session) {
             (HostOperation::Read {}, owner) => owner.session_mut().read_field(),
             (HostOperation::Advance { frames, .. }, _) if frames > 8192 => {
                 Err("native block ceiling exceeded".into())
             }
             (HostOperation::Advance { frames, muted }, Owner::Scene(instrument)) => {
-                instrument.advance(frames, muted).map(|(field, landed)| {
+                instrument.advance(frames, muted).map(|(field, landed, heard)| {
                     if !landed.is_empty() {
                         torus_set_landed = Some(Value::Array(landed));
+                    }
+                    if !heard.is_empty() {
+                        torus_heard = Some(Value::Array(heard));
                     }
                     field
                 })
@@ -1012,6 +1019,9 @@ impl FieldHost {
                 response["field"] = field;
                 if let Some(receipt) = strike_at_receipt {
                     response["strike_at"] = receipt;
+                }
+                if let Some(heard) = torus_heard {
+                    response["torus_heard"] = heard;
                 }
                 // The settings made in the block, with the session and the voices they leave.
                 if let (Some(landed), Owner::Scene(instrument)) = (torus_set_landed, &self.session)

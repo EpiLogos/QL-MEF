@@ -1883,6 +1883,115 @@ fn one_performance_in_two_contexts_differs_only_as_declared_and_the_saved_sound_
     assert_eq!(a, b, "still the world's");
 }
 
+// A host that continues the owner a frame at a time reaches a receiver's move over the samples the owner reached it over (O-I #849):
+// the block names each part of it that reached new gains, by its first sample, its length and the gain each voice reaches by its
+// end (`TORUS_HEARD_LAW`), and never the place.
+
+/// A part a block names in `torus_heard`: its first sample, its length and the gains it reaches, by voice.
+fn reached(part: &Value) -> (u64, u64, Vec<(String, f64)>) {
+    let gains = part["gains"].as_array().unwrap_or_else(|| panic!("{part}"));
+    (
+        part["at_samples_elapsed"]
+            .as_str()
+            .unwrap()
+            .parse()
+            .unwrap(),
+        part["frames"].as_u64().unwrap(),
+        gains
+            .iter()
+            .map(|g| {
+                (
+                    g["mode_ref"].as_str().unwrap().to_owned(),
+                    g["gain"].as_f64().unwrap(),
+                )
+            })
+            .collect(),
+    )
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn each_part_of_a_block_that_reaches_the_receivers_gains_is_named_by_its_samples_never_its_place() {
+    let mut d = Driver::open();
+    assert_eq!(d.send(chord())["status"], "ok");
+    let advance = |d: &mut Driver| {
+        let block = d.send(json!({"operation":"advance","frames":512,"muted":false}));
+        assert_eq!(block["status"], "ok", "{block}");
+        block
+    };
+    // The world's context reaches nothing new: a block names no part.
+    let world = advance(&mut d);
+    assert!(world.get("torus_heard").is_none(), "{world}");
+    let declared = heard(&d.send(json!({"operation":"torus-receiver","receiver":null})));
+
+    // On, with a setting waiting 200 samples in: the block runs in two parts, and the first reaches the receiver's gains over
+    // exactly its 200 samples. The body turns with its clock, so the second may reach the gains of where it then stands.
+    let on = d.send(json!({"operation":"torus-receiver","receiver":standing(1.5, 0.7)}));
+    assert_eq!(on["status"], "ok", "{on}");
+    let placed = heard(&on);
+    assert_ne!(placed, declared);
+    let now = cursor(&d);
+    let waits = d.send(json!({"operation":"torus-set","edit":{"carrier":0.4},"at_samples_elapsed":(now + 200).to_string()}));
+    assert_eq!(waits["status"], "ok", "{waits}");
+    let block = advance(&mut d);
+    assert!(!block.to_string().contains("at_metres"), "{block}");
+    let parts: Vec<_> = block["torus_heard"]
+        .as_array()
+        .unwrap_or_else(|| {
+            panic!("the block names the part that reached the receiver's gains: {block}")
+        })
+        .iter()
+        .map(reached)
+        .collect();
+    assert_eq!(parts[0], (now, 200, placed.clone()), "{block}");
+    assert!(parts.len() <= 2, "{block}");
+    if let Some((at, frames, gains)) = parts.get(1) {
+        assert_eq!((*at, *frames), (now + 200, 312), "{block}");
+        let modes = |g: &[(String, f64)]| g.iter().map(|(m, _)| m.clone()).collect::<Vec<_>>();
+        assert_eq!(modes(gains), modes(&placed));
+    }
+
+    // The clock turned under the listener: the next block reaches the gains of where they then stand, read at its start, over its
+    // whole 512.
+    let turned =
+        d.send(json!({"operation":"set-axis","axis":0,"phase":{"turns":"0","half_degrees":90}}));
+    assert_eq!(turned["status"], "ok", "{turned}");
+    let now = cursor(&d);
+    let block = advance(&mut d);
+    let parts: Vec<_> = block["torus_heard"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{block}"))
+        .iter()
+        .map(reached)
+        .collect();
+    let there = heard(&d.send(json!({"operation":"torus-receiver","receiver":standing(1.5, 0.7)})));
+    assert_ne!(there, placed);
+    assert_eq!(parts, vec![(now, 512, there)], "{block}");
+
+    // Off: the next block reaches the declared gains over its whole 512, and the one after reaches nothing new.
+    let off = d.send(json!({"operation":"torus-receiver","receiver":null}));
+    assert_eq!(off["status"], "ok", "{off}");
+    let now = cursor(&d);
+    let back = advance(&mut d);
+    let parts: Vec<_> = back["torus_heard"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{back}"))
+        .iter()
+        .map(reached)
+        .collect();
+    assert_eq!(parts, vec![(now, 512, declared)], "{back}");
+    let after = advance(&mut d);
+    assert!(after.get("torus_heard").is_none(), "{after}");
+
+    // A body chosen drops a move the old one left unreached: the form is heard at its pickup at once, and no part reaches anything.
+    let again = d.send(json!({"operation":"torus-receiver","receiver":standing(1.5, 0.7)}));
+    assert_eq!(again["status"], "ok", "{again}");
+    let chosen = d.send(json!({"operation":"torus-body","body":fold(&d.current["field"])}));
+    assert_eq!(chosen["status"], "ok", "{chosen}");
+    let bodied = advance(&mut d);
+    assert!(bodied.get("torus_heard").is_none(), "{bodied}");
+}
+
 /// A fold made a body (QL-MEF form_body.rs's controlled fold), prepared for the scene `field` names: its event and subject.
 fn fold(field: &Value) -> Value {
     json!({
