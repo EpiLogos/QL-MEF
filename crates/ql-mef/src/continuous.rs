@@ -625,6 +625,27 @@ impl FieldSession {
                 "anchor_steps":anchor_steps, "impulses":impulses}),
         )
     }
+    /// The body as it rang at a checkpoint, set again (O-I 855): one resident state per
+    /// mode, in mode order, at the cursor. One body act: one generation; the voices, their
+    /// shapes, the clock, the cursor, the drive and the acts admitted for later samples stay.
+    /// Malformed states are refused here without transport; the worker re-validates them.
+    pub fn set_state(&mut self, amplitudes: &[[f64; 2]]) -> Result<Value> {
+        let modes = self.receipt["amplitudes_metres"]
+            .as_array()
+            .map_or(0, Vec::len);
+        if amplitudes.len() != modes
+            || amplitudes
+                .iter()
+                .flatten()
+                .any(|x| !x.is_finite() || x.abs() > 1e6)
+        {
+            return Err(
+                "a body state names one finite resident state within 1e6 metres for every mode"
+                    .into(),
+            );
+        }
+        self.operation("set-state", json!({"amplitudes":amplitudes}))
+    }
     pub fn read(&mut self) -> Result<Value> {
         self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))
     }

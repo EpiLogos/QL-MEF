@@ -27,7 +27,7 @@
 //! Scale, damping, strike amplitude and output gain have no source table. They
 //! are declared material policy with that standing, never presented as source.
 use std::f64::consts::PI;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
@@ -1323,6 +1323,90 @@ pub struct StrikeAtOutcome {
 
 /// The receipt of one played Torus act (`torus-play`).
 pub const TORUS_PLAY_RECEIPT: &str = "ql.torus-play/v1";
+/// The Torus as it stands at a sample, kept so it rings on again from there (O-I 855).
+pub const TORUS_CHECKPOINT: &str = "ql.torus-checkpoint/v1";
+pub const TORUS_CHECKPOINT_LAW: &str = "a checkpoint keeps the Torus as it stands at its sample: the body as it rings (each resident voice's state, in the native owner's mode order), its form (the shapes' reference), the forces it answers to (the session's settings, which give the Carrier's drive, and the body's damping), the M1′ session (the pulse's steps, so its arc and the comma gathered, the Klein bottle's steps left and the sounding notes), and the scene's event with the seeds it carries. Set again at a later sample, the body rings on from those states and the pulse runs on from those steps; an event or a damping that has moved since comes back first as a modes continuation of the same voices. Acts admitted for samples after the checkpoint are not kept: they are the performance's, and the owner's journal keeps them";
+
+/// An offline render of a take (`torus-render`, O-I 855).
+pub const TORUS_RENDER: &str = "ql.torus-render/v1";
+/// The most frames one render answers (about 21.8 s at 48 kHz); a longer take renders in parts.
+pub const TORUS_RENDER_FRAMES_MAX: u64 = 1 << 20;
+/// The most acts one render takes.
+pub const TORUS_RENDER_ACTS_MAX: usize = 4096;
+pub const TORUS_RENDER_LAW: &str = "a take renders offline on a second owner of the same scene, never on the live one: opened from the scene the live owner was opened from and set to the take's checkpoint, or continuing the last render's owner where its sound ended. Each act is made at its sample, the render's sound reaching that sample first: a strike strikes its keys' moving points at the pulse's steps there, a release lets keys go from the count of notes, a setting is the session's own edit. Samples are the live owner's clock, from the checkpoint's sample; the sound is the render owner's own PCM, sample for sample what the live owner renders from the same state and the same acts. The answer keeps where it ended as a checkpoint, so a part continues exactly; the live owner neither moves nor sounds";
+
+/// One act of a take at the sample it lands at (`torus-render`): the Torus's own acts.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "action", rename_all = "kebab-case", deny_unknown_fields)]
+pub enum TorusRenderAct {
+    /// Keys strike their moving points (as `torus-play`).
+    Strike {
+        at_samples_elapsed: String,
+        keys: Vec<crate::janko::JankoKey>,
+        #[serde(deserialize_with = "super::number::pair")]
+        amplitude: [f64; 2],
+    },
+    /// Keys let go from the count of notes (as `torus-release`).
+    Release {
+        at_samples_elapsed: String,
+        keys: Vec<crate::janko::JankoKey>,
+    },
+    /// One edit of the session (as `torus-set`).
+    Set {
+        at_samples_elapsed: String,
+        edit: Box<m1_prime::SettingsEdit>,
+    },
+}
+
+impl TorusRenderAct {
+    fn at(&self) -> &str {
+        match self {
+            Self::Strike {
+                at_samples_elapsed, ..
+            }
+            | Self::Release {
+                at_samples_elapsed, ..
+            }
+            | Self::Set {
+                at_samples_elapsed, ..
+            } => at_samples_elapsed,
+        }
+    }
+}
+
+/// An exact decimal sample cursor.
+fn exact_sample(text: &str, what: &str) -> Result<u64, String> {
+    if text.is_empty()
+        || text.len() > 20
+        || (text.len() > 1 && text.starts_with('0'))
+        || !text.bytes().all(|b| b.is_ascii_digit())
+    {
+        return Err(format!("{what} is not an exact sample cursor"));
+    }
+    text.parse()
+        .map_err(|_| format!("{what} is not an exact sample cursor"))
+}
+
+/// The Torus as it stands at a sample (`TORUS_CHECKPOINT`, `TORUS_CHECKPOINT_LAW`).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TorusCheckpoint {
+    pub schema: String,
+    /// The owner's cursor when it was kept, an exact sample count.
+    pub taken_at_samples: String,
+    pub sample_rate: u32,
+    /// The scene's event as the owner holds it; its seeds stand in `seeds` for reading.
+    pub event: CoupledInput,
+    pub seeds: Value,
+    pub shape_ref: String,
+    pub damping_per_second: f64,
+    /// The resident voices, in the native owner's mode order.
+    pub voices: Vec<String>,
+    /// Each voice's resident state, modal metres, in that order.
+    pub amplitudes: Vec<[f64; 2]>,
+    pub session: m1_prime::SessionCheckpoint,
+    pub law: String,
+}
 /// The law of the classes a Torus reading carries (O-I #851).
 pub const CLASS_SOUNDS_LAW: &str = "each of the twelve classes stands at the one place of its helix every touch-point of it shares, and the pulse carries that place's point across the surface (janko POINT_LAW); a class sounds every voice of the tuning in force by that voice's shape term at its point now: what a key of the class struck now gives the voice per unit of amplitude (strike_at_tuned). A symbol's voice is the chord of the classes its form covers where it stands (DLW §20.2)";
 /// The standing of a played note's own cell.
@@ -1349,6 +1433,22 @@ pub struct SceneInstrument {
     torus: m1_prime::Session,
     /// The Carrier's drive the native owner holds; `None` while it drives nothing.
     carrier: Option<CarrierDrive>,
+    /// What this owner was opened from, so a take can be rendered offline on a second owner of
+    /// the same scene (`torus_render`, O-I 855): the worker, its timeout and the scene.
+    worker: PathBuf,
+    timeout: Duration,
+    opened: Box<SceneConfig>,
+    /// The last offline render's owner, kept so the next part of the same take continues it.
+    render: Option<TorusRender>,
+    renders: u64,
+}
+
+/// An offline render's own owner, its continuation token and the sample (the live owner's
+/// clock) its sound has reached.
+struct TorusRender {
+    owner: Box<SceneInstrument>,
+    token: String,
+    ends_at: u64,
 }
 
 /// The M1′ pulse's drive of the body as the native owner holds it
@@ -1365,6 +1465,7 @@ struct CarrierDrive {
 impl SceneInstrument {
     pub fn open(worker: &Path, config: SceneConfig, timeout: Duration) -> Result<Self, String> {
         config.validate()?;
+        let scene = Box::new(config.clone());
         // A new Torus opens with the session's defaults, Tuning Logic (DLW manual §21.2
         // Parameters); a saved sound opens with its own settings (§21.2 Rules).
         let settings = config.torus_settings()?;
@@ -1413,6 +1514,11 @@ impl SceneInstrument {
             personal,
             torus,
             carrier: None,
+            worker: worker.to_path_buf(),
+            timeout,
+            opened: scene,
+            render: None,
+            renders: 0,
         };
         instrument.sync_carrier()?;
         Ok(instrument)
@@ -1658,6 +1764,296 @@ impl SceneInstrument {
     /// no native state moves.
     pub fn torus_release(&mut self, keys: &[crate::janko::JankoKey]) -> Vec<m1_prime::Note> {
         self.torus.release(keys)
+    }
+
+    /// The Torus as it stands at the owner's cursor (`torus-checkpoint`, O-I 855): a read.
+    pub fn torus_checkpoint(&self) -> Result<Value, String> {
+        let now = self.samples_now();
+        let field = self.session.last_field();
+        let amplitudes: Vec<[f64; 2]> = serde_json::from_value(field["amplitudes_metres"].clone())
+            .map_err(|e| format!("the owner's body state is not readable: {e}"))?;
+        let checkpoint = TorusCheckpoint {
+            schema: TORUS_CHECKPOINT.into(),
+            taken_at_samples: now.to_string(),
+            sample_rate: self.sample_rate()?,
+            event: self.event(),
+            seeds: self.session.current_basis().m2["vimarsha"]["reading"]["seed"].clone(),
+            shape_ref: self.shape.shape_ref.clone(),
+            damping_per_second: self.material.damping_per_second,
+            voices: self
+                .shape
+                .resident_voices()
+                .map(|voice| voice.mode_ref.clone())
+                .collect(),
+            amplitudes,
+            session: self.torus.checkpoint(now),
+            law: TORUS_CHECKPOINT_LAW.into(),
+        };
+        serde_json::to_value(checkpoint).map_err(|e| e.to_string())
+    }
+
+    fn sample_rate(&self) -> Result<u32, String> {
+        self.session.last_field()["sample_rate"]
+            .as_u64()
+            .and_then(|rate| u32::try_from(rate).ok())
+            .ok_or_else(|| "the owner reports no sample rate".to_string())
+    }
+
+    /// The Torus a checkpoint kept, set again at the owner's cursor (`torus-restore`, O-I 855;
+    /// `TORUS_CHECKPOINT_LAW`). Everything that can be judged is judged before any act: a
+    /// checkpoint that cannot stand on this scene is refused in words and changes nothing. Then
+    /// the event and the damping, where they moved, come back as modes continuations of the same
+    /// voices, the body takes its kept states (one body act), and the session runs on from its
+    /// kept steps with the Carrier's drive following it. Returns the field.
+    pub fn torus_restore(&mut self, checkpoint: &Value) -> Result<Value, String> {
+        let kept: TorusCheckpoint = serde_json::from_value(checkpoint.clone())
+            .map_err(|e| format!("not a Torus checkpoint: {e}"))?;
+        if kept.schema != TORUS_CHECKPOINT {
+            return Err(format!(
+                "not a Torus checkpoint: its schema is {}",
+                kept.schema
+            ));
+        }
+        let rate = self.sample_rate()?;
+        if kept.sample_rate != rate {
+            return Err(format!(
+                "the checkpoint was kept at sample rate {} and this owner runs at {rate}",
+                kept.sample_rate
+            ));
+        }
+        if kept
+            .amplitudes
+            .iter()
+            .flatten()
+            .any(|x| !x.is_finite() || x.abs() > 1e6)
+        {
+            return Err("a checkpoint's body state must be finite and within 1e6 metres".into());
+        }
+        if !kept.damping_per_second.is_finite() || !(0.0..=1e6).contains(&kept.damping_per_second) {
+            return Err(
+                "a checkpoint's damping must be finite and in 0..1000000 per second".into(),
+            );
+        }
+        let now = self.samples_now();
+        let torus = m1_prime::Session::restore(&kept.session, rate, now)?;
+        let applied = self.event.m2.stamp.identity.profile_generation;
+        let normal = |event: &CoupledInput| {
+            next_generation(event, applied)
+                .and_then(|event| serde_json::to_value(event).map_err(|e| e.to_string()))
+        };
+        let same_event = normal(&kept.event)? == normal(&self.event())?;
+        let same_damping = kept.damping_per_second == self.material.damping_per_second;
+        let tuning = kept.session.settings.tuning;
+        let shape = if same_event && same_damping {
+            self.shape.clone()
+        } else {
+            let mut material = self.material.clone();
+            material.damping_per_second = kept.damping_per_second;
+            let event = next_generation(&kept.event, applied)?;
+            let (_, basis) = complete(&event, &material, self.fibre(), tuning)?;
+            ShapeBasis::from_basis(&basis)?
+        };
+        let voices: Vec<String> = shape
+            .resident_voices()
+            .map(|voice| voice.mode_ref.clone())
+            .collect();
+        if voices != kept.voices {
+            return Err(
+                "the checkpoint's voices are not the voices this scene's body holds: it was kept on another body"
+                    .into(),
+            );
+        }
+        if kept.amplitudes.len() != voices.len() {
+            return Err("a checkpoint's body state names one state for each of its voices".into());
+        }
+        if shape.shape_ref != kept.shape_ref {
+            return Err("the checkpoint's form is not this scene's: its shapes differ".into());
+        }
+        if !shape.resident(tuning) {
+            return Err(format!(
+                "this scene holds no {} voices for the checkpoint's tuning",
+                tuning.code()
+            ));
+        }
+        // Every judgement is made: now the acts, the session first so the event completes under
+        // the kept tuning. A failure from here is the owner's, never a refusal of the checkpoint.
+        let before = std::mem::replace(&mut self.torus, torus);
+        let carrier = self.carrier.clone();
+        let applied = (|| -> Result<Value, String> {
+            if !same_event {
+                self.replace(&kept.event, false)?;
+            }
+            if !same_damping {
+                self.set_damping(kept.damping_per_second)?;
+            }
+            let field = self.session.set_state_field(&kept.amplitudes)?;
+            self.sync_carrier()?;
+            Ok(field)
+        })();
+        if applied.is_err() {
+            self.torus = before;
+            self.carrier = carrier;
+        }
+        applied
+    }
+
+    /// A take rendered offline (`torus-render`, O-I 855; `TORUS_RENDER_LAW`): from `checkpoint`
+    /// on a second owner of this scene, or continuing the last render (`continues`, the token it
+    /// answered), `frames` of sound with each act made at its sample. A read of this owner: it
+    /// neither moves nor sounds. Everything that can be judged is judged before a render owner
+    /// opens; a part that fails leaves no render to continue.
+    pub fn torus_render(
+        &mut self,
+        checkpoint: Option<&Value>,
+        continues: Option<&str>,
+        acts: &[TorusRenderAct],
+        frames: u64,
+    ) -> Result<Value, String> {
+        if frames == 0 || frames > TORUS_RENDER_FRAMES_MAX {
+            return Err(format!(
+                "a render takes 1 to {TORUS_RENDER_FRAMES_MAX} frames; a longer take renders in parts"
+            ));
+        }
+        if acts.len() > TORUS_RENDER_ACTS_MAX {
+            return Err(format!(
+                "a render takes at most {TORUS_RENDER_ACTS_MAX} acts; a longer take renders in parts"
+            ));
+        }
+        let from = match (checkpoint, continues) {
+            (Some(checkpoint), None) => {
+                let kept: TorusCheckpoint = serde_json::from_value(checkpoint.clone())
+                    .map_err(|e| format!("not a Torus checkpoint: {e}"))?;
+                if kept.schema != TORUS_CHECKPOINT {
+                    return Err(format!(
+                        "not a Torus checkpoint: its schema is {}",
+                        kept.schema
+                    ));
+                }
+                exact_sample(&kept.taken_at_samples, "the checkpoint's sample")?
+            }
+            (None, Some(token)) => self
+                .render
+                .as_ref()
+                .filter(|render| render.token == token)
+                .map(|render| render.ends_at)
+                .ok_or_else(|| {
+                    format!("the render {token} continues has ended or never was: render again from its checkpoint")
+                })?,
+            _ => {
+                return Err(
+                    "a render takes either a checkpoint or the render it continues, not both".into(),
+                );
+            }
+        };
+        let end = from
+            .checked_add(frames)
+            .ok_or("the render ends past the last sample")?;
+        let mut offsets = Vec::with_capacity(acts.len());
+        let mut last = from;
+        for act in acts {
+            let at = exact_sample(act.at(), "an act's sample")?;
+            if at < from {
+                return Err(format!(
+                    "an act lands at sample {at}, before the render begins at {from}"
+                ));
+            }
+            if at >= end {
+                return Err(format!(
+                    "an act lands at sample {at}, at or after the render ends at {end}"
+                ));
+            }
+            if at < last {
+                return Err("the acts are not in the order of their samples".into());
+            }
+            last = at;
+            offsets.push(at - from);
+        }
+        let mut owner = match checkpoint {
+            Some(checkpoint) => {
+                // A new take replaces the last render: its owner closes first.
+                self.render = None;
+                let mut owner = Box::new(SceneInstrument::open(
+                    &self.worker,
+                    (*self.opened).clone(),
+                    self.timeout,
+                )?);
+                owner.torus_restore(checkpoint)?;
+                owner
+            }
+            None => {
+                self.render
+                    .take()
+                    .ok_or("the render this continues has ended")?
+                    .owner
+            }
+        };
+        // The render owner's clock began at its own opening; the take's samples are the live
+        // owner's. What the render reports at a sample is reported on the live owner's clock.
+        let shift = from
+            .checked_sub(owner.samples_now())
+            .ok_or("the render owner's clock runs ahead of the take")?;
+        let mut audio: Vec<Value> = Vec::with_capacity(usize::try_from(frames).unwrap_or(0));
+        let mut done = 0u64;
+        let mut advance = |owner: &mut SceneInstrument, to: u64| -> Result<(), String> {
+            while done < to {
+                let n = (to - done).min(8192);
+                let field = owner.session.advance_field(n as u32, false)?;
+                let block = field["audio"]
+                    .as_array()
+                    .filter(|block| block.len() as u64 == n)
+                    .ok_or("the render owner did not answer with its block of sound")?;
+                audio.extend(block.iter().cloned());
+                done += n;
+            }
+            Ok(())
+        };
+        let mut made_way = Vec::new();
+        for (act, offset) in acts.iter().zip(offsets) {
+            advance(&mut owner, offset)?;
+            match act {
+                TorusRenderAct::Strike {
+                    keys, amplitude, ..
+                } => {
+                    let played = owner.torus_play(keys, *amplitude, None)?;
+                    let mut notes = played.receipt["made_way"].clone();
+                    for note in notes.as_array_mut().into_iter().flatten() {
+                        if let Some(at) = note["struck_at_samples"].as_u64() {
+                            note["struck_at_samples"] = json!(at + shift);
+                        }
+                    }
+                    made_way.push(notes);
+                }
+                TorusRenderAct::Release { keys, .. } => {
+                    owner.torus_release(keys);
+                }
+                TorusRenderAct::Set { edit, .. } => {
+                    owner.torus_set(edit)?;
+                }
+            }
+        }
+        advance(&mut owner, frames)?;
+        let mut ended = owner.torus_checkpoint()?;
+        // The render owner's clock began at its own opening: where it ended is kept on the
+        // live owner's, as the take's samples are. Everything else a checkpoint keeps is relative.
+        ended["taken_at_samples"] = json!(end.to_string());
+        self.renders += 1;
+        let token = format!("render:{}", self.renders);
+        self.render = Some(TorusRender {
+            owner,
+            token: token.clone(),
+            ends_at: end,
+        });
+        Ok(json!({
+            "schema": TORUS_RENDER,
+            "from_samples": from.to_string(),
+            "frames": frames,
+            "sample_rate": self.sample_rate()?,
+            "audio": audio,
+            "made_way": made_way,
+            "checkpoint": ended,
+            "continues": token,
+            "law": TORUS_RENDER_LAW,
+        }))
     }
 
     /// The element the voices currently sound in.

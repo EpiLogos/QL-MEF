@@ -309,7 +309,11 @@ impl ReceiptGuard {
             return Ok(());
         };
         let operation = request["operation"].as_str().ok_or("missing operation")?;
-        let changing = replacing || reshaping || operation == "set-axis" || operation == "strike";
+        let changing = replacing
+            || reshaping
+            || operation == "set-axis"
+            || operation == "strike"
+            || operation == "set-state";
         require(
             generation
                 == if changing {
@@ -426,6 +430,31 @@ impl ReceiptGuard {
                         && value["amplitudes_metres"] == previous["amplitudes_metres"],
                     "independent axis acknowledgement disagrees",
                 )?;
+            }
+            "set-state" => {
+                // The body as it rang at a checkpoint, set again (O-I 855): every
+                // resident state exactly as asked, one per mode; the clock stays.
+                let asked = array(&request["amplitudes"], self.modes)?;
+                for state in asked {
+                    for component in array(state, 2)? {
+                        finite(component, 1e6)?;
+                    }
+                }
+                require(
+                    value["clock"] == previous["clock"],
+                    "setting the body changed the clock",
+                )?;
+                for (set, asked) in array(&value["amplitudes_metres"], self.modes)?
+                    .iter()
+                    .zip(asked)
+                {
+                    for (a, b) in array(set, 2)?.iter().zip(array(asked, 2)?) {
+                        require(
+                            a.as_f64() == b.as_f64(),
+                            "the body set is not the state asked for",
+                        )?;
+                    }
+                }
             }
             "set-carrier" => {
                 // The M1′ pulse's drive of the body (the Torus's Carrier): a

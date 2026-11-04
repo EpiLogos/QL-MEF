@@ -268,6 +268,18 @@ public:
     }
     // Strikes admitted for a later sample that have not landed yet.
     std::size_t pending_strikes() const noexcept { return pending_.size() - landed_; }
+    // The body as it rang at a checkpoint, set again (O-I 855): every prepared mode's resident state
+    // (modal metres) in mode order, at the cursor. The voices, their shapes, the clock, the cursor, the
+    // drive and the acts admitted for later samples stay; the next render continues from these states.
+    // One body act: one generation. All validation precedes the commit.
+    void set_state(std::uint64_t expected, const std::vector<Complex> &states) {
+        require(expected == source_.generation && expected != UINT64_MAX, "stale/overflow field generation");
+        require(states.size() == modes_.size(), "state/mode basis mismatch");
+        for (const auto &state : states)
+            require(finite(state) && std::abs(state) <= 1e6, "invalid resident modal state");
+        for (std::size_t i = 0; i < modes_.size(); ++i) modes_[i].state = states[i];
+        ++source_.generation;
+    }
     // The pulse's drive of the body (the Torus's Carrier, O-I #850): from the cursor on, each step
     // of the M1′ pulse adds `impulses[i]` (modal metres) to prepared mode i, landing exactly before
     // the first sample whose steps reach it, as a strike at that sample would. The pulse is the

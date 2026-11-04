@@ -226,6 +226,14 @@ int main() {
                         decimal<std::uint64_t>(get(request.get(), "anchor_samples")),
                         number(get(request.get(), "anchor_steps")), impulses);
                     committed = true;
+                } else if (op == "set-state") {
+                    // The body as it rang at a checkpoint (O-I 855): one resident state per mode, in mode order.
+                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "amplitudes"});
+                    J *items = get(request.get(), "amplitudes");
+                    ql::require(count(items, 4096) == field->source().modes.size(), "state/mode basis mismatch");
+                    std::vector<ql::Complex> states; states.reserve(field->source().modes.size());
+                    for (std::size_t i = 0; i < field->source().modes.size(); ++i) states.push_back(pair(at(items, i)));
+                    field->set_state(field->receipt().generation, states); committed = true;
                 } else { keys(request.get(), {"schema", "operation"}); ql::require(op == "read", "unknown field operation"); }
             }
             auto output = own(response(*field, audio, true, 1));

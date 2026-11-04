@@ -144,6 +144,30 @@ pub enum HostOperation {
     TorusRelease {
         keys: Vec<crate::janko::JankoKey>,
     },
+    /// scene only: the Torus as it stands at the cursor (O-I 855,
+    /// `ql.torus-checkpoint/v1`): its body as it rings, its form, forces and
+    /// session, the scene's event and its seeds. Read-only: the field does not
+    /// advance.
+    TorusCheckpoint {},
+    /// scene only: a kept Torus set again at the cursor: the event and the
+    /// damping where they moved (modes continuations of the same voices), then
+    /// the body's states (one body act), and the session from its kept steps.
+    /// A checkpoint that cannot stand on this scene is refused in words.
+    TorusRestore {
+        checkpoint: Value,
+    },
+    /// scene only: a take rendered offline (O-I 855, `ql.torus-render/v1`):
+    /// from a checkpoint on a second owner of the same scene, or continuing
+    /// the last render, `frames` of sound with each act made at its sample.
+    /// Read-only: this owner neither moves nor sounds.
+    TorusRender {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        checkpoint: Option<Value>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        continues: Option<String>,
+        acts: Vec<super::scene_field::TorusRenderAct>,
+        frames: u64,
+    },
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -455,7 +479,10 @@ impl FieldHost {
                 | HostOperation::TorusState {}
                 | HostOperation::TorusSet { .. }
                 | HostOperation::TorusPlay { .. }
-                | HostOperation::TorusRelease { .. },
+                | HostOperation::TorusRelease { .. }
+                | HostOperation::TorusCheckpoint {}
+                | HostOperation::TorusRestore { .. }
+                | HostOperation::TorusRender { .. },
                 _,
             ) => unreachable!("non-stage commands returned before stage dispatch"),
         };
@@ -595,6 +622,27 @@ impl FieldHost {
                 extra.insert("released".into(), json!(released));
                 Ok(None)
             }
+            HostOperation::TorusCheckpoint {} => instrument.torus_checkpoint().map(|checkpoint| {
+                extra.insert("torus_checkpoint".into(), checkpoint);
+                None
+            }),
+            HostOperation::TorusRestore { checkpoint } => {
+                instrument.torus_restore(&checkpoint).map(|field| {
+                    extra.insert("influence".into(), instrument.influence());
+                    Some(field)
+                })
+            }
+            HostOperation::TorusRender {
+                checkpoint,
+                continues,
+                acts,
+                frames,
+            } => instrument
+                .torus_render(checkpoint.as_ref(), continues.as_deref(), &acts, frames)
+                .map(|render| {
+                    extra.insert("torus_render".into(), render);
+                    None
+                }),
             _ => unreachable!("only Torus operations reach the Torus dispatch"),
         };
         let torus = instrument.torus_reading();
@@ -755,6 +803,9 @@ impl FieldHost {
                 | HostOperation::TorusSet { .. }
                 | HostOperation::TorusPlay { .. }
                 | HostOperation::TorusRelease { .. }
+                | HostOperation::TorusCheckpoint {}
+                | HostOperation::TorusRestore { .. }
+                | HostOperation::TorusRender { .. }
         ) {
             return self.torus_operation(request);
         }
@@ -851,7 +902,10 @@ impl FieldHost {
                 | HostOperation::TorusState {}
                 | HostOperation::TorusSet { .. }
                 | HostOperation::TorusPlay { .. }
-                | HostOperation::TorusRelease { .. },
+                | HostOperation::TorusRelease { .. }
+                | HostOperation::TorusCheckpoint {}
+                | HostOperation::TorusRestore { .. }
+                | HostOperation::TorusRender { .. },
                 _,
             ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };

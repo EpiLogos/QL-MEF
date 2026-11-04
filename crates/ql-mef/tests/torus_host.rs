@@ -92,6 +92,13 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-play","keys":[{"row":0,"column":2}],"amplitude":[0.1,0.0]}),
         json!({"operation":"torus-play","keys":[{"row":0,"column":2},{"row":3,"column":1}],"amplitude":[0.1,0.0],"at_samples_elapsed":"4800"}),
         json!({"operation":"torus-release","keys":[{"row":0,"column":2}]}),
+        json!({"operation":"torus-checkpoint"}),
+        json!({"operation":"torus-restore","checkpoint":{"schema":"ql.torus-checkpoint/v1"}}),
+        json!({"operation":"torus-render","checkpoint":{"schema":"ql.torus-checkpoint/v1"},"frames":4800,"acts":[
+            {"action":"strike","at_samples_elapsed":"96000","keys":[{"row":0,"column":2}],"amplitude":[0.2,0.0]},
+            {"action":"release","at_samples_elapsed":"96100","keys":[{"row":0,"column":2}]},
+            {"action":"set","at_samples_elapsed":"96200","edit":{"polyphony":3}}]}),
+        json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[]}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_ok(),
@@ -103,6 +110,12 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-set","edit":{"tuning":"equal"}}),
         json!({"operation":"torus-play","keys":[{"row":0}],"amplitude":[0.1,0.0]}),
         json!({"operation":"torus-state","x":1}),
+        json!({"operation":"torus-checkpoint","at":"0"}),
+        json!({"operation":"torus-restore"}),
+        json!({"operation":"torus-render","frames":4800,"acts":[{"action":"strike","at_samples_elapsed":"0","keys":[{"row":0,"column":2}]}]}),
+        json!({"operation":"torus-render","frames":4800,"acts":[{"action":"hold","at_samples_elapsed":"0","keys":[]}]}),
+        json!({"operation":"torus-render","frames":4800,"acts":[{"action":"release","at_samples_elapsed":"0","keys":[],"amplitude":[0.1,0.0]}]}),
+        json!({"operation":"torus-render","frames":4800}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_err(),
@@ -301,6 +314,16 @@ fn tuning_and_fundamental_change_the_voice_frequencies_the_owner_reports() {
 }
 
 /// The PCM of `seconds` of the field, rendered in blocks of 4800 samples.
+/// Each voice's state as the doubles it is, in mode order.
+fn metres(value: &Value) -> Vec<f64> {
+    value
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|pair| pair.as_array().unwrap().iter().map(|x| x.as_f64().unwrap()))
+        .collect()
+}
+
 fn render(d: &mut Driver, seconds: f64) -> Vec<f64> {
     let mut pcm = Vec::new();
     for _ in 0..(seconds * 10.0).round() as usize {
@@ -397,4 +420,303 @@ fn lowering_the_rate_through_the_bands_is_heard_a_note_becoming_a_beat() {
         after[24_000..].iter().all(|v| v.abs() < 1e-6 * peak),
         "the tail decays and nothing drives it"
     );
+}
+
+/// O-I 855: a Live take begins again where it began. The Torus is kept at a
+/// sample (its body as it rings, its M1′ session, the scene's event with its
+/// seeds, the body's damping) and set again later: from there it rings on as it
+/// rang on, bit for bit, while the cursor runs on. A damping moved since comes
+/// back as one modes continuation. A checkpoint that cannot stand is refused
+/// in words and changes nothing.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_torus_kept_at_a_sample_rings_on_from_its_restore_as_it_rang() {
+    let mut d = Driver::open();
+    let played = d.send(
+        json!({"operation":"torus-play","keys":[{"row":0,"column":2}],"amplitude":[0.2,0.0]}),
+    );
+    assert_eq!(played["status"], "ok", "{played}");
+    render(&mut d, 0.3);
+    let generation = d.generation();
+    let kept = d.send(json!({"operation":"torus-checkpoint"}));
+    assert_eq!(kept["status"], "ok", "{kept}");
+    assert_eq!(d.generation(), generation, "keeping the Torus is a read");
+    let checkpoint = kept["torus_checkpoint"].clone();
+    assert_eq!(checkpoint["schema"], "ql.torus-checkpoint/v1");
+    assert_eq!(
+        checkpoint["taken_at_samples"],
+        kept["field"]["samples_elapsed"]
+    );
+    // The same doubles (the owner's text keeps every digit the worker wrote; the checkpoint's is the shortest).
+    assert_eq!(
+        metres(&checkpoint["amplitudes"]),
+        metres(&kept["field"]["amplitudes_metres"])
+    );
+    assert_eq!(checkpoint["session"]["notes"].as_array().unwrap().len(), 1);
+    assert!(
+        checkpoint["seeds"].is_object()
+            || checkpoint["seeds"].is_array()
+            || checkpoint["seeds"].is_string(),
+        "{checkpoint}"
+    );
+    let then = render(&mut d, 0.3);
+
+    // The Torus moves on: another key, a setting, the body's damping, time.
+    for command in [
+        json!({"operation":"torus-play","keys":[{"row":4,"column":5}],"amplitude":[0.3,0.0]}),
+        json!({"operation":"torus-set","edit":{"polyphony":3}}),
+        json!({"operation":"set-damping","per_second":7.5}),
+    ] {
+        let answer = d.send(command.clone());
+        assert_eq!(answer["status"], "ok", "{command}: {answer}");
+    }
+    render(&mut d, 0.5);
+
+    // Refused in words, changing nothing.
+    let standing = d.current.clone();
+    for (path, value, words) in [
+        ("/schema", json!("ql.torus-checkpoint/v2"), "checkpoint"),
+        ("/sample_rate", json!(44100), "sample rate"),
+        ("/amplitudes/0/0", json!(2e6), "state"),
+        ("/voices/0", json!("mode:another"), "voices"),
+        ("/session/steps", json!(-1.0), "steps"),
+    ] {
+        let mut bad = checkpoint.clone();
+        *bad.pointer_mut(path).unwrap() = value;
+        let refused = d.send(json!({"operation":"torus-restore","checkpoint":bad}));
+        assert_eq!(refused["status"], "refused", "{path}: {refused}");
+        assert!(
+            refused["error"].as_str().unwrap().contains(words),
+            "{path}: {refused}"
+        );
+        assert_eq!(
+            refused["field"]["generation"], standing["field"]["generation"],
+            "{path}"
+        );
+        assert_eq!(
+            metres(&refused["field"]["amplitudes_metres"]),
+            metres(&standing["field"]["amplitudes_metres"]),
+            "{path}"
+        );
+    }
+
+    let generation = d.generation();
+    let restored = d.send(json!({"operation":"torus-restore","checkpoint":checkpoint}));
+    assert_eq!(restored["status"], "ok", "{restored}");
+    assert_eq!(
+        d.generation(),
+        generation + 2,
+        "the damping, then the body: two acts"
+    );
+    assert_eq!(
+        metres(&restored["field"]["amplitudes_metres"]),
+        metres(&checkpoint["amplitudes"])
+    );
+    assert_eq!(
+        restored["torus"]["settings"],
+        checkpoint["session"]["settings"]
+    );
+    assert_eq!(
+        restored["torus"]["notes"].as_array().unwrap().len(),
+        1,
+        "{restored}"
+    );
+    assert_eq!(
+        restored["torus"]["comma_cents"],
+        kept["torus"]["comma_cents"]
+    );
+    let again = render(&mut d, 0.3);
+    assert_eq!(again, then, "it rings on as it rang");
+}
+
+/// The live owner's PCM from its cursor for `frames`, in blocks of `block`.
+fn render_frames(d: &mut Driver, frames: u64, block: u64) -> Vec<f64> {
+    let mut pcm = Vec::new();
+    let mut done = 0;
+    while done < frames {
+        let n = block.min(frames - done);
+        let advanced = d.send(json!({"operation":"advance","frames":n,"muted":false}));
+        assert_eq!(advanced["status"], "ok", "{advanced}");
+        pcm.extend(
+            advanced["field"]["audio"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_f64().unwrap()),
+        );
+        done += n;
+    }
+    pcm
+}
+
+fn audio(render: &Value) -> Vec<f64> {
+    render["audio"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_f64().unwrap())
+        .collect()
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_take_renders_offline_from_its_checkpoint_as_the_owner_played_it() {
+    // O-I #855: Export Audio takes a Live take through the M1′ session offline. The take is a checkpoint (the Torus as it rang when
+    // the take began) and its acts at the samples they landed at; the render is a second owner of the same scene, set to the
+    // checkpoint, each act made at its sample, its sound the owner's own. The live owner neither moves nor waits for it.
+    let mut d = Driver::open();
+    let played = d.send(
+        json!({"operation":"torus-play","keys":[{"row":0,"column":2}],"amplitude":[0.2,0.0]}),
+    );
+    assert_eq!(played["status"], "ok", "{played}");
+    render(&mut d, 0.2);
+    let kept = d.send(json!({"operation":"torus-checkpoint"}));
+    let checkpoint = kept["torus_checkpoint"].clone();
+    let from: u64 = checkpoint["taken_at_samples"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let at = |offset: u64| (from + offset).to_string();
+    // The take: a key ahead of the cursor, a release, a setting and a chord, as the live owner takes them.
+    let acts = json!([
+        {"action":"strike","at_samples_elapsed":at(4800),"keys":[{"row":2,"column":3}],"amplitude":[0.3,0.0]},
+        {"action":"release","at_samples_elapsed":at(9600),"keys":[{"row":0,"column":2}]},
+        {"action":"set","at_samples_elapsed":at(9600),"edit":{"polyphony":2}},
+        {"action":"strike","at_samples_elapsed":at(14400),"keys":[{"row":4,"column":5},{"row":1,"column":1}],"amplitude":[0.25,0.0]},
+    ]);
+    let mut live = Vec::new();
+    let strike = d.send(json!({"operation":"torus-play","keys":[{"row":2,"column":3}],"amplitude":[0.3,0.0],"at_samples_elapsed":at(4800)}));
+    assert_eq!(strike["status"], "ok", "{strike}");
+    live.extend(render_frames(&mut d, 9600, 4800));
+    for command in [
+        json!({"operation":"torus-release","keys":[{"row":0,"column":2}]}),
+        json!({"operation":"torus-set","edit":{"polyphony":2}}),
+        json!({"operation":"torus-play","keys":[{"row":4,"column":5},{"row":1,"column":1}],"amplitude":[0.25,0.0],"at_samples_elapsed":at(14400)}),
+    ] {
+        let answer = d.send(command.clone());
+        assert_eq!(answer["status"], "ok", "{command}: {answer}");
+    }
+    let made_way = d.current["torus_play"]["made_way"].clone();
+    live.extend(render_frames(&mut d, 14400, 4800));
+    let frames = 24000u64;
+    assert_eq!(live.len() as u64, frames);
+
+    let standing = d.current.clone();
+    let whole = d.send(
+        json!({"operation":"torus-render","checkpoint":checkpoint,"acts":acts,"frames":frames}),
+    );
+    assert_eq!(whole["status"], "ok", "{whole}");
+    assert_eq!(
+        whole["field"]["generation"], standing["field"]["generation"],
+        "the live owner does not move"
+    );
+    assert_eq!(
+        whole["field"]["samples_elapsed"],
+        standing["field"]["samples_elapsed"]
+    );
+    assert_eq!(whole["field"]["audio"], json!([]), "nor sound");
+    let taken = &whole["torus_render"];
+    assert_eq!(taken["schema"], "ql.torus-render/v1");
+    assert_eq!(taken["from_samples"], json!(from.to_string()));
+    assert_eq!(taken["frames"], json!(frames));
+    assert_eq!(taken["sample_rate"], d.current["field"]["sample_rate"]);
+    assert_eq!(
+        taken["made_way"],
+        json!([[], made_way]),
+        "the notes that made way, strike by strike, as the owner made them"
+    );
+    assert!(
+        !made_way.as_array().unwrap().is_empty(),
+        "past Polyphony 2 the oldest note made way"
+    );
+    let pcm = audio(taken);
+    assert_eq!(pcm.len() as u64, frames);
+    assert!(pcm.iter().any(|x| *x != 0.0), "the take sounds");
+    assert_eq!(
+        pcm, live,
+        "sample for sample, the sound the live owner made"
+    );
+    assert_eq!(
+        taken["checkpoint"]["taken_at_samples"],
+        json!(at(frames)),
+        "and where it ends, kept as the owner keeps it"
+    );
+
+    // In parts: a continuation runs on the render owner; an end checkpoint opens another the same.
+    let first = d.send(json!({"operation":"torus-render","checkpoint":checkpoint,"acts":acts.as_array().unwrap()[..1],"frames":9600}));
+    assert_eq!(first["status"], "ok", "{first}");
+    let token = first["torus_render"]["continues"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let second = d.send(json!({"operation":"torus-render","continues":token,"acts":acts.as_array().unwrap()[1..],"frames":frames - 9600}));
+    assert_eq!(second["status"], "ok", "{second}");
+    let mut parts = audio(&first["torus_render"]);
+    parts.extend(audio(&second["torus_render"]));
+    assert_eq!(parts, live, "a continued render is the whole render");
+    let again = d.send(json!({"operation":"torus-render","checkpoint":first["torus_render"]["checkpoint"],"acts":acts.as_array().unwrap()[1..],"frames":frames - 9600}));
+    assert_eq!(again["status"], "ok", "{again}");
+    assert_eq!(
+        audio(&again["torus_render"]),
+        audio(&second["torus_render"]),
+        "the end checkpoint keeps the body exactly"
+    );
+
+    // Refused in words, the live owner untouched.
+    for (command, words) in [
+        (
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":[],"frames":0}),
+            "frames",
+        ),
+        (
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":[],"frames":(1u64 << 20) + 1}),
+            "frames",
+        ),
+        (
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":[{"action":"release","at_samples_elapsed":(from - 1).to_string(),"keys":[{"row":0,"column":2}]}],"frames":4800}),
+            "before",
+        ),
+        (
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":[{"action":"release","at_samples_elapsed":at(4800),"keys":[{"row":0,"column":2}]}],"frames":4800}),
+            "after",
+        ),
+        (
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":[
+            {"action":"release","at_samples_elapsed":at(200),"keys":[{"row":0,"column":2}]},
+            {"action":"release","at_samples_elapsed":at(100),"keys":[{"row":0,"column":2}]}],"frames":4800}),
+            "order",
+        ),
+        (
+            json!({"operation":"torus-render","checkpoint":checkpoint,"continues":token,"acts":[],"frames":4800}),
+            "either",
+        ),
+        (
+            json!({"operation":"torus-render","acts":[],"frames":4800}),
+            "either",
+        ),
+        (
+            json!({"operation":"torus-render","continues":"render:0","acts":[],"frames":4800}),
+            "continues",
+        ),
+        (
+            json!({"operation":"torus-render","checkpoint":{"schema":"ql.torus-checkpoint/v2"},"acts":[],"frames":4800}),
+            "checkpoint",
+        ),
+    ] {
+        let refused = d.send(command.clone());
+        assert_eq!(refused["status"], "refused", "{command}: {refused}");
+        assert!(
+            refused["error"].as_str().unwrap().contains(words),
+            "{words}: {refused}"
+        );
+        assert_eq!(
+            refused["field"]["generation"],
+            standing["field"]["generation"]
+        );
+        assert_eq!(
+            refused["field"]["samples_elapsed"],
+            standing["field"]["samples_elapsed"]
+        );
+    }
 }
