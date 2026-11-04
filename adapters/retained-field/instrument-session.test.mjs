@@ -984,7 +984,10 @@ test('a take renders offline as a read: the owner neither moves nor sounds, and 
   const acts = [
     { action: 'strike', at_samples_elapsed: '4800', keys: [{ row: 2, column: 3 }], amplitude: [0.3, 0] },
     { action: 'release', at_samples_elapsed: '9600', keys: [{ row: 2, column: 3 }] },
-    { action: 'set', at_samples_elapsed: '9600', edit: { polyphony: 2 } }];
+    { action: 'set', at_samples_elapsed: '9600', edit: { polyphony: 2 } },
+    // A touch and a singlet are a take's acts too (O-I #855 kept whole): each the owner's own act, at its sample.
+    { action: 'strike-at', at_samples_elapsed: '9700', points: [{ theta: 0.75, phi: 2.5, amplitude: [0.3, 0] }, { theta: 4, phi: 5.5, amplitude: [0.3, 0] }] },
+    { action: 'singlet', at_samples_elapsed: '9800', codon: 8, amplitude: [0.25, 0] }];
   const render = await session.torusRender({ checkpoint, acts, frames: 4800 });
   assert.deepEqual(calls.at(-1).command, { operation: 'torus-render', checkpoint, acts, frames: 4800 }, 'the take travels whole');
   assert.equal(render.schema, 'ql.torus-render/v1');
@@ -1007,7 +1010,13 @@ test('a take renders offline as a read: the owner neither moves nor sounds, and 
     [{ checkpoint, acts: [{ ...acts[0], at_samples_elapsed: 4800 }], frames: 4800 }, /exact sample cursor/],
     [{ checkpoint, acts: [{ ...acts[0], keys: [{ row: 6, column: 0 }] }], frames: 4800 }, /row \(0\.\.5\)/],
     [{ checkpoint, acts: [{ ...acts[0], amplitude: [1.5, 0] }], frames: 4800 }, /within 1\.0/],
-    [{ checkpoint, acts: [{ action: 'hold', at_samples_elapsed: '0', keys: [] }], frames: 4800 }, /strike, release or set/],
+    [{ checkpoint, acts: [{ action: 'hold', at_samples_elapsed: '0', keys: [] }], frames: 4800 }, /strike, touch, singlet, release or set/],
+    [{ checkpoint, acts: [{ ...acts[3], points: [] }], frames: 4800 }, /1\.\.64 points/],
+    [{ checkpoint, acts: [{ ...acts[3], points: [{ theta: 7, phi: 1, amplitude: [0.3, 0] }] }], frames: 4800 }, /\[0, 2\*pi\)/],
+    [{ checkpoint, acts: [{ ...acts[3], points: [{ theta: 1, phi: 1, amplitude: [1.5, 0] }] }], frames: 4800 }, /within 1\.0/],
+    [{ checkpoint, acts: [{ ...acts[4], codon: 64 }], frames: 4800 }, /codon is 0 to 63/],
+    [{ checkpoint, acts: [{ ...acts[4], codon: 2.5 }], frames: 4800 }, /codon is 0 to 63/],
+    [{ checkpoint, acts: [{ ...acts[4], amplitude: [1.5, 0] }], frames: 4800 }, /within 1\.0/],
     [{ checkpoint, acts: [{ action: 'set', at_samples_elapsed: '0', edit: {} }], frames: 4800 }, /at least one setting/],
   ]) await assert.rejects(session.torusRender(bad), words, JSON.stringify(bad).slice(0, 80));
   assert.equal(calls.length, sent);

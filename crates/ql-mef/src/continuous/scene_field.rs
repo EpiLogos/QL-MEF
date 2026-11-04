@@ -1337,9 +1337,10 @@ pub const TORUS_RENDER: &str = "ql.torus-render/v1";
 pub const TORUS_RENDER_FRAMES_MAX: u64 = 1 << 20;
 /// The most acts one render takes.
 pub const TORUS_RENDER_ACTS_MAX: usize = 4096;
-pub const TORUS_RENDER_LAW: &str = "a take renders offline on a second owner of the same scene, never on the live one: opened from the scene the live owner was opened from and set to the take's checkpoint, or continuing the last render's owner where its sound ended. Each act is made at its sample, the render's sound reaching that sample first: a strike strikes its keys' moving points at the pulse's steps there, a release lets keys go from the count of notes, a setting is the session's own edit. Samples are the live owner's clock, from the checkpoint's sample; the sound is the render owner's own PCM, sample for sample what the live owner renders from the same state and the same acts. The answer keeps where it ended as a checkpoint, so a part continues exactly; the live owner neither moves nor sounds";
+pub const TORUS_RENDER_LAW: &str = "a take renders offline on a second owner of the same scene, never on the live one: opened from the scene the live owner was opened from and set to the take's checkpoint, or continuing the last render's owner where its sound ended. Each act is made at its sample, the render's sound reaching that sample first: a strike strikes its keys' moving points at the pulse's steps there, a touch strikes its points (as strike-at), a singlet strikes its codon's place on the ring where the pulse has carried it there (as torus-singlet), a release lets keys go from the count of notes, a setting is the session's own edit; a touch and a singlet count no notes, so only a strike names the notes that made way. Samples are the live owner's clock, from the checkpoint's sample; the sound is the render owner's own PCM, sample for sample what the live owner renders from the same state and the same acts. The answer keeps where it ended as a checkpoint, so a part continues exactly; the live owner neither moves nor sounds";
 
-/// One act of a take at the sample it lands at (`torus-render`): the Torus's own acts.
+/// One act of a take at the sample it lands at (`torus-render`): the Torus's own acts, each struck through the path the live
+/// owner strikes it through, so a take holding any of them renders as it was played.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "action", rename_all = "kebab-case", deny_unknown_fields)]
 pub enum TorusRenderAct {
@@ -1360,6 +1361,18 @@ pub enum TorusRenderAct {
         at_samples_elapsed: String,
         edit: Box<m1_prime::SettingsEdit>,
     },
+    /// A touch strikes the surface at its points (as `strike-at`; O-I #855, a performance kept whole).
+    StrikeAt {
+        at_samples_elapsed: String,
+        points: Vec<StrikeAtInput>,
+    },
+    /// A singlet strikes its codon's place on the ring (as `torus-singlet`, O-I #771; #855).
+    Singlet {
+        at_samples_elapsed: String,
+        codon: u8,
+        #[serde(deserialize_with = "super::number::pair")]
+        amplitude: [f64; 2],
+    },
 }
 
 impl TorusRenderAct {
@@ -1373,7 +1386,37 @@ impl TorusRenderAct {
             }
             | Self::Set {
                 at_samples_elapsed, ..
+            }
+            | Self::StrikeAt {
+                at_samples_elapsed, ..
+            }
+            | Self::Singlet {
+                at_samples_elapsed, ..
             } => at_samples_elapsed,
+        }
+    }
+
+    /// What can be judged of the act before a render owner opens: a touch's points, a singlet's codon and impulse, as the live
+    /// owner judges them (`StrikeAtInput::validate_act`, `torus_singlet`).
+    fn judge(&self) -> Result<(), String> {
+        match self {
+            Self::StrikeAt { points, .. } => StrikeAtInput::validate_act(points),
+            Self::Singlet {
+                codon, amplitude, ..
+            } => {
+                if *codon >= 64 {
+                    return Err(format!(
+                        "a singlet's codon is 0 to 63; there is no codon {codon}"
+                    ));
+                }
+                StrikeAtInput {
+                    theta: 0.0,
+                    phi: 0.0,
+                    amplitude: *amplitude,
+                }
+                .validate()
+            }
+            Self::Strike { .. } | Self::Release { .. } | Self::Set { .. } => Ok(()),
         }
     }
 }
@@ -2583,6 +2626,7 @@ impl SceneInstrument {
         let mut offsets = Vec::with_capacity(acts.len());
         let mut last = from;
         for act in acts {
+            act.judge()?;
             let at = exact_sample(act.at(), "an act's sample")?;
             if at < from {
                 return Err(format!(
@@ -2660,6 +2704,14 @@ impl SceneInstrument {
                 }
                 TorusRenderAct::Set { edit, .. } => {
                     owner.torus_set(edit)?;
+                }
+                TorusRenderAct::StrikeAt { points, .. } => {
+                    owner.strike_at(points)?;
+                }
+                TorusRenderAct::Singlet {
+                    codon, amplitude, ..
+                } => {
+                    owner.torus_singlet(*codon, *amplitude, None)?;
                 }
             }
         }

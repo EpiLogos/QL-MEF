@@ -176,7 +176,8 @@ pub enum HostOperation {
     },
     /// scene only: a take rendered offline (O-I 855, `ql.torus-render/v1`):
     /// from a checkpoint on a second owner of the same scene, or continuing
-    /// the last render, `frames` of sound with each act made at its sample.
+    /// the last render, `frames` of sound with each act (a strike of keys, a
+    /// touch, a singlet, a release, a setting) made at its sample.
     /// Read-only: this owner neither moves nor sounds.
     TorusRender {
         #[serde(default, skip_serializing_if = "Option::is_none")]
