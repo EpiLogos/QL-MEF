@@ -46,7 +46,7 @@ function setup(options = {}) {
   let current = frame(), sequence = 0n;
   const initial = { schema: 'ql.field-host-receipt/v1', status: 'ready', available: true,
     instance_ref: 'controlled:instance', last_request_id: '0', request_id: null, field: current };
-  const port = { closed: false, effect: null, delay: null, renders: 0,
+  const port = { closed: false, effect: null, delay: null, renders: 0, waiting: [],
     async request(request) {
       calls.push(structuredClone(request));
       assert.equal(request.request_id, String(++sequence));
@@ -57,10 +57,27 @@ function setup(options = {}) {
         return { ...initial, status: 'refused', request_id: request.request_id,
           last_request_id: request.request_id, error: 'controlled refusal', field: structuredClone(current) };
       }
+      // Controlled protocol case (host.rs torus_operation): a setting sent for a later sample waits for it, and moves nothing.
+      const waits = request.command.operation === 'torus-set' && request.command.at_samples_elapsed !== undefined &&
+        BigInt(request.command.at_samples_elapsed) > BigInt(current.samples_elapsed);
+      let landed = null;
+      if (waits) port.waiting.push({ at_samples_elapsed: request.command.at_samples_elapsed, edit: request.command.edit });
       if (request.command.operation === 'advance') {
         current.samples_elapsed = String(BigInt(current.samples_elapsed) + BigInt(request.command.frames));
         current.audio = Array(request.command.frames).fill(0.125);
         current.targets[0].position[0] = Number(current.samples_elapsed) / 48000;
+        // The block that reaches a waiting setting's sample makes it there (scene_field.rs advance); a Fundamental is one
+        // modes continuation inside the block.
+        const due = port.waiting.filter(set => BigInt(set.at_samples_elapsed) <= BigInt(current.samples_elapsed));
+        port.waiting = port.waiting.filter(set => !due.includes(set));
+        if (due.length) {
+          landed = due.map(set => ({ at_samples_elapsed: set.at_samples_elapsed, edit: set.edit, applied: true,
+            moved: Object.keys(set.edit) }));
+          current.generation = String(BigInt(current.generation) + (port.landingStep ??
+            BigInt(landed.filter(set => set.moved.includes('fundamental')).length)));
+        }
+      } else if (waits) {
+        // Nothing moves before its sample.
       } else if (['m1-advance', 'replace-event'].includes(request.command.operation)) {
         // Controlled protocol cases; actual scene-owner evidence is separate.
         current.generation = String(BigInt(current.generation) +
@@ -127,6 +144,11 @@ function setup(options = {}) {
       }
       if (request.command.operation === 'torus-restore')
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
+      if (landed) {
+        reply.torus_set_landed = landed;
+        reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [], waiting: port.waiting };
+        reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
+      }
       if (request.command.operation === 'torus-play')
         reply.torus_play = { schema: 'ql.torus-play/v1', notes: request.command.keys.map((key, id) => ({ id, key })), made_way: [] };
       if (port.effect) reply = port.effect(reply);
@@ -739,6 +761,48 @@ test('the Torus session: a read, edits that move no native state, and a Fundamen
   await session.torusSet({ fundamental: { source: 'hz', hz: 261.6 } });
   assert.equal(session.reading.acknowledged.generation, '2', 'a Fundamental edit is one modes continuation');
   await assert.rejects(session.torusSet({}), /at least one setting/);
+  session.dispose();
+});
+
+test('a Torus setting for a later sample moves nothing until the block that reaches it lands it there', async () => {
+  // O-I 855: torus-set names the sample it lands at, as a strike does, and the owner makes it at that sample inside the block that
+  // reaches it; the player no longer waits for the cursor. A Fundamental made there is that block's one modes continuation, named
+  // in the block's torus_set_landed with the session reading and the voices it leaves.
+  const { session, calls, port, context } = setup({ maxBlocks: 1 });
+  // Each block is heard before the next is asked for: the presentation queue holds one.
+  const drain = () => { context.currentTime = session.reading.audio.target_context_seconds; session.present(); };
+  await session.torusSet({ fundamental: { source: 'hz', hz: 261.6 } }, { at_samples_elapsed: '700' });
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-set', edit: { fundamental: { source: 'hz', hz: 261.6 } },
+    at_samples_elapsed: '700' });
+  assert.equal(session.reading.acknowledged.generation, '1', 'nothing moves before its sample');
+  assert.equal(session.reading.queued_blocks, 0, 'a setting that waits claims no presentation block');
+  assert.deepEqual(session.journal().acts.map(act => [act.operation, act.command.at_samples_elapsed]), [['torus-set', '700']]);
+  await session.pump();
+  assert.deepEqual(session.reading.acknowledged, { generation: '1', samples_elapsed: '512' });
+  // With the presentation queue full, a still setting is still admitted; one for the cursor's own sample is made now.
+  await session.torusSet({ polyphony: 3 }, { at_samples_elapsed: '2048' });
+  await session.torusSet({ tuning: 'logic' }, { at_samples_elapsed: '512' });
+  assert.equal(session.reading.acknowledged.generation, '1');
+  await assert.rejects(session.torusSet({ polyphony: 3 }, { at_samples_elapsed: '511' }), /setting at sample 511 is behind the owner's cursor 512/);
+  await assert.rejects(session.torusSet({ polyphony: 3 }, { at_samples_elapsed: '0700' }), /exact sample cursor/);
+  // The block that reaches 700 lands the Fundamental: one generation, the samples of one block, its reading carried.
+  drain();
+  await session.pump();
+  assert.deepEqual(session.reading.acknowledged, { generation: '2', samples_elapsed: '1024' });
+  assert.deepEqual(session.lastTorus.waiting, [{ at_samples_elapsed: '2048', edit: { polyphony: 3 } }]);
+  assert.equal(session.lastInfluence.generation, '2', 'and the voices the owner reports after it');
+  drain();
+  await session.pump();
+  drain();
+  await session.pump();
+  assert.deepEqual(session.reading.acknowledged, { generation: '2', samples_elapsed: '2048' },
+    'a setting that moves no native state lands in its block and moves no generation');
+  assert.deepEqual(session.lastTorus.waiting, []);
+  // A block whose generation moved more than the settings it landed account for disagrees with the law.
+  await session.torusSet({ fundamental: { source: 'hz', hz: 300 } }, { at_samples_elapsed: '2100' });
+  port.landingStep = 2n;
+  drain();
+  await assert.rejects(session.pump(), /native cursor disagree/);
   session.dispose();
 });
 
