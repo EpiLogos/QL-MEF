@@ -210,6 +210,13 @@ tuning and Polyphony. A setting that would land before a strike already played
 for a later sample is refused; at most `TORUS_SETS_WAITING_MAX` (64) wait, and
 `torus.waiting` lists them in the order of their samples.
 
+Strike is the body's share of every strike's velocity (manual §21.2): a key, a
+touch, a clip's note, a collision and a singlet all strike at points, and each
+voice receives amplitude × Strike × χ, with the Strike in force at the act's
+sample, taken once (`strike_at_when`). The receipt's `points` stand as they
+were struck and `strike_at.strike` names the share. A named-voice `strike` is
+not a strike at points and is not scaled.
+
 Every answer carries `torus`; `torus-set` adds `influence` (its `tuning`,
 sounding `voices`, `boundaries`, `resident_tunings`, `fundamental_hz`);
 `torus-play` adds `torus_play` (`ql.torus-play/v1`: each note's place, point and

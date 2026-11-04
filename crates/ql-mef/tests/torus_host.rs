@@ -207,16 +207,85 @@ fn strike_is_the_share_of_a_keys_velocity_that_excites_the_body() {
     );
     assert_eq!(played["status"], "ok", "{played}");
     assert_eq!(played["torus_play"]["strike"], json!(0.45));
-    let excited = played["strike_at"]["points"][0]["amplitude"][0]
-        .as_f64()
-        .unwrap();
-    assert!((excited - 0.045).abs() < 1e-12, "{excited}");
+    // The key's point is struck at its velocity; the body takes its share once, at the strike (strike_at_when).
+    assert_eq!(played["strike_at"]["points"][0]["amplitude"][0], json!(0.1));
+    assert_eq!(played["strike_at"]["strike"], json!(0.45));
     let refused = d.send(json!({"operation":"torus-set","edit":{"strike":1.5}}));
     assert_eq!(refused["status"], "refused");
     assert!(
         refused["error"].as_str().unwrap().contains("Strike"),
         "{refused}"
     );
+}
+
+/// What each voice of a strike at points was given (the `ql.strike-at/v1` receipt's voices).
+fn given(reply: &Value) -> Vec<[f64; 2]> {
+    reply["strike_at"]["voices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|voice| serde_json::from_value(voice["amplitude"].clone()).unwrap())
+        .collect()
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn strike_is_the_bodys_share_of_every_strike_a_touch_a_collision_and_a_singlet_too() {
+    // Manual §21.2: Strike, "How strongly velocity excites the body", stands in the Body group with Damping, and under Body source
+    // Tattva the element sets both: it is the body's, so everything that strikes the Torus (a key, a touch, a clip's note, a collision,
+    // a singlet; "What strikes the Torus") excites it by that share. A strike at points takes it at its own sample, once.
+    let mut d = Driver::open();
+    let points = json!([{"theta": 0.8, "phi": 1.9, "amplitude": [0.2, 0.1]}]);
+    let share = d.send(json!({"operation":"strike-at","points":points}));
+    assert_eq!(share["status"], "ok", "{share}");
+    assert_eq!(
+        share["strike_at"]["strike"],
+        json!(0.7),
+        "the default Strike, 70%"
+    );
+    assert_eq!(
+        share["strike_at"]["points"], points,
+        "the receipt names the points as they were struck"
+    );
+    assert_eq!(
+        d.send(json!({"operation":"torus-set","edit":{"strike":1.0}}))["status"],
+        "ok"
+    );
+    let whole = d.send(json!({"operation":"strike-at","points":points}));
+    assert_eq!(whole["strike_at"]["strike"], json!(1.0));
+    let (part, full) = (given(&share), given(&whole));
+    assert_eq!(part.len(), full.len());
+    assert!(
+        full.iter().any(|v| *v != [0.0, 0.0]),
+        "the point reaches the voices"
+    );
+    for (part, full) in part.iter().zip(&full) {
+        for i in 0..2 {
+            assert!(
+                (part[i] - 0.7 * full[i]).abs() < 1e-12,
+                "{part:?} against {full:?}"
+            );
+        }
+    }
+    // A strike for a later sample takes the Strike in force there.
+    let from: u64 = d.current["field"]["samples_elapsed"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let waits = d.send(json!({"operation":"torus-set","edit":{"strike":0.25},"at_samples_elapsed":(from + 700).to_string()}));
+    assert_eq!(waits["status"], "ok", "{waits}");
+    let later = d.send(json!({"operation":"strike-at","points":points,"at_samples_elapsed":(from + 1000).to_string()}));
+    assert_eq!(later["status"], "ok", "{later}");
+    assert_eq!(later["strike_at"]["strike"], json!(0.25));
+    for (later, full) in given(&later).iter().zip(&full) {
+        for i in 0..2 {
+            assert!(
+                (later[i] - 0.25 * full[i]).abs() < 1e-12,
+                "{later:?} against {full:?}"
+            );
+        }
+    }
 }
 
 #[test]

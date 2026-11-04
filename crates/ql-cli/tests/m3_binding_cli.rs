@@ -14,9 +14,10 @@ fn ql(args: &[&str], input: &Value) -> std::process::Output {
         .spawn()
         .unwrap();
     let mut stdin = p.stdin.take().unwrap();
-    stdin
-        .write_all(&serde_json::to_vec(input).unwrap())
-        .unwrap();
+    // A command that answers without reading its input (`capabilities`) may have closed it first.
+    if let Err(error) = stdin.write_all(&serde_json::to_vec(input).unwrap()) {
+        assert_eq!(error.kind(), std::io::ErrorKind::BrokenPipe, "{error}");
+    }
     drop(stdin);
     p.wait_with_output().unwrap()
 }
