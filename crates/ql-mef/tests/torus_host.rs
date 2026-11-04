@@ -2129,3 +2129,118 @@ fn keys_and_touches_strike_a_fold_where_they_land() {
     assert_eq!(singlet["strike_at"]["body"], preparation, "{singlet}");
     assert_eq!(singlet["torus_singlet"]["codon"], 5);
 }
+
+/// The most bytes a host carries one checkpoint in (O-I's frame, stageCommands.ts STAGE_TORUS_CHECKPOINT_BYTES_MAX): 1 MiB.
+const HOST_CHECKPOINT_BYTES: usize = 1024 * 1024;
+
+/// O-I 856 (855 under #852): a checkpoint keeps the form a scene rings and the preparation it was (`KeptBody`), so a take
+/// begun on a form is played again on it. What a kept body carries grows with its samples (a glyph's mask names each sample's
+/// coverage; the preparation names its edges and held samples) and with its modes (each voice's state through each mode).
+/// The owner admits a form up to `MAX_BODY_SAMPLES` samples and `MAX_BODY_MODES` modes, within its native shape budget and
+/// the qualified audio band, which a finer sheet reaches with fewer modes. For each side of sheet the owner admits, as a
+/// sheet (a fold) and as a drawn glyph with a mask, the body with the most modes the owner admits there is kept and its
+/// checkpoint measured: the largest is still carried whole within a host's 1 MiB.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_checkpoint_kept_on_the_largest_form_the_owner_admits_stays_within_a_hosts_bound() {
+    use ql_mef::form_instrument::body::{MAX_BODY_MODES, MAX_BODY_SAMPLES};
+    let mut d = Driver::open();
+    let kept = |d: &mut Driver| {
+        let kept = d.send(json!({"operation":"torus-checkpoint"}));
+        assert_eq!(kept["status"], "ok", "{kept}");
+        serde_json::to_vec(&kept["torus_checkpoint"]).unwrap().len()
+    };
+    let torus = kept(&mut d);
+    let field = d.current["field"].clone();
+    let request = |side: usize, modes: usize, glyph: bool| {
+        let mut request = fold(&field);
+        request["modes"] = json!(modes);
+        request["samples"]["resolution"] = json!(side);
+        if glyph {
+            request["form"] = json!({"kind":"glyph","form_ref":"glyph:drawn/largest","source_ref":"app:rasteriser:form@1"});
+            request["samples"]["treatment"] = json!("glyph-mask");
+            // Coverages as long as an f64 prints, none zero, so every sample stays in the body.
+            let coverages: Vec<f64> = (0..side * side)
+                .map(|i| 0.123_456_789_012_345_67 + (i as f64) * 1e-9)
+                .collect();
+            request["samples"]["mask"] =
+                json!({"mask_ref":"app:rasteriser:form@1","coverages":coverages});
+        }
+        request
+    };
+    // Chosen and kept, or the owner's words for why not (the body given back to the torus after each).
+    let choose =
+        |d: &mut Driver, side: usize, modes: usize, glyph: bool| -> Result<usize, String> {
+            let answer =
+                d.send(json!({"operation":"torus-body","body":request(side, modes, glyph)}));
+            if answer["status"] != "ok" {
+                return Err(answer["error"].as_str().unwrap_or("refused").to_string());
+            }
+            let bytes = kept(d);
+            assert_eq!(
+                d.send(json!({"operation":"torus-body","body":null}))["status"],
+                "ok"
+            );
+            Ok(bytes)
+        };
+    let largest_side = (1..=MAX_BODY_SAMPLES)
+        .rev()
+        .find(|side| side * side <= MAX_BODY_SAMPLES)
+        .unwrap();
+    let mut largest = (0usize, String::new());
+    for glyph in [false, true] {
+        for side in [largest_side, 12, 8, 4] {
+            // The most modes admitted on this side, by halving: past the band or the budget a mode count is refused, and so is
+            // every count above it.
+            let (mut low, mut high, mut bytes) = (0usize, usize::from(MAX_BODY_MODES), None);
+            while low < high {
+                let mid = (low + high).div_ceil(2);
+                match choose(&mut d, side, mid, glyph) {
+                    Ok(size) => (low, bytes) = (mid, Some(size)),
+                    Err(why) => {
+                        assert!(
+                            why.contains("band") || why.contains("budget"),
+                            "{side}×{side}, {mid} modes: {why}"
+                        );
+                        high = mid - 1;
+                    }
+                }
+            }
+            // `low` moves only on an admitted count, so the last size measured is the size at `low`.
+            let Some(bytes) = bytes else {
+                eprintln!(
+                    "checkpoint: {} of {side}×{side} samples: no mode count admitted",
+                    if glyph { "glyph mask" } else { "sheet" }
+                );
+                continue;
+            };
+            let form = format!(
+                "{} of {side}×{side} samples × {low} modes",
+                if glyph { "glyph mask" } else { "sheet" }
+            );
+            eprintln!(
+                "checkpoint: torus {torus} bytes; {form}: {bytes} bytes (+{}) against {HOST_CHECKPOINT_BYTES}",
+                bytes - torus
+            );
+            if bytes > largest.0 {
+                largest = (bytes, form);
+            }
+        }
+    }
+    assert!(
+        largest.0 > torus,
+        "a kept body is carried in the checkpoint"
+    );
+    eprintln!(
+        "checkpoint: the largest is the {} at {} bytes, {:.1}% of {HOST_CHECKPOINT_BYTES}",
+        largest.1,
+        largest.0,
+        100.0 * largest.0 as f64 / HOST_CHECKPOINT_BYTES as f64
+    );
+    assert!(
+        largest.0 <= HOST_CHECKPOINT_BYTES,
+        "the largest form's checkpoint ({}) is {} bytes, past a host's {HOST_CHECKPOINT_BYTES}",
+        largest.1,
+        largest.0
+    );
+}
