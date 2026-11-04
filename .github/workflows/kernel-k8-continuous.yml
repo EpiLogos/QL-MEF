@@ -55,6 +55,11 @@ jobs:
             -Wall -Wextra -Werror -pedantic -Icpp/include -Ic/include \
             cpp/tests/continuous_field.cpp c/build/libql-mef-c.a -lm -o target/k8-continuous/sanitized-test
           target/k8-continuous/sanitized-test > target/k8-continuous/sanitized.json
+          # The continuation a native host takes over, strike by index, silence and the Torus's keys (O-I #849).
+          c++ -std=c++17 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
+            -Wall -Wextra -Werror -pedantic -Icpp/include -Ic/include \
+            cpp/tests/torus_native.cpp c/build/libql-mef-c.a -lm -o target/k8-continuous/sanitized-torus-native
+          target/k8-continuous/sanitized-torus-native
       - name: Accepted Rust producer, actual sky, persistent native modes and clock
         run: |
           cargo build --locked -p ql-mef --example m2_engine
@@ -83,6 +88,7 @@ jobs:
           cargo test --locked -p ql-mef --test scene_instrument -- --ignored 2>&1 | tee target/k8-continuous/scene.log
           cargo test --locked -p ql-mef --test scene_nara_reception -- --ignored 2>&1 | tee target/k8-continuous/scene-nara.log
           cargo test --locked -p ql-mef --test played_note_native -- --ignored 2>&1 | tee target/k8-continuous/played-notes.log
+          cargo test --locked -p ql-mef --test torus_native -- --ignored 2>&1 | tee target/k8-continuous/torus-native.log
       - name: The Ta-Onta procedural stage over the installed worker, through the field host
         env:
           QL_FIELD_WORKER: ${{ github.workspace }}/target/k8-cpp/bin/ql-field-worker

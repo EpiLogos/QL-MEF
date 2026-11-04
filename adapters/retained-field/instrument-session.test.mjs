@@ -159,6 +159,10 @@ function setup(options = {}) {
         reply.torus_receiver = { schema: 'ql.torus-receiver/v1', context: request.command.receiver === null ? 'world' : 'personal',
           gains: [{ mode_ref: '#3-0', gain: request.command.receiver === null ? 1 : 0.5 }], law: 'controlled' };
       }
+      // Controlled protocol case (host.rs torus_operation, O-I #849): the Torus handed over to a native host; a read.
+      if (request.command.operation === 'torus-native')
+        reply.torus_native = port.nativeBody ?? { schema: 'ql.torus-native/v1', at_samples_elapsed: current.samples_elapsed,
+          generation: current.generation, continuation: { schema: 'ql.continuous-handover/v1' }, keys: { contract: 'ql.torus-keys/v1' } };
       if (landed) {
         reply.torus_set_landed = landed;
         reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [], waiting: port.waiting };
@@ -1066,5 +1070,33 @@ test('where the Torus is heard from is a receiving setting: the body stands, the
   const moved = setup();
   moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
   await assert.rejects(moved.session.torusReceiver([1, 2, 3]), /native cursor disagree/);
+  session.dispose();
+});
+
+test('the Torus is handed over to a native host as a read: the body stands, nothing is journaled, and the answer is the owner\'s', async () => {
+  // O-I #849: a native audio host continues the field exactly as it stands (ql.torus-native/v1). Through O:I's kernel the answer is
+  // the digest it relays in the document's place (the kernel keeps the document for the host), so either is the owner's answer.
+  const { session, calls } = setup();
+  const handed = await session.torusNative();
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-native' });
+  assert.equal(handed.schema, 'ql.torus-native/v1');
+  assert.equal(session.reading.acknowledged.generation, '1', 'the body does not move');
+  assert.equal(session.reading.queued_blocks, 0, 'there is nothing to present');
+  assert.ok(!session.journal().acts.some(act => act.operation === 'torus-native'), 'a handover is not the performance');
+  handed.keys.contract = 'changed'; // the caller's copy is its own
+  const relayed = setup();
+  relayed.port.nativeBody = { schema: 'ql.torus-native/v1', sha256: 'sha256:' + '0'.repeat(64), generation: '1', at_samples_elapsed: '0' };
+  assert.equal((await relayed.session.torusNative()).sha256, 'sha256:' + '0'.repeat(64));
+  // An answer without the handover is not the owner's; a refusal comes back in its words; a held owner hands nothing over.
+  const bare = setup(); bare.port.effect = reply => { delete reply.torus_native; return reply; };
+  await assert.rejects(bare.session.torusNative(), /no Torus handed over/);
+  const refused = setup(); refused.port.refuseOperation = 'torus-native';
+  await assert.rejects(refused.session.torusNative(), /controlled refusal/);
+  const held = setup(); held.session.hold('test');
+  await assert.rejects(held.session.torusNative(), /idle admitted owner/);
+  // An answer whose body moved disagrees with the owner's law.
+  const moved = setup();
+  moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
+  await assert.rejects(moved.session.torusNative(), /native cursor disagree/);
   session.dispose();
 });

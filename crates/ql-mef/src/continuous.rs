@@ -8,6 +8,7 @@ pub mod personal;
 mod receipt;
 pub mod scene_field;
 pub mod stage;
+pub mod torus_native;
 
 use receipt::ReceiptGuard;
 
