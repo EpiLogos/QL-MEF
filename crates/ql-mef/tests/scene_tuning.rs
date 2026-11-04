@@ -242,3 +242,49 @@ fn a_new_torus_opens_under_logic_and_a_saved_sound_opens_with_its_own_tuning() {
     let refused = binding(serde_json::from_value::<BindingRequest>(asked).unwrap()).unwrap_err();
     assert!(refused.contains("Polyphony"), "{refused}");
 }
+
+#[test]
+fn each_class_sounds_the_voices_of_the_tuning_in_force_by_their_shape_at_its_point() {
+    // O-I #851: what each of the twelve classes sounds now is what a key of it struck now gives each
+    // voice of the tuning in force: the voice's shape at the class's moving point (strike_at_tuned).
+    for (tuning, count, prefix) in [
+        (Tuning::Logic, 8, "scene:logic/"),
+        (Tuning::Sky, 9, "scene:planet/"),
+    ] {
+        let (shape, _) = shape(tuning, None);
+        let steps = 3.25;
+        let reading = shape.class_sounds(tuning, steps).unwrap();
+        assert_eq!(reading["tuning"], serde_json::json!(tuning));
+        assert_eq!(reading["steps"], serde_json::json!(steps));
+        let classes = reading["by_class"].as_array().unwrap();
+        assert_eq!(classes.len(), 12);
+        let surface = ql_mef::JankoSurface::new();
+        for (class, expected) in classes.iter().zip(surface.class_points(steps)) {
+            assert_eq!(class["pitch_class"], expected.pitch_class);
+            let point = &class["point"];
+            assert_eq!(point["arc"], expected.point.arc);
+            let sounds = class["sounds"].as_array().unwrap();
+            assert_eq!(sounds.len(), count);
+            let struck = shape
+                .strike_at_tuned(
+                    &[StrikeAtInput {
+                        theta: expected.point.theta,
+                        phi: expected.point.phi,
+                        amplitude: [1.0, 0.0],
+                    }],
+                    tuning,
+                )
+                .unwrap();
+            for (sound, (impulse, voice)) in
+                sounds.iter().zip(struck.iter().zip(shape.sounding(tuning)))
+            {
+                assert!(sound["mode_ref"].as_str().unwrap().starts_with(prefix));
+                assert_eq!(sound["mode_ref"], impulse.mode_ref.as_str());
+                assert_eq!(sound["frequency_hz"], voice.frequency_hz);
+                let coupling = sound["coupling"].as_f64().unwrap();
+                assert!((coupling - impulse.amplitude[0]).abs() < 1e-12);
+            }
+        }
+        assert!(reading["law"].as_str().unwrap().contains("tuning in force"));
+    }
+}

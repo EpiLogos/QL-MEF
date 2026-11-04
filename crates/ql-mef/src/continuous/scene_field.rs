@@ -555,6 +555,45 @@ impl ShapeBasis {
         }
     }
 
+    /// Where each of the twelve classes stands after `pulse_steps` and what it
+    /// sounds under `tuning`: every voice of the tuning by its shape term at the
+    /// class's point, which is what a key of the class struck now gives that
+    /// voice per unit of amplitude ([`Self::strike_at_tuned`]). Refused in words
+    /// when this scene holds no voices for `tuning`.
+    pub fn class_sounds(&self, tuning: Tuning, pulse_steps: f64) -> Result<Value, String> {
+        let voices = self.group(tuning);
+        if voices.is_empty() {
+            return Err(format!(
+                "this scene holds no {} voices: its event admits none",
+                tuning.code()
+            ));
+        }
+        let by_class: Vec<Value> = crate::janko::JankoSurface::new()
+            .class_points(pulse_steps)
+            .iter()
+            .map(|class| {
+                json!({
+                    "pitch_class": class.pitch_class,
+                    "pitch_name": class.pitch_name,
+                    "key": class.key,
+                    "place": class.point.place,
+                    "point": class.point,
+                    "sounds": voices.iter().map(|voice| json!({
+                        "mode_ref": voice.mode_ref,
+                        "frequency_hz": voice.frequency_hz,
+                        "coupling": chi(voice, class.point.phi, class.point.theta),
+                    })).collect::<Vec<_>>(),
+                })
+            })
+            .collect();
+        Ok(json!({
+            "tuning": tuning,
+            "steps": pulse_steps,
+            "by_class": by_class,
+            "law": CLASS_SOUNDS_LAW,
+        }))
+    }
+
     /// The voices that sound under `tuning`.
     pub fn sounding(&self, tuning: Tuning) -> impl Iterator<Item = &Voice> {
         self.group(tuning).iter()
@@ -1196,6 +1235,8 @@ pub struct StrikeAtOutcome {
 
 /// The receipt of one played Torus act (`torus-play`).
 pub const TORUS_PLAY_RECEIPT: &str = "ql.torus-play/v1";
+/// The law of the classes a Torus reading carries (O-I #851).
+pub const CLASS_SOUNDS_LAW: &str = "each of the twelve classes stands at the one place of its helix every touch-point of it shares, and the pulse carries that place's point across the surface (janko POINT_LAW); a class sounds every voice of the tuning in force by that voice's shape term at its point now: what a key of the class struck now gives the voice per unit of amplitude (strike_at_tuned). A symbol's voice is the chord of the classes its form covers where it stands (DLW §20.2)";
 /// The standing of a played note's own cell.
 const NOTE_CELL_STANDING: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental. Disclosed per note; the native owner sounds the resident voices of the tuning in force at the struck point, so a per-note voice bank sounding each cell's own eight is not built (QL-MEF #287 packet A)";
 
@@ -1370,6 +1411,10 @@ impl SceneInstrument {
                 .collect::<Vec<_>>()
         );
         reading["sounding_voices"] = json!(self.shape.group(self.tuning()).len());
+        reading["classes"] = self
+            .shape
+            .class_sounds(self.tuning(), self.torus.steps_at(self.samples_now()))
+            .unwrap_or_else(|why| json!({"absent": why}));
         reading["carrier"]["metres_per_step"] =
             json!(self.torus.carrier_step() * self.material.strike_metres);
         reading["carrier"]["native"] = json!(self.carrier.is_some());

@@ -745,3 +745,34 @@ test('a played Torus act is one generation and keeps its receipt; a release move
   await assert.rejects(session.torusPlay([{ row: 0, column: 0 }]), /disagree/);
   session.dispose();
 });
+
+test('an act that moves no native state presents nothing: a release enters the owner\'s count without claiming a presentation block', async () => {
+  // O-I #790: a dense clip at a fast tempo releases as often as it strikes. A release moves no native state (the body rings on),
+  // so it has no frame to present; if it claimed a block, a full presentation queue would refuse it and leave its note counted.
+  const { session, calls, context, field } = setup({ maxBlocks: 1 });
+  await session.pump();
+  assert.equal(session.reading.queued_blocks, 1, 'the presentation queue is full');
+  await assert.rejects(session.torusPlay([{ row: 0, column: 0 }]), /wait for bounded presentation capacity/,
+    'a played act moves the body, so it still waits for a block to present it');
+  for (let i = 0; i < 40; i++) await session.torusRelease([{ row: i % 6, column: i }]);
+  assert.equal(calls.filter(call => call.command.operation === 'torus-release').length, 40, 'every release reaches the owner');
+  assert.equal(session.reading.queued_blocks, 1, 'and none claims a presentation block');
+  assert.equal(session.journal().acts.filter(act => act.operation === 'torus-release').length, 40, 'each is an owner act in the journal');
+  // A session edit that moves no native state is the same; a Fundamental edit moves the owner and waits like any act that does.
+  await session.torusSet({ tuning: 'logic' });
+  assert.equal(session.reading.queued_blocks, 1);
+  await assert.rejects(session.torusSet({ fundamental: { source: 'hz', hz: 261.6 } }), /wait for bounded presentation capacity/);
+  // So are the stage's acts that move nothing.
+  await session.operate({ operation: 'stage-unbind', procedure_ref: 'ta-onta:stage:live-fold' });
+  assert.equal(session.reading.queued_blocks, 1);
+  // Once the block is heard the queue drains and the played act is admitted.
+  context.currentTime = session.reading.audio.target_context_seconds; session.present();
+  await session.torusPlay([{ row: 0, column: 0 }]);
+  assert.equal(field.last.generation, session.reading.acknowledged.generation, 'the played act presents its struck body');
+  assert.equal(session.reading.acknowledged.generation, '2', 'and is the one act of all these that moved the owner');
+  // A still act whose acknowledgement moved the owner disagrees with the law, as before.
+  const moved = setup();
+  moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
+  await assert.rejects(moved.session.torusRelease([{ row: 0, column: 0 }]), /native cursor disagree/);
+  session.dispose();
+});

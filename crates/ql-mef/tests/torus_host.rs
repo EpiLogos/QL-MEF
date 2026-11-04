@@ -123,6 +123,14 @@ fn each_setting_reaches_the_owner_and_reads_back() {
     assert_eq!(torus["comma_cents"], json!(0.0));
     // A new Torus opens under Logic, the manual's default (§21.2 Parameters).
     assert_eq!(torus["settings"]["tuning"], "logic");
+    // Where each of the twelve classes stands and what it sounds under the tuning in force (O-I #851).
+    let classes = &torus["classes"];
+    assert_eq!(classes["tuning"], "logic", "{classes}");
+    assert_eq!(classes["by_class"].as_array().unwrap().len(), 12);
+    assert_eq!(
+        classes["by_class"][0]["sounds"].as_array().unwrap().len(),
+        8
+    );
     let generation = d.generation();
     let set = d.send(json!({"operation":"torus-set","edit":{
         "rate":{"mode":"free","steps_per_second":440.0},"carrier":0.25,"shape":"spiral","polyphony":3}}));
