@@ -99,7 +99,9 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-render","checkpoint":{"schema":"ql.torus-checkpoint/v1"},"frames":4800,"acts":[
             {"action":"strike","at_samples_elapsed":"96000","keys":[{"row":0,"column":2}],"amplitude":[0.2,0.0]},
             {"action":"release","at_samples_elapsed":"96100","keys":[{"row":0,"column":2}]},
-            {"action":"set","at_samples_elapsed":"96200","edit":{"polyphony":3}}]}),
+            {"action":"set","at_samples_elapsed":"96200","edit":{"polyphony":3}},
+            {"action":"strike-at","at_samples_elapsed":"96300","points":[{"theta":0.5,"phi":1.0,"amplitude":[0.2,0.0]}]},
+            {"action":"singlet","at_samples_elapsed":"96400","codon":8,"amplitude":[0.2,0.0]}]}),
         json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[]}),
         json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25]}}),
         json!({"operation":"torus-receiver","receiver":null}),
@@ -125,6 +127,11 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-render","frames":4800,"acts":[{"action":"hold","at_samples_elapsed":"0","keys":[]}]}),
         json!({"operation":"torus-render","frames":4800,"acts":[{"action":"release","at_samples_elapsed":"0","keys":[],"amplitude":[0.1,0.0]}]}),
         json!({"operation":"torus-render","frames":4800}),
+        json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[{"action":"strike-at","at_samples_elapsed":"0","keys":[{"row":0,"column":2}]}]}),
+        json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[{"action":"strike-at","at_samples_elapsed":"0","points":[{"theta":0.5,"phi":1.0}]}]}),
+        json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[{"action":"singlet","at_samples_elapsed":"0","amplitude":[0.2,0.0]}]}),
+        json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[{"action":"singlet","at_samples_elapsed":"0","codon":8,"amplitude":[0.2,0.0],"places":[]}]}),
+        json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[{"action":"singlet","at_samples_elapsed":"0","codon":300,"amplitude":[0.2,0.0]}]}),
         json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0]}}),
         json!({"operation":"torus-receiver","receiver":{"at":[4.5,0.0,0.25]}}),
         json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25],"distance":2.0}}),
@@ -972,6 +979,247 @@ fn a_take_renders_offline_from_its_checkpoint_as_the_owner_played_it() {
             standing["field"]["samples_elapsed"]
         );
     }
+}
+
+/// The sha256 of a take's sound as the kernel seals it (O-I kernel expression_performance/torus.rs PCM_ENCODING: IEEE-754 binary32,
+/// little-endian, one channel, sample after sample).
+fn pcm_sha256(pcm: &[f64]) -> String {
+    use sha2::{Digest, Sha256};
+    let mut hash = Sha256::new();
+    for sample in pcm {
+        hash.update((*sample as f32).to_le_bytes());
+    }
+    format!("sha256:{:x}", hash.finalize())
+}
+
+/// A take played live on the owner `d` from a checkpoint: a touch sent ahead, a singlet struck now, a key and a singlet for later
+/// samples. Answers the checkpoint, the take's acts as a render makes them, the sound the live owner made, its frames, and the
+/// receipt of each strike at points the live owner made (the touch, the singlets and the key).
+fn a_take_of_touches_and_singlets(d: &mut Driver) -> (Value, Value, Vec<f64>, u64, Vec<Value>) {
+    let played = d.send(
+        json!({"operation":"torus-play","keys":[{"row":0,"column":2}],"amplitude":[0.2,0.0]}),
+    );
+    assert_eq!(played["status"], "ok", "{played}");
+    render(d, 0.2);
+    let kept = d.send(json!({"operation":"torus-checkpoint"}));
+    let checkpoint = kept["torus_checkpoint"].clone();
+    let from: u64 = checkpoint["taken_at_samples"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let at = |offset: u64| (from + offset).to_string();
+    let touch = json!([
+        {"theta":0.75,"phi":2.5,"amplitude":[0.3,0.0]},
+        {"theta":4.0,"phi":5.5,"amplitude":[0.3,0.0]}]);
+    let mut live = Vec::new();
+    // A touch sent ahead, for a sample inside the first block.
+    let touched =
+        d.send(json!({"operation":"strike-at","points":touch,"at_samples_elapsed":at(2400)}));
+    assert_eq!(touched["status"], "ok", "{touched}");
+    let mut struck_at = vec![touched["strike_at"].clone()];
+    live.extend(render_frames(d, 4800, 4800));
+    // A singlet struck now lands at the owner's cursor as it took the act.
+    let struck = d.send(json!({"operation":"torus-singlet","codon":8,"amplitude":[0.25,0.0]}));
+    assert_eq!(struck["status"], "ok", "{struck}");
+    assert_eq!(
+        struck["torus_singlet"]["at_samples_elapsed"],
+        json!(at(4800))
+    );
+    struck_at.push(struck["strike_at"].clone());
+    live.extend(render_frames(d, 4800, 2400));
+    // A key and a singlet for later samples.
+    for command in [
+        json!({"operation":"torus-play","keys":[{"row":2,"column":3}],"amplitude":[0.3,0.0],"at_samples_elapsed":at(10000)}),
+        json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0],"at_samples_elapsed":at(12000)}),
+    ] {
+        let answer = d.send(command.clone());
+        assert_eq!(answer["status"], "ok", "{command}: {answer}");
+        struck_at.push(answer["strike_at"].clone());
+    }
+    live.extend(render_frames(d, 9600, 4800));
+    let frames = 19200u64;
+    assert_eq!(live.len() as u64, frames);
+    let acts = json!([
+        {"action":"strike-at","at_samples_elapsed":at(2400),"points":touch},
+        {"action":"singlet","at_samples_elapsed":at(4800),"codon":8,"amplitude":[0.25,0.0]},
+        {"action":"strike","at_samples_elapsed":at(10000),"keys":[{"row":2,"column":3}],"amplitude":[0.3,0.0]},
+        {"action":"singlet","at_samples_elapsed":at(12000),"codon":5,"amplitude":[0.2,0.0]},
+    ]);
+    (checkpoint, acts, live, frames, struck_at)
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_take_holding_a_touch_and_a_singlet_renders_as_the_owner_played_them_and_again_to_its_digest() {
+    // O-I #855, a performance kept whole: a touch of the surface (strike-at) and a singlet (torus-singlet, O-I #771) are acts a take
+    // keeps, as a key, a release and a setting are. The render makes each at its sample on a second owner of the scene through the one
+    // strike at points the live owner made, so the take's sound is the live owner's sample for sample, and rendered again from its
+    // checkpoint it is the same sound, to the digest the kernel seals it with.
+    let mut d = Driver::open();
+    let (checkpoint, acts, live, frames, _) = a_take_of_touches_and_singlets(&mut d);
+    let from: u64 = checkpoint["taken_at_samples"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let at = |offset: u64| (from + offset).to_string();
+    let standing = d.current.clone();
+    let render_of = |d: &mut Driver, acts: Value| {
+        let answer = d.send(
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":acts,"frames":frames}),
+        );
+        assert_eq!(answer["status"], "ok", "{answer}");
+        answer
+    };
+    let whole = render_of(&mut d, acts.clone());
+    assert_eq!(
+        whole["field"]["generation"], standing["field"]["generation"],
+        "the live owner does not move"
+    );
+    assert_eq!(
+        whole["field"]["samples_elapsed"],
+        standing["field"]["samples_elapsed"]
+    );
+    let taken = &whole["torus_render"];
+    assert_eq!(
+        taken["made_way"],
+        json!([[]]),
+        "a touch and a singlet count no notes: only the key's strike names what made way"
+    );
+    let pcm = audio(taken);
+    assert!(pcm.iter().any(|x| *x != 0.0), "the take sounds");
+    assert_eq!(
+        pcm, live,
+        "sample for sample, the sound the live owner made"
+    );
+    assert!(
+        taken["law"]
+            .as_str()
+            .unwrap()
+            .contains("a touch strikes its points")
+            && taken["law"]
+                .as_str()
+                .unwrap()
+                .contains("a singlet strikes its codon's place"),
+        "{}",
+        taken["law"]
+    );
+    // Rendered again from its checkpoint, the take is the same sound, to the digest the kernel seals it with.
+    let again = render_of(&mut d, acts.clone());
+    assert_eq!(
+        pcm_sha256(&audio(&again["torus_render"])),
+        pcm_sha256(&live)
+    );
+    // In parts: the touch and the first singlet in the first, the rest continuing it.
+    let first = d.send(json!({"operation":"torus-render","checkpoint":checkpoint,"acts":acts.as_array().unwrap()[..2],"frames":9600}));
+    assert_eq!(first["status"], "ok", "{first}");
+    let token = first["torus_render"]["continues"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let second = d.send(json!({"operation":"torus-render","continues":token,"acts":acts.as_array().unwrap()[2..],"frames":frames - 9600}));
+    assert_eq!(second["status"], "ok", "{second}");
+    let mut parts = audio(&first["torus_render"]);
+    parts.extend(audio(&second["torus_render"]));
+    assert_eq!(
+        pcm_sha256(&parts),
+        pcm_sha256(&live),
+        "a take in parts is the whole take"
+    );
+    // Each act is the take's: a render that leaves one out is another sound.
+    for left_out in 0..4 {
+        let mut fewer = acts.as_array().unwrap().clone();
+        fewer.remove(left_out);
+        let other = render_of(&mut d, json!(fewer));
+        assert_ne!(
+            audio(&other["torus_render"]),
+            live,
+            "act {left_out} is heard"
+        );
+    }
+    // Judged before a render owner opens, refused in words, the live owner untouched.
+    for (act, words) in [
+        (
+            json!({"action":"strike-at","at_samples_elapsed":at(100),"points":[{"theta":7.0,"phi":1.0,"amplitude":[0.3,0.0]}]}),
+            "theta",
+        ),
+        (
+            json!({"action":"strike-at","at_samples_elapsed":at(100),"points":[]}),
+            "points",
+        ),
+        (
+            json!({"action":"strike-at","at_samples_elapsed":at(100),"points":[{"theta":1.0,"phi":1.0,"amplitude":[1.5,0.0]}]}),
+            "amplitude",
+        ),
+        (
+            json!({"action":"singlet","at_samples_elapsed":at(100),"codon":64,"amplitude":[0.3,0.0]}),
+            "0 to 63",
+        ),
+        (
+            json!({"action":"singlet","at_samples_elapsed":at(100),"codon":8,"amplitude":[1.5,0.0]}),
+            "amplitude",
+        ),
+    ] {
+        let refused = d.send(
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":[act],"frames":4800}),
+        );
+        assert_eq!(refused["status"], "refused", "{act}: {refused}");
+        assert!(
+            refused["error"].as_str().unwrap().contains(words),
+            "{words}: {refused}"
+        );
+        assert_eq!(
+            refused["field"]["generation"],
+            standing["field"]["generation"]
+        );
+    }
+}
+
+/// O-I #855 under O-I #852: a take played while a form's body rings keeps the body in its checkpoint, and its render owner
+/// chooses it again on restore, so each touch, singlet and key strikes the fold where it struck live (strike_at_lowered) and
+/// the take is the live owner's sound sample for sample, rendered again to the same digest.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_take_played_on_a_fold_renders_its_touches_and_singlets_on_the_fold_as_they_were_played() {
+    let mut d = Driver::open();
+    let request = fold(&d.current["field"]);
+    let chosen = d.send(json!({"operation":"torus-body","body":request}));
+    assert_eq!(chosen["status"], "ok", "{chosen}");
+    let preparation = chosen["torus"]["body"]["prepared"]["request"]["preparation_ref"].clone();
+    let (checkpoint, acts, live, frames, struck_at) = a_take_of_touches_and_singlets(&mut d);
+    assert_eq!(
+        checkpoint["body"]["request"], request,
+        "the checkpoint keeps the body: {checkpoint}"
+    );
+    for receipt in &struck_at {
+        assert_eq!(
+            receipt["body"], preparation,
+            "struck on the fold live: {receipt}"
+        );
+    }
+    let render_of = |d: &mut Driver| {
+        let answer = d.send(
+            json!({"operation":"torus-render","checkpoint":checkpoint,"acts":acts,"frames":frames}),
+        );
+        assert_eq!(answer["status"], "ok", "{answer}");
+        audio(&answer["torus_render"])
+    };
+    let pcm = render_of(&mut d);
+    assert!(pcm.iter().any(|x| *x != 0.0), "the take sounds");
+    assert_eq!(
+        pcm, live,
+        "sample for sample, the fold as the live owner rang it"
+    );
+    assert_eq!(
+        pcm_sha256(&render_of(&mut d)),
+        pcm_sha256(&live),
+        "and again, to its digest"
+    );
+    // The same take played on the torus is another sound: the body is what the render rings.
+    let mut torus = Driver::open();
+    let (_, _, on_torus, _, _) = a_take_of_touches_and_singlets(&mut torus);
+    assert_ne!(on_torus, live, "the fold, not the torus");
 }
 
 fn cursor(d: &Driver) -> u64 {
