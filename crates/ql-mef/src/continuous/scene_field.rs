@@ -876,19 +876,19 @@ pub fn complete(
     // name when chosen.
     let admits_maqam = event.schema != super::coupled::REQUEST;
     let (mut maqam, mut input) = (admits_maqam, voiced(admits_maqam, hint));
+    let mut refused = None;
     let first = match input.compose() {
         Ok(basis) => basis,
-        Err(_) if maqam => {
+        Err(error) if maqam => {
             maqam = false;
+            refused = Some(error);
             input = voiced(false, hint);
             input.compose()?
         }
         Err(error) => return Err(error),
     };
     if tuning == Tuning::Maqam && !maqam {
-        return Err(
-            "this scene holds no maqam voices: its event's M2 condition admits none".into(),
-        );
+        return Err(maqam_absence(&first, refused.as_deref()));
     }
     let fibre: MaterialFibre = serde_json::from_value(
         first.m2["condition"]["source_path"]["material_fibre"].clone(),
@@ -902,6 +902,94 @@ pub fn complete(
     let input = voiced(maqam, fibre);
     let basis = input.compose()?;
     Ok((input, basis))
+}
+
+/// Why the scene holds no voices for the M2 condition's maqām, in words that name the source it lacks (O-I #854: "When its source is
+/// missing, it refuses in words"). The source is checked first: the condition, its path in the map, the eight pitches its tuning gives;
+/// then the bus, since only a dual-bus event binds the condition's pitches to voices (`coupled.rs`: no missing-path or tuning fallback,
+/// and a v1 event's condition is never reinterpreted as a pitch source). `refused` is the composer's own refusal, when it gave one.
+fn maqam_absence(basis: &CoupledBasis, refused: Option<&str>) -> String {
+    let condition = &basis.m2["condition"];
+    let Some(input) = basis.m2_input.condition.as_ref() else {
+        return "Maqām sounds the M2 condition's maqām, and this event names no M2 condition"
+            .into();
+    };
+    let role = serde_json::to_value(input.role)
+        .ok()
+        .and_then(|v| v.as_str().map(str::to_owned))
+        .unwrap_or_default();
+    let path = &condition["source_path"];
+    if path.is_null() {
+        return format!(
+            "the M2 condition's maqām (index {} as {role}) has no source-held path in the map: no maqām, planet and centre stand for it, so it has no pitches",
+            input.maqam_index
+        );
+    }
+    let name = format!(
+        "maqām {} ({}), the condition's {role}",
+        path["maqam_name"].as_str().unwrap_or("unnamed"),
+        path["maqam_coordinate"].as_str().unwrap_or("no coordinate")
+    );
+    let pitches = condition["musical"]["pitches_hz"]
+        .as_array()
+        .map_or(0, Vec::len);
+    if pitches == 0 {
+        let tuning = match input.tuning {
+            crate::m2_condition::TuningPolicy::BimbaSpelled24Tet => "Bimba spelling",
+            crate::m2_condition::TuningPolicy::Retained24Tet => "retained 24-TET reading",
+        };
+        return format!(
+            "{name}, has no {tuning} in the map, so its eight pitches have no source, and no other tuning stands in"
+        );
+    }
+    if basis.input.schema == super::coupled::REQUEST {
+        return format!(
+            "{name}, is not a pitch source on this single-bus event ({}, v1): only a dual-bus event (v2) binds the condition's eight pitches to voices",
+            super::coupled::REQUEST
+        );
+    }
+    match refused {
+        Some(why) => format!("{name}, was not voiced: {why}"),
+        None => format!("{name}, is not voiced in this scene"),
+    }
+}
+
+/// The surface's material under the event's lens in force (M2-1′, `m2_material`): the lens is
+/// the M1 event's `lens12`, its position the tick's place in the six (`tick12 % 6`, as the M2
+/// condition's MEF address reads it). Display-only: no voice reads it, so a lens changes the
+/// surface and, under Sky, leaves every note where it was.
+pub fn lens_material_of(basis: &CoupledBasis) -> Value {
+    let m1 = &basis.input.m1;
+    let lens = crate::LensId::ALL[usize::from(m1.lens12 % 12)];
+    match crate::m2_material::lens_material(lens, (m1.tick12 % 6) as u8) {
+        Ok(material) => json!(material),
+        Err(why) => json!({"absent": why}),
+    }
+}
+
+/// The M2 condition's maqām as the Torus reads it: its name, coordinate, role, tonic and tuning, with its eight pitches while the scene
+/// holds its voices, or `absent` in words naming the source it lacks (`maqam_absence`).
+pub fn maqam_reading(basis: &CoupledBasis, resident: bool) -> Value {
+    let condition = &basis.m2["condition"];
+    let path = &condition["source_path"];
+    let musical = &condition["musical"];
+    let role = basis
+        .m2_input
+        .condition
+        .as_ref()
+        .map(|c| json!(c.role))
+        .unwrap_or(Value::Null);
+    let mut reading = json!({
+        "name": path["maqam_name"], "coordinate": path["maqam_coordinate"], "role": role,
+        "tonic_hz": musical["tonic_hz"], "tuning": musical["tuning"], "standing": musical["standing"],
+        "pitches_hz": Value::Null, "absent": Value::Null,
+    });
+    if resident {
+        reading["pitches_hz"] = musical["pitches_hz"].clone();
+    } else {
+        reading["absent"] = json!(maqam_absence(basis, None));
+    }
+    reading
 }
 
 pub const BINDING_REQUEST: &str = "ql.scene-binding-request/v1";
@@ -1411,6 +1499,11 @@ impl SceneInstrument {
                 .collect::<Vec<_>>()
         );
         reading["sounding_voices"] = json!(self.shape.group(self.tuning()).len());
+        reading["maqam"] = maqam_reading(
+            self.session.current_basis(),
+            self.shape.resident(Tuning::Maqam),
+        );
+        reading["material"] = lens_material_of(self.session.current_basis());
         reading["classes"] = self
             .shape
             .class_sounds(self.tuning(), self.torus.steps_at(self.samples_now()))
@@ -1434,6 +1527,9 @@ impl SceneInstrument {
         let mut next = self.torus.clone();
         let moved = next.edit(edit, self.samples_now())?;
         if !self.shape.resident(next.settings().tuning) {
+            if next.settings().tuning == Tuning::Maqam {
+                return Err(maqam_absence(self.session.current_basis(), None));
+            }
             return Err(format!(
                 "this scene holds no {} voices: its event admits none",
                 next.settings().tuning.code()
@@ -1493,6 +1589,9 @@ impl SceneInstrument {
         }
         let at = at_samples_elapsed.unwrap_or_else(|| self.samples_now());
         let steps = self.torus.steps_at(at);
+        // Strike: the share of the key's velocity that excites the body (manual §21.2; the element's under Body source Tattva).
+        let strike = self.torus.settings().strike;
+        let amplitude = [amplitude[0] * strike, amplitude[1] * strike];
         let surface = crate::janko::JankoSurface::new();
         let points: Vec<crate::janko::KeyPoint> =
             keys.iter().map(|key| surface.point(*key, steps)).collect();
@@ -1541,6 +1640,7 @@ impl SceneInstrument {
             "notes": notes,
             "made_way": admission.made_way,
             "polyphony": self.torus.settings().polyphony,
+            "strike": strike,
             "tuning": self.tuning(),
             "pulse": self.torus.pulse(at),
             "at_samples_elapsed": outcome.receipt["at_samples_elapsed"],

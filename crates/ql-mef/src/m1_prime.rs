@@ -51,6 +51,11 @@ pub const FUNDAMENTAL_MIN: f64 = 20.0;
 pub const FUNDAMENTAL_MAX: f64 = 2_000.0;
 pub const POLYPHONY_MAX: u8 = 32;
 pub const POLYPHONY_DEFAULT: u8 = 16;
+/// Strike's default share of a key's velocity (manual §21.2 Parameters: "Strike | 0 to 100% | 70%").
+pub const STRIKE_DEFAULT: f64 = 0.7;
+fn strike_default() -> f64 {
+    STRIKE_DEFAULT
+}
 /// Steps of one full return: the spanda ring of twelve places.
 pub const RETURN_STEPS: f64 = crate::spanda_field::RING_SIZE as f64;
 /// The comma: six epogdoons (9:8) over the octave, (9/8)^6 / 2.
@@ -230,6 +235,10 @@ pub struct Settings {
     pub polyphony: u8,
     /// The set's tempo, which Sync reads.
     pub tempo_bpm: f64,
+    /// 0..1: how strongly velocity excites the body, the share of a key's amplitude a played note strikes with (manual §21.2 Strike).
+    /// Under Body source Tattva the element of the M2 condition sets it (`m2_body::TABLE`); a saved sound without it opens at 70 %.
+    #[serde(default = "strike_default")]
+    pub strike: f64,
 }
 
 impl Default for Settings {
@@ -244,6 +253,7 @@ impl Default for Settings {
             tuning: Tuning::Logic,
             polyphony: POLYPHONY_DEFAULT,
             tempo_bpm: 120.0,
+            strike: STRIKE_DEFAULT,
         }
     }
 }
@@ -271,6 +281,9 @@ impl Settings {
         }
         if !self.carrier.is_finite() || !(0.0..=1.0).contains(&self.carrier) {
             return Err("the Carrier runs from 0 to 100 %".into());
+        }
+        if !self.strike.is_finite() || !(0.0..=1.0).contains(&self.strike) {
+            return Err("Strike runs from 0 to 100 %".into());
         }
         if !(1..=POLYPHONY_MAX).contains(&self.polyphony) {
             return Err(format!("Polyphony counts 1 to {POLYPHONY_MAX} notes"));
@@ -318,6 +331,12 @@ pub struct SettingsEdit {
         deserialize_with = "crate::continuous::number::option"
     )]
     pub tempo_bpm: Option<f64>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::continuous::number::option"
+    )]
+    pub strike: Option<f64>,
 }
 
 impl SettingsEdit {
@@ -334,6 +353,7 @@ impl SettingsEdit {
             tuning: self.tuning.unwrap_or(settings.tuning),
             polyphony: self.polyphony.unwrap_or(settings.polyphony),
             tempo_bpm: self.tempo_bpm.unwrap_or(settings.tempo_bpm),
+            strike: self.strike.unwrap_or(settings.strike),
         };
         next.validate()?;
         Ok(next)
@@ -525,6 +545,7 @@ impl Session {
             ("tuning", before.tuning != next.tuning),
             ("polyphony", before.polyphony != next.polyphony),
             ("tempo", before.tempo_bpm != next.tempo_bpm),
+            ("strike", before.strike != next.strike),
         ] {
             if changed {
                 moved.push(name);

@@ -131,6 +131,10 @@ fn each_setting_reaches_the_owner_and_reads_back() {
         classes["by_class"][0]["sounds"].as_array().unwrap().len(),
         8
     );
+    // The lens in force gives the surface its material (M2-1′, O-I #854): the opening event stands under L5′ at position 1.
+    assert_eq!(torus["material"]["lens"], "L5'", "{}", torus["material"]);
+    assert_eq!(torus["material"]["partner"], "L5");
+    assert_eq!(torus["material"]["position"], 1);
     let generation = d.generation();
     let set = d.send(json!({"operation":"torus-set","edit":{
         "rate":{"mode":"free","steps_per_second":440.0},"carrier":0.25,"shape":"spiral","polyphony":3}}));
@@ -145,6 +149,59 @@ fn each_setting_reaches_the_owner_and_reads_back() {
     let refused = d.send(json!({"operation":"torus-set","edit":{"polyphony":40}}));
     assert_eq!(refused["status"], "refused");
     assert!(refused["error"].as_str().unwrap().contains("Polyphony"));
+    // The condition's maqām as the owner reads it (O-I #854): QL's default condition is Kirdan as tonic under the Bimba spelling, which
+    // the map does not spell, so the reading names it and why it is absent, and Maqām is refused in those words, changing nothing.
+    let maqam = &torus["maqam"];
+    assert_eq!(maqam["name"], "Kirdan", "{maqam}");
+    assert_eq!(maqam["coordinate"], "#2-4.3-0-4");
+    assert!(
+        maqam["absent"]
+            .as_str()
+            .unwrap()
+            .contains("no Bimba spelling"),
+        "{maqam}"
+    );
+    let generation = d.generation();
+    let refused = d.send(json!({"operation":"torus-set","edit":{"tuning":"maqam"}}));
+    assert_eq!(refused["status"], "refused", "{refused}");
+    let why = refused["error"].as_str().unwrap();
+    assert!(
+        why.contains("Kirdan") && why.contains("no Bimba spelling"),
+        "{why}"
+    );
+    assert_eq!(d.generation(), generation);
+    let state = d.send(json!({"operation":"torus-state"}));
+    assert_eq!(state["torus"]["settings"]["tuning"], "logic");
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn strike_is_the_share_of_a_keys_velocity_that_excites_the_body() {
+    // Manual §21.2 Parameters: Strike "0 to 100% · 70% · How strongly velocity excites the body". Under Body source Tattva the element
+    // sets it (Earth 45%); it is a session setting, so setting it moves no native state, and each key's amplitude excites by its share.
+    let mut d = Driver::open();
+    let state = d.send(json!({"operation":"torus-state"}));
+    assert_eq!(state["torus"]["settings"]["strike"], json!(0.7), "{state}");
+    let generation = d.generation();
+    let set = d.send(json!({"operation":"torus-set","edit":{"strike":0.45}}));
+    assert_eq!(set["status"], "ok", "{set}");
+    assert_eq!(set["torus"]["settings"]["strike"], json!(0.45));
+    assert_eq!(d.generation(), generation, "Strike moves no native state");
+    let played = d.send(
+        json!({"operation":"torus-play","keys":[{"row":2,"column":1}],"amplitude":[0.1,0.0]}),
+    );
+    assert_eq!(played["status"], "ok", "{played}");
+    assert_eq!(played["torus_play"]["strike"], json!(0.45));
+    let excited = played["strike_at"]["points"][0]["amplitude"][0]
+        .as_f64()
+        .unwrap();
+    assert!((excited - 0.045).abs() < 1e-12, "{excited}");
+    let refused = d.send(json!({"operation":"torus-set","edit":{"strike":1.5}}));
+    assert_eq!(refused["status"], "refused");
+    assert!(
+        refused["error"].as_str().unwrap().contains("Strike"),
+        "{refused}"
+    );
 }
 
 #[test]

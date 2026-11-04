@@ -34,6 +34,7 @@ pub mod m2_body;
 pub mod m2_condition;
 pub mod m2_engine;
 pub mod m2_hours;
+pub mod m2_material;
 pub mod m2_sky;
 pub mod m2_vimarsha;
 pub mod m3_binding;

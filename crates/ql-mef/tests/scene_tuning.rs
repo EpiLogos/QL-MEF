@@ -6,7 +6,7 @@
 use ql_mef::continuous::StrikeAtInput;
 use ql_mef::continuous::scene_field::{
     BINDING_REQUEST, BindingRequest, ShapeBasis, Tuning, binding, complete, default_event,
-    default_material,
+    default_material, maqam_reading,
 };
 use ql_mef::m2_engine::MaterialFibre;
 
@@ -142,7 +142,7 @@ fn an_event_whose_condition_admits_its_maqam_holds_the_maqam_resident() {
             Tuning::Maqam
         )
         .unwrap_err()
-        .contains("maqam")
+        .contains("maqām")
     );
     // The same event under v2, with a tuning the map supplies pitches for,
     // admits the condition's eight pitches.
@@ -170,6 +170,79 @@ fn an_event_whose_condition_admits_its_maqam_holds_the_maqam_resident() {
     for (voice, hz) in maqam.iter().zip(&pitches) {
         assert!((voice - hz).abs() < 1e-9, "{voice} vs {hz}");
     }
+}
+
+#[test]
+fn maqam_refuses_in_words_naming_the_source_it_lacks_and_reads_the_maqam_it_sounds() {
+    // #854: "Tuning set to Maqām sounds the condition's maqām. When its source is missing, it
+    // refuses in words." The default condition is Kirdan as tonic under the Bimba spelling, which
+    // the map does not spell: its eight pitches have no source, and no retained tuning stands in.
+    let refuse = |event: &ql_mef::continuous::coupled::CoupledInput| {
+        complete(
+            event,
+            &default_material(),
+            MaterialFibre::Earth,
+            Tuning::Maqam,
+        )
+        .unwrap_err()
+    };
+    let mut event = default_event().unwrap();
+    let why = refuse(&event);
+    assert!(
+        why.contains("Kirdan") && why.contains("#2-4.3-0-4") && why.contains("no Bimba spelling"),
+        "{why}"
+    );
+    // Under the v2 bus the same missing spelling is the reason.
+    event.schema = ql_mef::continuous::coupled::REQUEST_V2.into();
+    let why = refuse(&event);
+    assert!(why.contains("no Bimba spelling"), "{why}");
+    // With a tuning that gives pitches, a single-bus (v1) event still holds no maqām: it says so.
+    event = default_event().unwrap();
+    event.m2.condition.as_mut().unwrap().tuning = ql_mef::m2_condition::TuningPolicy::Retained24Tet;
+    let why = refuse(&event);
+    assert!(
+        why.contains("Kirdan") && why.contains("single-bus") && why.contains("v1"),
+        "{why}"
+    );
+    // The reading the Torus publishes: the words while it is absent ...
+    let (_, basis) = complete(
+        &default_event().unwrap(),
+        &default_material(),
+        MaterialFibre::Earth,
+        Tuning::Logic,
+    )
+    .unwrap();
+    let shape = ShapeBasis::from_basis(&basis).unwrap();
+    let absent = maqam_reading(&basis, shape.resident(Tuning::Maqam));
+    assert_eq!(absent["name"], "Kirdan");
+    assert!(
+        absent["absent"]
+            .as_str()
+            .unwrap()
+            .contains("no Bimba spelling"),
+        "{absent}"
+    );
+    // ... and the maqām with its tonic, role and eight pitches once it sounds.
+    event.schema = ql_mef::continuous::coupled::REQUEST_V2.into();
+    let (_, basis) = complete(
+        &event,
+        &default_material(),
+        MaterialFibre::Earth,
+        Tuning::Maqam,
+    )
+    .unwrap();
+    let shape = ShapeBasis::from_basis(&basis).unwrap();
+    let sounding = maqam_reading(&basis, shape.resident(Tuning::Maqam));
+    assert_eq!(sounding["absent"], serde_json::Value::Null);
+    assert_eq!(sounding["name"], "Kirdan");
+    assert_eq!(sounding["coordinate"], "#2-4.3-0-4");
+    assert_eq!(sounding["role"], "tonic");
+    assert_eq!(sounding["tuning"], "retained24_tet");
+    assert_eq!(sounding["pitches_hz"].as_array().unwrap().len(), 8);
+    assert_eq!(
+        sounding["pitches_hz"],
+        basis.m2["condition"]["musical"]["pitches_hz"]
+    );
 }
 
 /// The opening excitation of each resident group in the binding's composed body.
