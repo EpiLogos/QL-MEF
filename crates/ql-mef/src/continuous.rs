@@ -53,6 +53,11 @@ pub(crate) mod number {
         Ok([finite(&a)?, finite(&b)?])
     }
 
+    pub fn triple<'de, D: Deserializer<'de>>(deserializer: D) -> Result<[f64; 3], D::Error> {
+        let [a, b, c] = <[Number; 3]>::deserialize(deserializer)?;
+        Ok([finite(&a)?, finite(&b)?, finite(&c)?])
+    }
+
     /// An optional finite number, absent or `null` as `None`.
     pub fn option<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<f64>, D::Error> {
         Option::<Number>::deserialize(deserializer)?
@@ -624,6 +629,20 @@ impl FieldSession {
             json!({"steps_per_second":steps_per_second, "anchor_samples":anchor_samples.to_string(),
                 "anchor_steps":anchor_steps, "impulses":impulses}),
         )
+    }
+    /// Where the body is heard from (the Torus's receiver, O-I 856): one output gain per
+    /// mode, in mode order, from the cursor on. A receiving setting, not a body act:
+    /// generation, clock, cursor, body and targets stay, and a later `replace_modes` keeps
+    /// these gains. The next block reaches them linearly from those it was heard by.
+    /// Malformed gains are refused here without transport; the worker re-validates them.
+    pub fn set_gains(&mut self, gains: &[f64]) -> Result<Value> {
+        let modes = self.receipt["amplitudes_metres"]
+            .as_array()
+            .map_or(0, Vec::len);
+        if gains.len() != modes || gains.iter().any(|g| !g.is_finite() || g.abs() > 1e6) {
+            return Err("a receiver names one finite output gain within 1e6 for every mode".into());
+        }
+        self.operation("set-gains", json!({"audio_gains":gains}))
     }
     /// The body as it rang at a checkpoint, set again (O-I 855): one resident state per
     /// mode, in mode order, at the cursor. One body act: one generation; the voices, their

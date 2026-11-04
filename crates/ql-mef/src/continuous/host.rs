@@ -173,6 +173,14 @@ pub enum HostOperation {
         acts: Vec<super::scene_field::TorusRenderAct>,
         frames: u64,
     },
+    /// scene only: where the Torus is heard from (O-I 856, `ql.torus-receiver/v1`). A place
+    /// (`at_metres`, the frame the targets are drawn in) is the listener's own context: the
+    /// body is heard at the torus where they stand. `null` is the world's: every voice by the
+    /// declared gain. A receiving setting: the body, its clock and its generation stand, and
+    /// the place is kept nowhere (`TORUS_RECEIVER_LAW`).
+    TorusReceiver {
+        receiver: Option<super::scene_field::ReceiverInput>,
+    },
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -492,7 +500,8 @@ impl FieldHost {
                 | HostOperation::TorusRelease { .. }
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }
-                | HostOperation::TorusRender { .. },
+                | HostOperation::TorusRender { .. }
+                | HostOperation::TorusReceiver { .. },
                 _,
             ) => unreachable!("non-stage commands returned before stage dispatch"),
         };
@@ -658,6 +667,12 @@ impl FieldHost {
                     extra.insert("torus_render".into(), render);
                     None
                 }),
+            HostOperation::TorusReceiver { receiver } => {
+                instrument.set_receiver(receiver).map(|reading| {
+                    extra.insert("torus_receiver".into(), reading);
+                    None
+                })
+            }
             _ => unreachable!("only Torus operations reach the Torus dispatch"),
         };
         let torus = instrument.torus_reading();
@@ -821,6 +836,7 @@ impl FieldHost {
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }
                 | HostOperation::TorusRender { .. }
+                | HostOperation::TorusReceiver { .. }
         ) {
             return self.torus_operation(request);
         }
@@ -929,7 +945,8 @@ impl FieldHost {
                 | HostOperation::TorusRelease { .. }
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }
-                | HostOperation::TorusRender { .. },
+                | HostOperation::TorusRender { .. }
+                | HostOperation::TorusReceiver { .. },
                 _,
             ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };

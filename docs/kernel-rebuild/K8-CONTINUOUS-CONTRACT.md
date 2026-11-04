@@ -203,6 +203,7 @@ earlier input composes bit-for-bit as before.
 | `advance {frames, muted}` with settings waiting | the block runs to each waiting setting's sample, the setting is made there as above, and the block runs on; `torus_set_landed` names each (`at_samples_elapsed`, `edit`, `applied`, `moved`, or `refused`) with `torus` and `influence` | +1 for each Fundamental made in the block |
 | `torus-play {keys, amplitude, at_samples_elapsed?}` | each key's moving point at the pulse (`janko::JankoSurface::point`) struck on the tuning in force: one `strike-at` | +1 |
 | `torus-release {keys}` | none: the body rings on | unchanged |
+| `torus-receiver {receiver: {at_metres} \| null}` | where the Torus is heard from (O-I 856): the output gains only (`set-gains`), from the next block; body, clock, event and cursor stand (`TORUS_RECEIVER_LAW`) | unchanged |
 
 A strike for a later sample (`torus-play`, `strike-at`) reads the settings in
 force at its sample, the waiting ones before it made: its points, Strike,
@@ -217,6 +218,30 @@ sample, taken once (`strike_at_when`). The receipt's `points` stand as they
 were struck and `strike_at.strike` names the share. A named-voice `strike` is
 not a strike at points and is not scaled.
 
+The receiver is where the Torus is heard from (manual §21.2 View, "Receiver On
+makes your camera the place where the torus is heard"; QL-MEF #289 packet N).
+`null` is the world's context: every voice is heard by the declared
+`audio_gain_per_metre`, and nothing a camera does reaches the owner. A place,
+metres in the frame the targets are drawn in, is the listener's own context:
+the body is heard where they stand. With the body turned back by its clock
+attachment, each voice is heard by the declared gain × the root mean square of
+its χ (the term a strike meets and the picture draws) over the samples near the
+listener, each weighted by a Gaussian in its distance beyond the nearest, as
+wide as the listener stands off the surface and never narrower than the
+sampling's spacing, over its root mean square over every sample; and beyond one
+tube radius of the surface × the radius over the distance. Far off, every voice
+is heard as declared, quieter by the distance; near, a voice the surface under
+the listener rings in is loudest. The gains reach the native owner as
+`set-gains {audio_gains}` (`ContinuousField::set_gains`): one finite gain per
+mode within 1e6; generation, clock, cursor, body and targets are unchanged, a
+later `replace-modes` keeps them, and the next rendered block reaches them
+linearly from those it was heard by, so a move never clicks and gains equal to
+those in force change no sample. The scene sends them at each block's start,
+only when they differ. The place is kept nowhere: not in `torus`, a checkpoint,
+a render or a receipt; a render is the world's context, and the answer
+(`torus_receiver`, `ql.torus-receiver/v1`) names the context and each voice's
+gain, never the place.
+
 Every answer carries `torus`; `torus-set` adds `influence` (its `tuning`,
 sounding `voices`, `boundaries`, `resident_tunings`, `fundamental_hz`);
 `torus-play` adds `torus_play` (`ql.torus-play/v1`: each note's place, point and
@@ -226,4 +251,5 @@ in every played note: a per-note voice bank sounding each note's own cell (QL-ME
 (the carrier heard on the rendered PCM: silence at 0 % unstruck, a note at the
 pulse's period at pitch rates, a beat at rhythm rates) and
 `cpp/tests/continuous_field.cpp` (the drive bit-identical to strikes at the same
-samples, a step at the cursor landing once).
+samples, a step at the cursor landing once; new gains reached at the block's last
+sample, the next block exactly at them, the body unmoved).

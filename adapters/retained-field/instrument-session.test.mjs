@@ -144,6 +144,12 @@ function setup(options = {}) {
       }
       if (request.command.operation === 'torus-restore')
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
+      // Controlled protocol case (host.rs torus_operation, O-I 856): the receiver is a receiving setting; the field is unchanged.
+      if (request.command.operation === 'torus-receiver') {
+        reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [] };
+        reply.torus_receiver = { schema: 'ql.torus-receiver/v1', context: request.command.receiver === null ? 'world' : 'personal',
+          gains: [{ mode_ref: '#3-0', gain: request.command.receiver === null ? 1 : 0.5 }], law: 'controlled' };
+      }
       if (landed) {
         reply.torus_set_landed = landed;
         reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [], waiting: port.waiting };
@@ -942,5 +948,45 @@ test('a take renders offline as a read: the owner neither moves nor sounds, and 
   const moved = setup(); const kept = await moved.session.torusCheckpoint();
   moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
   await assert.rejects(moved.session.torusRender({ checkpoint: kept, acts: [], frames: 4800 }), /native cursor disagree|read advanced/);
+  session.dispose();
+});
+
+test('where the Torus is heard from is a receiving setting: the body stands, the listener is never journaled, and the place goes nowhere else', async () => {
+  // O-I 856 (DLW §21.2 View: "Receiver On makes your camera the place where the torus is heard"; QL-MEF #289 packet N): a place in
+  // the metres the targets are drawn in is the listener's own context, null the world's. The owner's answer says how the body is
+  // heard, and the body, its clock and its generation stand.
+  const { session, calls } = setup();
+  const heard = await session.torusReceiver([4.0625, 0, 0.375]);
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-receiver', receiver: { at_metres: [4.0625, 0, 0.375] } });
+  assert.equal(heard.schema, 'ql.torus-receiver/v1');
+  assert.equal(heard.context, 'personal');
+  assert.equal(session.reading.acknowledged.generation, '1', 'the body does not move');
+  assert.equal(session.reading.queued_blocks, 0, 'there is nothing to present');
+  assert.equal(session.lastTorus.schema, 'ql.m1-prime-session/v1');
+  heard.gains[0].gain = 9; // the caller's copy is its own
+  const world = await session.torusReceiver(null);
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-receiver', receiver: null });
+  assert.equal(world.context, 'world');
+  assert.equal(world.gains[0].gain, 1);
+  const journal = JSON.stringify(session.journal());
+  assert.ok(!session.journal().acts.some(act => act.operation === 'torus-receiver'), 'the listener is not the performance');
+  assert.ok(!journal.includes('4.0625') && !journal.includes('at_metres'), journal);
+  // Refused before any exchange: anything that is not three finite metres within the owner's bound, or null.
+  const sent = calls.length;
+  for (const bad of [undefined, [1, 2], [1, 2, Number.NaN], [1, 2, 2e6], 'here', { at_metres: [1, 2, 3] }])
+    await assert.rejects(session.torusReceiver(bad), /a receiver stands at three finite metres/);
+  assert.equal(calls.length, sent);
+  // An answer without the receiver's reading is not the owner's.
+  const bare = setup(); bare.port.effect = reply => { delete reply.torus_receiver; return reply; };
+  await assert.rejects(bare.session.torusReceiver(null), /no receiver reading/);
+  // A refusal comes back in the owner's words; a held owner takes no receiver.
+  const refused = setup(); refused.port.refuseOperation = 'torus-receiver';
+  await assert.rejects(refused.session.torusReceiver([1, 2, 3]), /controlled refusal/);
+  const held = setup(); held.session.hold('test');
+  await assert.rejects(held.session.torusReceiver(null), /idle admitted owner/);
+  // An answer whose body moved disagrees with the owner's law.
+  const moved = setup();
+  moved.port.effect = reply => ({ ...reply, field: { ...reply.field, generation: String(BigInt(reply.field.generation) + 1n) } });
+  await assert.rejects(moved.session.torusReceiver([1, 2, 3]), /native cursor disagree/);
   session.dispose();
 });

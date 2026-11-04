@@ -488,6 +488,19 @@ impl ReceiptGuard {
                     "setting the carrier moved the body",
                 )?;
             }
+            "set-gains" => {
+                // Where the body is heard from (the Torus's receiver, O-I 856): a
+                // receiving setting, not a body act. The gains move only what is heard.
+                for gain in array(&request["audio_gains"], self.modes)? {
+                    finite(gain, 1e6)?;
+                }
+                require(
+                    value["clock"] == previous["clock"]
+                        && value["amplitudes_metres"] == previous["amplitudes_metres"]
+                        && value["targets"] == previous["targets"],
+                    "setting the receiver moved the body",
+                )?;
+            }
             "advance" => {
                 // Native C owns the exact lifted trajectory. This checks its
                 // wire cursor boundary; native numerical parity is tested there.

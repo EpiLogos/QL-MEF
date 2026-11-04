@@ -100,6 +100,8 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
             {"action":"release","at_samples_elapsed":"96100","keys":[{"row":0,"column":2}]},
             {"action":"set","at_samples_elapsed":"96200","edit":{"polyphony":3}}]}),
         json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[]}),
+        json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25]}}),
+        json!({"operation":"torus-receiver","receiver":null}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_ok(),
@@ -118,6 +120,10 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-render","frames":4800,"acts":[{"action":"hold","at_samples_elapsed":"0","keys":[]}]}),
         json!({"operation":"torus-render","frames":4800,"acts":[{"action":"release","at_samples_elapsed":"0","keys":[],"amplitude":[0.1,0.0]}]}),
         json!({"operation":"torus-render","frames":4800}),
+        json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0]}}),
+        json!({"operation":"torus-receiver","receiver":{"at":[4.5,0.0,0.25]}}),
+        json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25],"distance":2.0}}),
+        json!({"operation":"torus-receiver","place":[4.5,0.0,0.25]}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_err(),
@@ -1080,4 +1086,375 @@ fn a_setting_for_a_later_sample_is_refused_in_words_where_it_cannot_land() {
         json!(2 + (62 % 3)),
         "the last made is in force"
     );
+}
+
+// The Torus is heard where you stand (O-I 856; QL-MEF #289 packet N): manual §21.2 View, "Receiver On makes your camera the place
+// where the torus is heard", and Rules, "A camera move does not change the sound, unless Receiver is On". Receiver Off is the world's
+// context, heard by the declared gain wherever the camera is; On is the listener's own, heard at the torus where they stand.
+
+/// The chord every test below plays: three keys of the Jankó surface.
+fn chord() -> Value {
+    json!({"operation":"torus-play","keys":[{"row":0,"column":2},{"row":3,"column":1},{"row":5,"column":4}],"amplitude":[0.2,0.0]})
+}
+
+/// The gains a `torus-receiver` answer says the body is heard by, by voice.
+fn heard(reply: &Value) -> Vec<(String, f64)> {
+    reply["torus_receiver"]["gains"]
+        .as_array()
+        .unwrap_or_else(|| panic!("{reply}"))
+        .iter()
+        .map(|g| {
+            (
+                g["mode_ref"].as_str().unwrap().to_owned(),
+                g["gain"].as_f64().unwrap(),
+            )
+        })
+        .collect()
+}
+
+/// A place in the scene's metres (the targets' frame, metres_per_unit 1): `beyond` units out from the torus's outer equator at
+/// longitude `phi` of the frame (the body turns by its clock under it), at height 0.
+fn standing(beyond: f64, phi: f64) -> Value {
+    let out = 16.0 / 9.0 + 1.0 + beyond;
+    json!({"at_metres":[out * phi.cos(), out * phi.sin(), 0.0]})
+}
+
+/// The body as the owner reports it: everything but the sound.
+fn body(reply: &Value) -> Value {
+    let field = &reply["field"];
+    json!({"generation":field["generation"], "samples_elapsed":field["samples_elapsed"], "clock":field["clock"],
+        "amplitudes":field["amplitudes_metres"], "targets":field["targets"], "event_ref":field["event_ref"]})
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn with_the_receiver_off_a_camera_move_leaves_the_sound_unchanged() {
+    let (mut control, mut moved) = (Driver::open(), Driver::open());
+    for d in [&mut control, &mut moved] {
+        assert_eq!(d.send(chord())["status"], "ok");
+    }
+    let (mut a, mut b) = (Vec::new(), Vec::new());
+    for _ in 0..12 {
+        // Off is the world's context: saying so again, as a camera moves, asks nothing of the body and hears it as declared.
+        let off = moved.send(json!({"operation":"torus-receiver","receiver":null}));
+        assert_eq!(off["status"], "ok", "{off}");
+        assert_eq!(off["torus_receiver"]["context"], "world");
+        let gains = heard(&off);
+        assert!(!gains.is_empty());
+        assert!(
+            gains.iter().all(|(_, g)| *g == 1.0),
+            "the declared gain, 1 per metre: {off}"
+        );
+        assert_eq!(
+            body(&off),
+            body(&control.current),
+            "nothing of the body moves"
+        );
+        a.extend(render_frames(&mut control, 512, 512));
+        b.extend(render_frames(&mut moved, 512, 512));
+    }
+    assert_eq!(a, b, "the renders are the same, sample for sample");
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn with_the_receiver_on_the_sound_follows_where_you_stand() {
+    use std::f64::consts::{FRAC_PI_2, PI, TAU};
+    let opened = || {
+        let mut d = Driver::open();
+        assert_eq!(d.send(chord())["status"], "ok");
+        render_frames(&mut d, 1024, 512);
+        d
+    };
+    let mut owners: Vec<Driver> = (0..6).map(|_| opened()).collect();
+    let [world, near, aside, far, farther, probe] = &mut owners[..] else {
+        unreachable!()
+    };
+    let generation = near.generation();
+    let at_near = near.send(json!({"operation":"torus-receiver","receiver":standing(0.25, 0.0)}));
+    let at_aside =
+        aside.send(json!({"operation":"torus-receiver","receiver":standing(0.25, FRAC_PI_2)}));
+    let at_far = far.send(json!({"operation":"torus-receiver","receiver":standing(1000.0, 0.0)}));
+    let at_farther =
+        farther.send(json!({"operation":"torus-receiver","receiver":standing(2000.0, 0.0)}));
+    for reply in [&at_near, &at_aside, &at_far, &at_farther] {
+        assert_eq!(reply["status"], "ok", "{reply}");
+        assert_eq!(reply["torus_receiver"]["context"], "personal");
+        assert_eq!(
+            body(reply),
+            body(&world.current),
+            "the place moves only what is heard"
+        );
+        // The place is the listener's: the answer says how the body is heard, never where from.
+        let mut keys: Vec<&str> = reply["torus_receiver"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .map(String::as_str)
+            .collect();
+        keys.sort_unstable();
+        assert_eq!(keys, ["context", "gains", "law", "schema"], "{reply}");
+        assert_eq!(reply["torus_receiver"]["schema"], "ql.torus-receiver/v1");
+        assert!(!reply.to_string().contains("at_metres"), "{reply}");
+    }
+    assert_eq!(
+        near.generation(),
+        generation,
+        "a receiving setting, not a body act"
+    );
+
+    // Far off, every voice is heard as declared (1 per metre), quieter by the tube radius over the distance.
+    for (reply, beyond) in [(&at_far, 1000.0), (&at_farther, 2000.0)] {
+        for (mode, gain) in heard(reply) {
+            assert!(
+                (gain * beyond - 1.0).abs() < 1e-5,
+                "{mode} at {beyond}: {gain}"
+            );
+        }
+    }
+    // Near, the mix is the surface's under you: the voices are heard unequally, and another place hears another mix.
+    let (near_gains, aside_gains) = (heard(&at_near), heard(&at_aside));
+    let (low, high) = near_gains
+        .iter()
+        .fold((f64::INFINITY, 0.0f64), |(l, h), (_, g)| {
+            (l.min(*g), h.max(*g))
+        });
+    assert!(
+        high - low > 0.1,
+        "near, the voices are heard unequally: {near_gains:?}"
+    );
+    assert!(
+        near_gains
+            .iter()
+            .zip(&aside_gains)
+            .any(|((_, n), (_, a))| (n - a).abs() > 1e-3),
+        "another place on the torus hears another mix"
+    );
+
+    // The law, stated over the owner's own shape terms: χ of every voice of the tuning in force at every sample of the 32 × 16 sheet,
+    // as a strike there meets it. Each voice is heard by the root mean square of χ near the listener (a Gaussian in each sample's
+    // distance beyond the nearest, as wide as the listener stands off the surface and never narrower than the sampling's spacing) over
+    // its root mean square over the whole sheet, and beyond one tube radius by the radius over the distance.
+    let sheet: Vec<(f64, f64)> = (0..16)
+        .flat_map(|j| (0..32).map(move |i| (TAU * f64::from(i) / 32.0, TAU * f64::from(j) / 16.0)))
+        .collect();
+    let mut chi: Vec<Vec<f64>> = Vec::new();
+    let mut modes: Vec<String> = Vec::new();
+    for part in sheet.chunks(64) {
+        let points: Vec<Value> = part
+            .iter()
+            .map(|(phi, theta)| json!({"theta":theta,"phi":phi,"amplitude":[1e-6,0.0]}))
+            .collect();
+        let met = probe.send(json!({"operation":"strike-at","points":points}));
+        assert_eq!(met["status"], "ok", "{met}");
+        let voices = met["strike_at"]["voices"].as_array().unwrap();
+        modes = voices
+            .iter()
+            .map(|v| v["mode_ref"].as_str().unwrap().to_owned())
+            .collect();
+        for p in 0..part.len() {
+            chi.push(
+                voices
+                    .iter()
+                    .map(|v| v["coupling"][p].as_f64().unwrap())
+                    .collect(),
+            );
+        }
+    }
+    let law = |q: [f64; 3]| -> Vec<f64> {
+        let major = 16.0 / 9.0;
+        let beyond = (q[0].hypot(q[1]) - major).hypot(q[2]) - 1.0;
+        let width = beyond.max(TAU * (major + 1.0) / 32.0);
+        let d: Vec<f64> = sheet
+            .iter()
+            .map(|(phi, theta)| {
+                let r = major + theta.cos();
+                (q[0] - r * phi.cos())
+                    .hypot(q[1] - r * phi.sin())
+                    .hypot(q[2] - theta.sin())
+            })
+            .collect();
+        let nearest = d.iter().copied().fold(f64::INFINITY, f64::min);
+        let w: Vec<f64> = d
+            .iter()
+            .map(|d| (-0.5 * ((d - nearest) / width).powi(2)).exp())
+            .collect();
+        let total: f64 = w.iter().sum();
+        (0..modes.len())
+            .map(|k| {
+                let near = (w
+                    .iter()
+                    .zip(&chi)
+                    .map(|(w, c)| w * c[k] * c[k])
+                    .sum::<f64>()
+                    / total)
+                    .sqrt();
+                let whole =
+                    (chi.iter().map(|c| c[k] * c[k]).sum::<f64>() / chi.len() as f64).sqrt();
+                near / whole * if beyond > 1.0 { 1.0 / beyond } else { 1.0 }
+            })
+            .collect()
+    };
+    for (beyond, phi, gains) in [(0.25, 0.0, &near_gains), (0.25, FRAC_PI_2, &aside_gains)] {
+        let at: [f64; 3] =
+            serde_json::from_value(standing(beyond, phi)["at_metres"].clone()).unwrap();
+        for (mode, want) in modes.iter().zip(law(at)) {
+            let (_, gain) = gains.iter().find(|(m, _)| m == mode).unwrap();
+            assert!(
+                (gain - want).abs() < 1e-9 * want.max(1.0),
+                "{mode} at φ {phi}: {gain} against the law's {want}"
+            );
+        }
+    }
+
+    // The block after a move reaches the new gains; from then on the sound is the place's, and the body is the same in all.
+    let pcm = |d: &mut Driver| {
+        render_frames(d, 512, 512);
+        render_frames(d, 4096, 512)
+    };
+    let (w, n, a, f, f2) = (pcm(world), pcm(near), pcm(aside), pcm(far), pcm(farther));
+    for d in [&*near, &*aside, &*far, &*farther] {
+        assert_eq!(body(&d.current), body(&world.current));
+    }
+    let peak = f.iter().fold(0.0f64, |m, v| m.max(v.abs()));
+    assert!(peak > 0.0);
+    assert!(
+        f.iter()
+            .zip(&f2)
+            .all(|(f, f2)| (f2 - 0.5 * f).abs() <= 1e-5 * peak),
+        "twice as far, half as loud, sample for sample"
+    );
+    assert_ne!(n, w, "standing there is not the world's sound");
+    let k =
+        a.iter().zip(&n).map(|(a, n)| a * n).sum::<f64>() / n.iter().map(|n| n * n).sum::<f64>();
+    let rest: Vec<f64> = a.iter().zip(&n).map(|(a, n)| a - k * n).collect();
+    assert!(
+        rms(&rest) > 1e-3 * rms(&a),
+        "aside is another mix, not the same one louder"
+    );
+
+    // The body turns under the frame with its clock: a place is heard as that place turned back by the clock's angle.
+    let (mut turned, mut unturned) = (opened(), opened());
+    let set = turned
+        .send(json!({"operation":"set-axis","axis":0,"phase":{"turns":"0","half_degrees":90}}));
+    assert_eq!(set["status"], "ok", "{set}");
+    assert_eq!(
+        set["field"]["clock"]["inscription"]["half_degrees"],
+        json!(90)
+    );
+    let place = standing(0.5, 0.3)["at_metres"].clone();
+    let [x, y, z]: [f64; 3] = serde_json::from_value(place.clone()).unwrap();
+    let (c, s) = ((PI / 4.0).cos(), (PI / 4.0).sin());
+    let back = json!({"at_metres":[c * x + s * y, -s * x + c * y, z]});
+    let by_turn =
+        heard(&turned.send(json!({"operation":"torus-receiver","receiver":{"at_metres":place}})));
+    let by_back = heard(&unturned.send(json!({"operation":"torus-receiver","receiver":back})));
+    assert_eq!(by_turn.len(), by_back.len());
+    for ((mode, a), (_, b)) in by_turn.iter().zip(&by_back) {
+        assert!((a - b).abs() < 1e-9, "{mode}: {a} turned against {b}");
+    }
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn one_performance_in_two_contexts_differs_only_as_declared_and_the_saved_sound_is_the_worlds() {
+    let (mut world, mut mine) = (Driver::open(), Driver::open());
+    let both = |w: &mut Driver, m: &mut Driver, command: Value| {
+        let (a, b) = (w.send(command.clone()), m.send(command.clone()));
+        assert_eq!(a["status"], "ok", "{command}: {a}");
+        assert_eq!(body(&a), body(&b), "{command}");
+        assert_eq!(a["torus"], b["torus"], "{command}");
+        assert_eq!(a["influence"], b["influence"], "{command}");
+    };
+    both(&mut world, &mut mine, chord());
+    let block = |w: &mut Driver, m: &mut Driver| {
+        let (a, b) = (render_frames(w, 512, 512), render_frames(m, 512, 512));
+        assert_eq!(body(&w.current), body(&m.current));
+        (a, b)
+    };
+    let (a, b) = block(&mut world, &mut mine);
+    assert_eq!(a, b, "one context, one sound");
+
+    // Switching context is the explicit act; the performance goes on the same in both.
+    let on = mine.send(json!({"operation":"torus-receiver","receiver":standing(1.5, 0.7)}));
+    assert_eq!(on["status"], "ok", "{on}");
+    let mut differed = false;
+    for step in 0..6 {
+        if step == 2 {
+            both(
+                &mut world,
+                &mut mine,
+                json!({"operation":"torus-set","edit":{"carrier":0.4}}),
+            );
+        }
+        if step == 3 {
+            both(
+                &mut world,
+                &mut mine,
+                json!({"operation":"torus-play","keys":[{"row":2,"column":6}],"amplitude":[0.3,0.0]}),
+            );
+        }
+        let (a, b) = block(&mut world, &mut mine);
+        differed |= a != b;
+    }
+    assert!(differed, "the personal context is heard");
+
+    // The saved sound is the world's: the checkpoint and the session carry nothing of the listener, and a take renders as the world
+    // hears it.
+    let (kept_w, kept_m) = (
+        world.send(json!({"operation":"torus-checkpoint"})),
+        mine.send(json!({"operation":"torus-checkpoint"})),
+    );
+    assert_eq!(kept_m["status"], "ok", "{kept_m}");
+    assert_eq!(kept_w["torus_checkpoint"], kept_m["torus_checkpoint"]);
+    assert_eq!(kept_w["torus"], kept_m["torus"]);
+    let (state_w, state_m) = (
+        world.send(json!({"operation":"torus-state"})),
+        mine.send(json!({"operation":"torus-state"})),
+    );
+    assert_eq!(
+        state_w["torus"], state_m["torus"],
+        "the session is the world's"
+    );
+    for text in [kept_m.to_string(), state_m.to_string()] {
+        assert!(
+            !text.contains("torus_receiver") && !text.contains("at_metres"),
+            "{text}"
+        );
+    }
+    let render = |d: &mut Driver, checkpoint: &Value| {
+        let r = d.send(
+            json!({"operation":"torus-render","checkpoint":checkpoint,"frames":2048,"acts":[]}),
+        );
+        assert_eq!(r["status"], "ok", "{r}");
+        audio(&r["torus_render"])
+    };
+    let checkpoint = kept_w["torus_checkpoint"].clone();
+    assert_eq!(
+        render(&mut world, &checkpoint),
+        render(&mut mine, &checkpoint)
+    );
+
+    // Back in the world's context: one block reaches the declared gains, and from then on the sound is the world's, sample for sample.
+    let off = mine.send(json!({"operation":"torus-receiver","receiver":null}));
+    assert_eq!(off["torus_receiver"]["context"], "world");
+    let (a, b) = block(&mut world, &mut mine);
+    assert_ne!(a, b, "the block that reaches the declared gains");
+    for _ in 0..4 {
+        let (a, b) = block(&mut world, &mut mine);
+        assert_eq!(a, b, "the world's sound again");
+    }
+
+    // Refused in words, changing nothing: a place past the owner's bounds.
+    let standing_body = body(&mine.current);
+    let refused =
+        mine.send(json!({"operation":"torus-receiver","receiver":{"at_metres":[2e6,0.0,0.0]}}));
+    assert_eq!(refused["status"], "refused", "{refused}");
+    assert!(
+        refused["error"].as_str().unwrap().contains("place"),
+        "{refused}"
+    );
+    assert_eq!(body(&refused), standing_body);
+    let (a, b) = block(&mut world, &mut mine);
+    assert_eq!(a, b, "still the world's");
 }

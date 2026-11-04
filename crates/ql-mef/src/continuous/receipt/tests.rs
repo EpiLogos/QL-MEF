@@ -336,6 +336,44 @@ fn setting_the_carrier_keeps_the_generation_and_moves_nothing() {
     }
 }
 
+/// O-I 856: where the body is heard from (the Torus's receiver) is a receiving
+/// setting: one finite gain per mode; the generation, clock, cursor, body and
+/// targets stay, and a reply that moved any of them is refused.
+#[test]
+fn setting_the_receivers_gains_moves_only_what_is_heard() {
+    let (_, _, guard, receipt) = fixture();
+    let request = json!({"operation":"set-gains","audio_gains":[0.25]});
+    guard.validate(&request, Some(&receipt), &receipt).unwrap();
+    for (path, moved) in [
+        ("/generation", json!("2")),
+        ("/samples_elapsed", json!("1")),
+        ("/amplitudes_metres/0/0", json!(0.0054)),
+        ("/targets/0/position/0", json!(0.0054)),
+        ("/clock/inscription/turns", json!("1")),
+    ] {
+        let mut bad = receipt.clone();
+        *bad.pointer_mut(path).unwrap() = moved;
+        assert!(
+            guard.validate(&request, Some(&receipt), &bad).is_err(),
+            "setting the receiver moved {path}"
+        );
+    }
+    for bad_request in [
+        json!({"operation":"set-gains","audio_gains":[]}),
+        json!({"operation":"set-gains","audio_gains":[0.25, 0.5]}),
+        json!({"operation":"set-gains","audio_gains":[2e6]}),
+        json!({"operation":"set-gains","audio_gains":["0.25"]}),
+        json!({"operation":"set-gains"}),
+    ] {
+        assert!(
+            guard
+                .validate(&bad_request, Some(&receipt), &receipt)
+                .is_err(),
+            "accepted {bad_request}"
+        );
+    }
+}
+
 /// O-I 855: the body as it rang at a checkpoint is set again: one resident state
 /// per mode, exactly as asked. One body act, one generation; the clock and the
 /// cursor stay. A state that does not name every mode, or is not finite and
