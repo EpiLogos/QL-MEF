@@ -360,7 +360,7 @@ fn help() -> String {
     format!(
         "Quaternal Logic {} — the semantic kernel: derivation, coverage, and the\nregistry/lens/frame reads built on it. Domain distinctions are preserved;\nthe groups below say who each is for.\n\n\
 Kernel derivation and coverage (everyday for a QL specialist):\n  ql kernel m1 <request.json> [--json]\n  ql kernel m3 <request.json|-> [--json]\n  ql kernel coverage <M|M0..M5|exact-coordinate> [--stratum rust] [--axis operational] [--require verified] [--ledger path] [--json]\n  ql kernel ledger [coordinate] [--json]\n  ql kernel validate-ledger [--ledger path] [--json]\n  ql kernel apply <operator> <ql-address> [--json]\n                                    current deterministic operators: conjugate-address, complement-address, classify-four-plus-two\n  ql kernel body-constants [--json]\n                                    M2's proposed body constants by element fibre: Strike, Q factor, Agitation and Boundary strength, with the map's tattvas\n  ql kernel m3-binding <request.json|-> [--json]\n                                    Binding's engine over a hexagram's cell under a matrix: the coupling at its scale, the string's stretch and energy, and the M3 event behind the last motion\n  ql matheme derive [--json]\n                                    the definitional 0-layer derivation; the kernel coordinates remain the governing 1\n  ql matheme shadow [--json]\n\n\
-Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql context-frame read <request.json|-> [--json]\n                                    the External Context Frame reading of a supplied sixfold mapping and structural probe (descriptive evidence only)\n  ql context-frame team-space [--json]\n                                    the Anima and Aletheia team space: frame rows, M depth, Vāk-block path and decision instruments (read-only; calls no model)\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n  ql shape bind <request.json|-> [--json]\n                                    the shape binding of a drafted constellation: its canonical shape, the binding a Wiki keeps and each generated relation's identity (creates no member, asserts no relation)\n  ql wiki living-plan <request.json|-> [--json]\n                                    the Living Wiki refraction plan: the 5 -> 0 -> 1 entry aperture, then the positions asked for within the budget (orientation only; reads no wiki)\n  ql wiki refract <request.json|-> [--json]\n                                    one Wiki refraction request: the caller's target read through the lenses and sublenses it names, in the provider mode it asks (reads no wiki)\n\n\
+Registry, lens and frame reads (contextual):\n  ql mef lenses [--json]\n  ql context-frame list [--json]\n  ql context-frame read <request.json|-> [--json]\n                                    the External Context Frame reading of a supplied sixfold mapping and structural probe (descriptive evidence only)\n  ql context-frame team-space [--json]\n                                    the Anima and Aletheia team space: frame rows, M depth, Vāk-block path and decision instruments (read-only; calls no model)\n  ql context-frame team-space check <instrument> <cells.json|-> [--json]\n                                    the engine's word on cells of one decision instrument: each chosen label held to its head and the instrument's constraints, the open heads named (calls no model)\n  ql vak compose <request.json> [--json]\n  ql vak locate <vak-ref> [--json]\n  ql vak context <vak-ref> [depth] [--json]\n                                    source-locked, bounded to depth 0..={MAX_VAK_CONTEXT_DEPTH}\n  ql vak workflow-types [--check <path>] [--json]\n  ql vak capabilities [--json]\n  ql techne reading <target.json> [--json]\n  ql shape bind <request.json|-> [--json]\n                                    the shape binding of a drafted constellation: its canonical shape, the binding a Wiki keeps and each generated relation's identity (creates no member, asserts no relation)\n  ql wiki living-plan <request.json|-> [--json]\n                                    the Living Wiki refraction plan: the 5 -> 0 -> 1 entry aperture, then the positions asked for within the budget (orientation only; reads no wiki)\n  ql wiki refract <request.json|-> [--json]\n                                    one Wiki refraction request: the caller's target read through the lenses and sublenses it names, in the provider mode it asks (reads no wiki)\n\n\
 Integrated scene (the dated sky on the clock, voiced):\n  ql scene compose <request.json|-> [--json]\n  ql scene binding <request.json|-> [--json]\n  ql scene world <request.json|-> [--json]\n                                    the dated sky placed on the clock as a world reading\n                                    the continuous-field host binding the Live instrument opens\n  ql scene render <binding-request.json|-> --worker <path> --seconds N --out take.wav [--json]\n                                    the played scene rendered offline through the native host to WAV\n\n\
 Ta-Onta procedural stage (the live scene's procedural owner; one command, one host exchange):\n  ql stage state [--config <binding-request.json|->] [--worker <path>] [--instance <ref>] [--json]\n                                    the stage's scoped disclosure: live slots, their owners and the bindings\n  ql stage evaluate <procedure.json|-> [--config <path|->] [--worker <path>] [--json]\n                                    evaluate one versioned procedure; prints its receipt and the acknowledged field\n  ql stage bind <procedure.json|-> [--max-evaluations N] [--config <path|->] [--worker <path>] [--json]\n                                    bind a determinant-triggered procedure to the live flow within an evaluation budget\n  ql stage unbind <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    remove a binding; the answer names its final standing\n  ql stage retire <procedure_ref> [--config <path|->] [--worker <path>] [--json]\n                                    release one procedure's contributions; retained material stays as the authored state\n                                    the worker is named with --worker <path> or QL_FIELD_WORKER; an example\n                                    procedure lives at fixtures/kernel/stage-procedure-example-v1.json\n\n\
 Music (controller projections of the accepted musical object):\n  ql music janko window [--columns N] [--first-column C] [--lens 0..=11] [--json]\n                                    the six-row surface over one column period\n  ql music janko key --row 0..=5 --column C [--lens 0..=11] [--json]\n                                    one key's sounding class, kernel coordinate and fifths overlay\n  ql music janko touch-points --pitch 0..=11 [--json]\n                                    the three repeated touch-points of one sounding note\n\
@@ -725,6 +725,36 @@ fn context_frame_command(args: &[String], json: bool) -> Result<String, CliError
             }
         }
         Some("read") => context_frame_reading::command(&args[1..], json),
+        // The engine's word on cells of one instrument (`ql.instrument-cells/v1`
+        // from the file or stdin, bounded to 1 MiB).
+        Some("team-space") if args.get(1).map(String::as_str) == Some("check") => {
+            let (Some(instrument), Some(path)) = (args.get(2), args.get(3)) else {
+                return Err(CliError(
+                    "usage: ql context-frame team-space check <instrument> <cells.json|-> [--json]"
+                        .into(),
+                ));
+            };
+            let reader: Box<dyn std::io::Read> = if path == "-" {
+                Box::new(std::io::stdin())
+            } else {
+                Box::new(std::fs::File::open(path).map_err(|e| CliError(e.to_string()))?)
+            };
+            let mut input = String::new();
+            std::io::Read::read_to_string(
+                &mut std::io::Read::take(reader, 1024 * 1024 + 1),
+                &mut input,
+            )
+            .map_err(|e| CliError(e.to_string()))?;
+            if input.len() > 1024 * 1024 {
+                return Err(CliError("the cells exceed 1 MiB".into()));
+            }
+            let request: serde_json::Value = serde_json::from_str(&input)
+                .map_err(|e| CliError(format!("the cells are not JSON: {e}")))?;
+            let answer = ql_mef::team_space::team_space()
+                .check_cells(instrument, &request)
+                .map_err(|e| CliError(e.to_string()))?;
+            serde_json::to_string_pretty(&answer).map_err(CliError::from)
+        }
         Some("team-space") => {
             let space = ql_mef::team_space::team_space();
             if json {
@@ -1424,6 +1454,127 @@ mod tests {
         assert_eq!(frames["grammarVersion"], CONTEXT_FRAME_GRAMMAR_VERSION);
         assert_eq!(frames["frames"].as_array().unwrap().len(), 7);
         assert_eq!(frames["frames"][4]["code"], "CF5");
+    }
+
+    /// The engine's word on cells of a decision instrument (O-I #843: a
+    /// Factory unit's seven heads are a Vāk-block cell): each chosen label
+    /// held to its head's labels and cardinality, the instrument's
+    /// constraints held to the choice, and every head the cell leaves open
+    /// named. A pick is evidence; this is where the engine validates it. No
+    /// model is called.
+    #[test]
+    fn a_cell_of_an_instrument_is_checked_by_the_engine_with_its_open_heads_named() {
+        let space = ql_mef::team_space::team_space();
+        let block = space.instrument("vak-block").unwrap();
+        let labels = |head: &str| -> Vec<String> {
+            block.heads.iter().find(|h| h["id"] == head).unwrap()["labels"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|l| l["id"].as_str().unwrap().to_string())
+                .collect()
+        };
+        let first = |head: &str| labels(head)[0].clone();
+        let whole: serde_json::Map<String, serde_json::Value> = [
+            "vak-cpf",
+            "vak-ct",
+            "vak-cp",
+            "vak-cf",
+            "vak-cfp",
+            "vak-cs",
+            "vak-direction",
+        ]
+        .iter()
+        .map(|head| ((*head).to_string(), serde_json::json!([first(head)])))
+        .collect();
+        let unauthorised = labels("vak-cpf")
+            .into_iter()
+            .find(|label| label != "authorised-undertaking")
+            .unwrap();
+        let request = serde_json::json!({"schema": "ql.instrument-cells/v1", "cells": [
+            {"key": "whole", "chosen": whole},
+            {"key": "open-cs", "chosen": {"vak-cpf": [first("vak-cpf")]}},
+            {"key": "illegal", "chosen": {"vak-cf": ["CF8"]}},
+            {"key": "z", "chosen": {"vak-cfp": ["Z"], "vak-cpf": [unauthorised]}},
+            {"key": "stray", "chosen": {"vak-nothing": ["x"]}},
+        ]});
+        let path = std::env::temp_dir().join(format!("ql-cell-check-{}.json", std::process::id()));
+        std::fs::write(&path, request.to_string()).unwrap();
+        let answer = execute_cli(&[
+            "context-frame".into(),
+            "team-space".into(),
+            "check".into(),
+            "vak-block".into(),
+            path.display().to_string(),
+            "--json".into(),
+        ]);
+        let _ = std::fs::remove_file(&path);
+        let answer: serde_json::Value = serde_json::from_str(&answer.unwrap()).unwrap();
+        assert_eq!(answer["schema"], "ql.instrument-cell-check/v1");
+        assert_eq!(answer["instrument"], "vak-block");
+        let cell = |key: &str| {
+            answer["cells"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|c| c["key"] == key)
+                .unwrap()
+                .clone()
+        };
+        assert_eq!(cell("whole")["state"], "admitted");
+        assert_eq!(cell("whole")["open"], serde_json::json!([]));
+        let open = cell("open-cs");
+        assert_eq!(
+            open["state"], "admitted",
+            "an open head is the head's abstention, legal"
+        );
+        assert!(
+            open["open"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|h| h == "vak-cs")
+        );
+        assert!(open["why"].as_str().unwrap().contains("sequence"), "{open}");
+        let illegal = cell("illegal");
+        assert_eq!(illegal["state"], "refused");
+        assert!(
+            illegal["why"].as_str().unwrap().contains("CF8"),
+            "{illegal}"
+        );
+        let z = cell("z");
+        assert_eq!(z["state"], "refused");
+        assert!(
+            z["why"]
+                .as_str()
+                .unwrap()
+                .contains("authorised-undertaking"),
+            "{z}"
+        );
+        assert_eq!(cell("stray")["state"], "refused");
+        assert!(
+            cell("stray")["why"]
+                .as_str()
+                .unwrap()
+                .contains("vak-nothing")
+        );
+        // A request in another shape, or for an instrument the space holds none of, is refused whole.
+        assert!(
+            ql_mef::team_space::team_space()
+                .check_cells(
+                    "vak-none",
+                    &serde_json::json!({"schema": "ql.instrument-cells/v1", "cells": []})
+                )
+                .is_err()
+        );
+        assert!(
+            ql_mef::team_space::team_space()
+                .check_cells(
+                    "vak-block",
+                    &serde_json::json!({"schema": "other/v1", "cells": []})
+                )
+                .is_err()
+        );
     }
 
     #[test]

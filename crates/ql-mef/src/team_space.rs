@@ -28,6 +28,11 @@ use crate::vak_profile::{
 use crate::vak_workflow_types::Specialist;
 use crate::{CONTEXT_FRAME_GRAMMAR_VERSION, ContextFrameId};
 
+/// The cells of one instrument a caller has filled, and the engine's word on
+/// them (`TeamSpace::check_cells`).
+pub const INSTRUMENT_CELLS: &str = "ql.instrument-cells/v1";
+pub const INSTRUMENT_CELL_CHECK: &str = "ql.instrument-cell-check/v1";
+
 /// Stable contract id of the serialised team space.
 pub const TEAM_SPACE_CONTRACT: &str = "ql.vak-team-space/v1";
 /// The proving Positions of the first two situated roles (L5 lock §15).
@@ -1479,6 +1484,146 @@ impl TeamSpace {
             receipt: false,
             abstention: answer.labels.is_empty(),
         })
+    }
+
+    /// The engine's word on cells of one instrument (`ql.instrument-cells/v1`
+    /// → `ql.instrument-cell-check/v1`): for each cell, every chosen label
+    /// held to its head's labels and cardinality, the instrument's
+    /// constraints held to the choice, and the heads the cell leaves open
+    /// named — a head the cell does not name, or names with no label, is its
+    /// abstention, which the instrument allows. A cell is admitted when no
+    /// label is illegal, no cardinality is broken and no constraint is broken
+    /// by what it chose; refused otherwise, with why. A Factory unit's seven
+    /// heads are a Vāk-block cell (O-I #843). No model is called.
+    pub fn check_cells(&self, instrument: &str, request: &Value) -> Result<Value, TeamSpaceError> {
+        if request["schema"] != INSTRUMENT_CELLS {
+            return Err(invalid(format!("a check takes `{INSTRUMENT_CELLS}` cells")));
+        }
+        let instrument = self
+            .instrument(instrument)
+            .ok_or_else(|| TeamSpaceError::UnknownInstrument(instrument.to_string()))?;
+        let cells = request["cells"]
+            .as_array()
+            .ok_or_else(|| invalid("a check names its cells"))?;
+        let checked: Vec<Value> = cells
+            .iter()
+            .map(|cell| {
+                let key = cell["key"].clone();
+                let chosen = cell["chosen"].as_object().cloned().unwrap_or_default();
+                let mut refusals = Vec::new();
+                for named in chosen.keys() {
+                    if !instrument.heads.iter().any(|h| h["id"] == named.as_str()) {
+                        refusals.push(format!("`{named}` is no head of `{}`", instrument.id));
+                    }
+                }
+                let mut heads = Vec::new();
+                let mut open = Vec::new();
+                for head in &instrument.heads {
+                    let id = head["id"].as_str().unwrap_or_default();
+                    let field = head["field"].as_str().unwrap_or_default();
+                    let given: Vec<String> = chosen
+                        .get(id)
+                        .and_then(Value::as_array)
+                        .into_iter()
+                        .flatten()
+                        .filter_map(|l| l.as_str().map(str::to_string))
+                        .collect();
+                    let legal: BTreeSet<&str> = head["labels"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .filter_map(|l| l["id"].as_str())
+                        .collect();
+                    let illegal: Vec<&String> =
+                        given.iter().filter(|l| !legal.contains(l.as_str())).collect();
+                    let max = head["cardinality"]["max"].as_u64().unwrap_or(0) as usize;
+                    let state = if !illegal.is_empty() {
+                        for label in &illegal {
+                            refusals.push(format!("label `{label}` is not legal for `{id}` ({field})"));
+                        }
+                        "refused"
+                    } else if given.len() > max {
+                        refusals.push(format!("`{id}` ({field}) holds at most {max}, and {} are chosen", given.len()));
+                        "refused"
+                    } else if given.is_empty() {
+                        open.push(Value::from(id));
+                        "open"
+                    } else {
+                        "chosen"
+                    };
+                    heads.push(json!({"head": id, "field": field, "labels": given, "state": state}));
+                }
+                let picked = |selection: &Value| -> bool {
+                    let head = selection["head_id"].as_str().unwrap_or_default();
+                    let given: BTreeSet<&str> = chosen
+                        .get(head)
+                        .and_then(Value::as_array)
+                        .into_iter()
+                        .flatten()
+                        .filter_map(Value::as_str)
+                        .collect();
+                    let wanted: Vec<&str> = selection["label_ids"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .filter_map(Value::as_str)
+                        .collect();
+                    if selection["match"] == "any" {
+                        wanted.iter().any(|l| given.contains(l))
+                    } else {
+                        !wanted.is_empty() && wanted.iter().all(|l| given.contains(l))
+                    }
+                };
+                let all = |selections: &Value| -> bool {
+                    selections.as_array().is_some_and(|s| !s.is_empty() && s.iter().all(picked))
+                };
+                for constraint in &instrument.constraints {
+                    let broken = match constraint["kind"].as_str() {
+                        Some("implication") => all(&constraint["antecedent"]) && !all(&constraint["consequent"]),
+                        Some("exclusion") => all(&constraint["forbidden_together"]),
+                        _ => false,
+                    };
+                    if broken {
+                        let wants: Vec<String> = constraint["consequent"]
+                            .as_array()
+                            .into_iter()
+                            .flatten()
+                            .map(|c| {
+                                let labels: Vec<&str> = c["label_ids"]
+                                    .as_array()
+                                    .into_iter()
+                                    .flatten()
+                                    .filter_map(Value::as_str)
+                                    .collect();
+                                format!("`{}` {}", c["head_id"].as_str().unwrap_or_default(), labels.join(", "))
+                            })
+                            .collect();
+                        refusals.push(format!(
+                            "`{}` ({}) is broken{}",
+                            constraint["id"].as_str().unwrap_or_default(),
+                            constraint["rule_ref"].as_str().unwrap_or_default(),
+                            if wants.is_empty() { String::new() } else { format!(": it asks {}", wants.join("; ")) }
+                        ));
+                    }
+                }
+                let fields: Vec<&str> = instrument
+                    .heads
+                    .iter()
+                    .filter(|h| open.iter().any(|o| *o == h["id"]))
+                    .filter_map(|h| h["field"].as_str())
+                    .collect();
+                let why = if !refusals.is_empty() {
+                    refusals.join("; ")
+                } else if fields.is_empty() {
+                    "every head holds a label it allows, and no constraint is broken".to_string()
+                } else {
+                    format!("every chosen label is one its head holds, and no constraint is broken; open: {}", fields.join(", "))
+                };
+                json!({"key": key, "state": if refusals.is_empty() { "admitted" } else { "refused" },
+                    "heads": heads, "open": open, "why": why})
+            })
+            .collect();
+        Ok(json!({"schema": INSTRUMENT_CELL_CHECK, "instrument": instrument.id, "cells": checked}))
     }
 
     /// A short reading of the grid for the terminal.
