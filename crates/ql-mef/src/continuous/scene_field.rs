@@ -41,11 +41,12 @@ use super::{
     ClockInput, FieldInput, FieldSample, FieldUnits, LiftInput, STRIKE_CAP_METRES, StrikeAtInput,
     StrikeInput,
 };
+use crate::form_instrument::body::{BODY_STANDING, BodyRequest, BodyVoice, EXCITER_LAW, FormBody};
 use crate::m1_engine::M1Engine;
 use crate::m1_prime;
 pub use crate::m1_prime::Tuning;
 use crate::m2_engine::{
-    CarrierWeight, ContinuousMode, MaterialFibre, PhysicalParameter, ResonatorState,
+    CarrierWeight, ContinuousMode, M2Request, MaterialFibre, PhysicalParameter, ResonatorState,
 };
 use crate::nara::{
     EventBasisRefs, PersonalConstitution, PersonalEventInput, PersonalFieldInstance,
@@ -1417,7 +1418,28 @@ pub struct TorusCheckpoint {
     pub amplitudes: Vec<[f64; 2]>,
     pub session: m1_prime::SessionCheckpoint,
     pub law: String,
+    /// The form the body was made from when it was kept (`torus-body`, O-I #852); absent, the torus rang.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub body: Option<KeptBody>,
 }
+
+/// A form's body as a checkpoint keeps it: the request it is prepared from, and the preparation it was, so a restore
+/// prepares it again and a body its form no longer prepares to is refused, never rung.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeptBody {
+    pub request: BodyRequest,
+    /// The owner's `ql.physical-body-preparation/v1` of it (`FormBody::reading`).
+    pub prepared: Value,
+}
+
+/// What the scene rings (`torus-body`, O-I #852; DLW manual §21.2 Body, "The body is what rings. It is the torus unless you
+/// choose a form").
+pub const TORUS_BODY_LAW: &str = "the body is what rings: the torus unless a form is chosen. A form's body rings the scene's resident voices, each at the pitch the event sounds it and by its weight, through every mode the form's own creased lattice gives (FormBody): its frequencies are the voice's times the mode's ratio, it rings out at π·f/Q of its material, its points are the form's samples, and it is heard at its pickup. Choosing a body is one body act on the native owner at its cursor, under the clock in force: the new body rings from rest (the torus from the states its event supplies, as the scene opened it), what the body standing rang is not carried to another body, and the event, the session, its pulse and the receiver stand. A strike at points strikes the voices of the tuning in force at the form's sample nearest each point (its exciter law); a named strike names the modes the body rings; the Carrier strikes those voices where the body is heard, each step the share of an event's excitation the Torus gives a voice; an event's strike excites them there too. A body is chosen for this scene's event, subject and sample rate, within the native owner's shape budget, and once no act waits for its sample; anything else is refused in words and changes nothing";
+/// Where a form's body is heard (`torus-receiver` while a form rings).
+pub const FORM_BODY_HEARING_LAW: &str = "a form's body is heard where its form says it is heard, at its pickup: each mode by the declared gain times its shape there, in the world's context and in the listener's alike, so a receiver's place moves no gain while a form rings. The place is still the listener's and is kept nowhere";
+/// The most shape coefficients one body choice may hand the native owner: samples × modes (the worker's JSON budget).
+const NATIVE_SHAPE_BUDGET: usize = 262_144;
 /// The law of the classes a Torus reading carries (O-I #851).
 pub const CLASS_SOUNDS_LAW: &str = "each of the twelve classes stands at the one place of its helix every touch-point of it shares, and the pulse carries that place's point across the surface (janko POINT_LAW); a class sounds every voice of the tuning in force by that voice's shape term at its point now: what a key of the class struck now gives the voice per unit of the amplitude the body takes, its velocity × Strike (strike_at_tuned). A symbol's voice is the chord of the classes its form covers where it stands (DLW §20.2)";
 /// The standing of a played note's own cell.
@@ -1496,6 +1518,73 @@ pub struct SceneInstrument {
     heard: Vec<f64>,
     /// What a receiver hears the body by, made for the voices' shape terms now.
     hearing: Option<Hearing>,
+    /// The form the body is made from (`torus-body`, `TORUS_BODY_LAW`); `None` while the torus rings.
+    body: Option<SceneBody>,
+}
+
+/// A form made the scene's body: the body its owner prepared, and the voices it rings, the scene's resident voices in the
+/// native owner's order, each through every mode of the body.
+struct SceneBody {
+    body: FormBody,
+    voices: Vec<BodyVoice>,
+}
+
+/// The resident voices as a form's body rings them: each at the pitch `basis` sounds it, from its M2 source, by its weight
+/// in `shape`, in the native owner's order.
+fn body_voices(basis: &CoupledBasis, shape: &ShapeBasis) -> Result<Vec<BodyVoice>, String> {
+    let modes = &basis
+        .m2_input
+        .resonator
+        .as_ref()
+        .ok_or("the event carries no voices for a body to ring")?
+        .modes;
+    shape
+        .resident_voices()
+        .map(|voice| {
+            let mode = modes
+                .iter()
+                .find(|mode| mode.mode_ref == voice.mode_ref)
+                .ok_or_else(|| format!("the event sounds no voice {}", voice.mode_ref))?;
+            Ok(BodyVoice {
+                mode_ref: voice.mode_ref.clone(),
+                source_coordinate: mode.source_coordinate.clone(),
+                frequency_hz: mode.frequency_hz,
+                weight: voice.weight,
+            })
+        })
+        .collect()
+}
+
+/// `basis`'s M2 lowered onto a form's body: the body's modes for `voices` in place of the torus's. With `excite`, each mode
+/// takes its voice's supplied state times the voice's weight times the mode's shape where the body is heard, as an event's
+/// strike there; otherwise the body rests (`FormBody::resonator`).
+fn lowered_m2(
+    body: &FormBody,
+    basis: &CoupledBasis,
+    voices: &[BodyVoice],
+    excite: bool,
+) -> Result<M2Request, String> {
+    let mut m2 = basis.m2_input.clone();
+    let mut resonator = body.resonator(m2.stamp.clone(), voices)?;
+    if excite {
+        let supplied = &m2
+            .resonator
+            .as_ref()
+            .ok_or("the event carries no voices for a body to ring")?
+            .modes;
+        let n = body.modes().len();
+        for (i, mode) in resonator.modes.iter_mut().enumerate() {
+            let voice = &voices[i / n];
+            let given = supplied
+                .iter()
+                .find(|m| m.mode_ref == voice.mode_ref)
+                .map_or([0.0, 0.0], |m| m.amplitude);
+            let at = voice.weight * body.modes()[i % n].shape[body.pickup()];
+            mode.amplitude = given.map(|a| a * at);
+        }
+    }
+    m2.resonator = Some(resonator);
+    Ok(m2)
 }
 
 /// The torus's major radius in tube radii (m1::torus: R = 16/9, r = 1).
@@ -1547,6 +1636,32 @@ struct CarrierDrive {
     impulses: Vec<[f64; 2]>,
 }
 
+/// The field the torus rings in over `field`: its resident voices by the declared gain, its samples and its shapes.
+fn torus_field(
+    field: &SceneField,
+    shape: &ShapeBasis,
+    geometry: &SceneGeometry,
+    material: &SceneMaterial,
+) -> Result<FieldInput, String> {
+    Ok(FieldInput {
+        subject_ref: field.subject_ref.clone(),
+        sample_rate: field.sample_rate,
+        clock: field.clock.clone(),
+        driver_numerator: field.driver_numerator,
+        driver_denominator: field.driver_denominator,
+        units: FieldUnits {
+            amplitude: "m".into(),
+            excitation: "m/s".into(),
+            shape: "dimensionless".into(),
+            position: "m".into(),
+            audio: "linear".into(),
+        },
+        audio_gains: vec![material.audio_gain_per_metre; shape.resident_voices().count()],
+        samples: shape.samples(geometry)?,
+        shape_ref: Some(shape.shape_ref.clone()),
+    })
+}
+
 impl SceneInstrument {
     pub fn open(worker: &Path, config: SceneConfig, timeout: Duration) -> Result<Self, String> {
         config.validate()?;
@@ -1561,26 +1676,7 @@ impl SceneInstrument {
             settings.tuning,
         )?;
         let shape = ShapeBasis::from_basis(&basis)?;
-        let field = FieldInput {
-            subject_ref: config.field.subject_ref.clone(),
-            sample_rate: config.field.sample_rate,
-            clock: config.field.clock.clone(),
-            driver_numerator: config.field.driver_numerator,
-            driver_denominator: config.field.driver_denominator,
-            units: FieldUnits {
-                amplitude: "m".into(),
-                excitation: "m/s".into(),
-                shape: "dimensionless".into(),
-                position: "m".into(),
-                audio: "linear".into(),
-            },
-            audio_gains: vec![
-                config.material.audio_gain_per_metre;
-                shape.resident_voices().count()
-            ],
-            samples: shape.samples(&config.geometry)?,
-            shape_ref: Some(shape.shape_ref.clone()),
-        };
+        let field = torus_field(&config.field, &shape, &config.geometry, &config.material)?;
         let personal = config
             .reception
             .map(PersonalFieldInstance::new)
@@ -1609,6 +1705,7 @@ impl SceneInstrument {
             receiver: None,
             heard: Vec::new(),
             hearing: None,
+            body: None,
         };
         instrument.heard = instrument.declared_gains();
         instrument.sync_carrier()?;
@@ -1626,22 +1723,56 @@ impl SceneInstrument {
         }
         let tuning = self.tuning();
         let (anchor_samples, anchor_steps) = self.torus.anchor();
-        Some(CarrierDrive {
-            steps_per_second: self.torus.steps_per_second(),
-            anchor_samples,
-            anchor_steps,
-            impulses: self
+        let metres = share * self.material.strike_metres;
+        let impulses = match &self.body {
+            // A form's body: the voices in force struck where the body is heard, each mode by the voice's weight times its shape
+            // there (`TORUS_BODY_LAW`).
+            Some(body) => body
+                .voices
+                .iter()
+                .zip(self.shape.resident_voices())
+                .flat_map(|(voice, resident)| {
+                    let sounding = resident.tuning == tuning;
+                    body.body.modes().iter().map(move |mode| {
+                        if sounding {
+                            [metres * voice.weight * mode.shape[body.body.pickup()], 0.0]
+                        } else {
+                            [0.0, 0.0]
+                        }
+                    })
+                })
+                .collect(),
+            None => self
                 .shape
                 .resident_voices()
                 .map(|voice| {
                     if voice.tuning == tuning {
-                        [share * self.material.strike_metres, 0.0]
+                        [metres, 0.0]
                     } else {
                         [0.0, 0.0]
                     }
                 })
                 .collect(),
+        };
+        Some(CarrierDrive {
+            steps_per_second: self.torus.steps_per_second(),
+            anchor_samples,
+            anchor_steps,
+            impulses,
         })
+    }
+
+    /// The modes the native owner rings now, in its order: the resident voices on the torus, each voice's body modes on a
+    /// form's body.
+    fn native_modes(&self) -> Vec<String> {
+        match &self.body {
+            Some(body) => body.body.mode_refs(&body.voices),
+            None => self
+                .shape
+                .resident_voices()
+                .map(|voice| voice.mode_ref.clone())
+                .collect(),
+        }
     }
 
     /// Gives the native owner the Carrier's drive when it differs from the one it
@@ -1660,7 +1791,7 @@ impl SceneInstrument {
             )?,
             None => {
                 let (anchor_samples, anchor_steps) = self.torus.anchor();
-                let rest = vec![[0.0, 0.0]; self.shape.resident_voices().count()];
+                let rest = vec![[0.0, 0.0]; self.native_modes().len()];
                 self.session
                     .set_carrier_field(0.0, anchor_samples, anchor_steps, &rest)?
             }
@@ -1708,6 +1839,11 @@ impl SceneInstrument {
         reading["carrier"]["metres_per_step"] =
             json!(self.torus.carrier_step() * self.material.strike_metres);
         reading["carrier"]["native"] = json!(self.carrier.is_some());
+        reading["body"] = match &self.body {
+            Some(body) => json!({"kind": "form", "prepared": body.body.reading(),
+                "modes": body.body.modes().len(), "voices": body.voices.len(), "law": TORUS_BODY_LAW}),
+            None => json!({"kind": "torus", "law": TORUS_BODY_LAW}),
+        };
         reading["waiting"] = json!(
             self.waiting
                 .iter()
@@ -1886,9 +2022,15 @@ impl SceneInstrument {
         Ok((field, landed))
     }
 
-    /// Every voice heard by the declared gain: the world's context.
+    /// Every voice heard by the declared gain: the world's context. A form's body is heard at its pickup
+    /// (`FORM_BODY_HEARING_LAW`).
     fn declared_gains(&self) -> Vec<f64> {
-        vec![self.material.audio_gain_per_metre; self.shape.resident_voices().count()]
+        match &self.body {
+            Some(body) => body
+                .body
+                .audio_gains(&body.voices, self.material.audio_gain_per_metre),
+            None => vec![self.material.audio_gain_per_metre; self.shape.resident_voices().count()],
+        }
     }
 
     /// The clock angle the body's samples are turned by now (write_targets: 0 fixed, 1 inscription, 2 lensing).
@@ -1908,7 +2050,8 @@ impl SceneInstrument {
     /// world's context; from a place, the declared gain × how strongly the surface near it moves in each voice against how strongly
     /// the whole surface does, × the tube radius over the distance beyond one tube radius.
     fn gains_from(&mut self, receiver: Option<[f64; 3]>, turn: f64) -> Vec<f64> {
-        let Some(place) = receiver else {
+        // A form's body is heard where its form says it is heard (`FORM_BODY_HEARING_LAW`).
+        let Some(place) = receiver.filter(|_| self.body.is_none()) else {
             return self.declared_gains();
         };
         let gain = self.material.audio_gain_per_metre;
@@ -2033,10 +2176,10 @@ impl SceneInstrument {
         json!({
             "schema": TORUS_RECEIVER,
             "context": if self.receiver.is_some() { "personal" } else { "world" },
-            "gains": self.shape.resident_voices().zip(&self.heard)
-                .map(|(voice, gain)| json!({"mode_ref": voice.mode_ref, "gain": gain}))
+            "gains": self.native_modes().iter().zip(&self.heard)
+                .map(|(mode, gain)| json!({"mode_ref": mode, "gain": gain}))
                 .collect::<Vec<_>>(),
-            "law": TORUS_RECEIVER_LAW,
+            "law": if self.body.is_some() { FORM_BODY_HEARING_LAW } else { TORUS_RECEIVER_LAW },
         })
     }
 
@@ -2070,7 +2213,7 @@ impl SceneInstrument {
     /// no strike and no reshape (one ratio keeps every weight).
     fn set_fundamental(&mut self, hz: Option<f64>) -> Result<Value, String> {
         let (input, shape) = self.fundamental_event(hz)?;
-        let field = self.session.replace_field_state(input.clone(), false)?;
+        let field = self.continue_field(input.clone(), &shape, false)?;
         self.event = input;
         self.shape = shape;
         Ok(field)
@@ -2242,6 +2385,10 @@ impl SceneInstrument {
             amplitudes,
             session: self.torus.checkpoint(now),
             law: TORUS_CHECKPOINT_LAW.into(),
+            body: self.body.as_ref().map(|body| KeptBody {
+                request: body.body.request().clone(),
+                prepared: body.body.reading(),
+            }),
         };
         serde_json::to_value(checkpoint).map_err(|e| e.to_string())
     }
@@ -2317,8 +2464,26 @@ impl SceneInstrument {
                     .into(),
             );
         }
-        if kept.amplitudes.len() != voices.len() {
-            return Err("a checkpoint's body state names one state for each of its voices".into());
+        // The form it was kept on, prepared again: a body its form no longer prepares to is refused, never rung.
+        let kept_body = match &kept.body {
+            Some(kept_body) => {
+                let body = self.judge_body(kept_body.request.clone())?;
+                if body.reading() != kept_body.prepared {
+                    return Err(format!(
+                        "the checkpoint's body was prepared otherwise than its form prepares now ({}): prepare it again before it rings",
+                        body.preparation_ref()
+                    ));
+                }
+                Some(body)
+            }
+            None => None,
+        };
+        let per_voice = kept_body.as_ref().map_or(1, |body| body.modes().len());
+        if kept.amplitudes.len() != voices.len() * per_voice {
+            return Err(
+                "a checkpoint's body state names one state for each mode of each of its voices"
+                    .into(),
+            );
         }
         if shape.shape_ref != kept.shape_ref {
             return Err("the checkpoint's form is not this scene's: its shapes differ".into());
@@ -2333,12 +2498,25 @@ impl SceneInstrument {
         // the kept tuning. A failure from here is the owner's, never a refusal of the checkpoint.
         let before = std::mem::replace(&mut self.torus, torus);
         let carrier = self.carrier.clone();
+        let same_body = match (&self.body, &kept_body) {
+            (None, None) => true,
+            (Some(now), Some(kept)) => now.body.reading() == kept.reading(),
+            _ => false,
+        };
         let applied = (|| -> Result<Value, String> {
+            // While a form rings, the event and the damping come back on the torus, and the form kept is chosen after them.
+            let to_torus = self.body.is_some() && (!same_event || !same_damping || !same_body);
+            if to_torus {
+                self.choose_body(None)?;
+            }
             if !same_event {
                 self.replace(&kept.event, false)?;
             }
             if !same_damping {
                 self.set_damping(kept.damping_per_second)?;
+            }
+            if let Some(body) = kept_body.filter(|_| to_torus || !same_body) {
+                self.choose_body(Some(body))?;
             }
             let field = self.session.set_state_field(&kept.amplitudes)?;
             self.sync_carrier()?;
@@ -2598,10 +2776,11 @@ impl SceneInstrument {
         input.m3_commands = Vec::new();
         rebase_m3_request(&mut input.m3, &basis)?;
         let shape = ShapeBasis::from_basis(&basis)?;
-        let mut field = self.session.replace_field_state(input.clone(), strike)?;
+        let mut field = self.continue_field(input.clone(), &shape, strike)?;
         self.event = input;
         if shape != self.shape {
-            if !shape.same_body(&self.shape) {
+            // A form's body keeps its own shapes; the torus's are re-read for when it rings again.
+            if self.body.is_none() && !shape.same_body(&self.shape) {
                 let shapes = shape.shapes(&self.geometry)?;
                 field = self.session.replace_shapes(&shape.shape_ref, shapes)?;
             }
@@ -2621,6 +2800,12 @@ impl SceneInstrument {
     pub fn set_damping(&mut self, per_second: f64) -> Result<Value, String> {
         if !per_second.is_finite() || !(0.0..=1e6).contains(&per_second) {
             return Err("scene damping must be finite and in 0..1000000 per second".into());
+        }
+        if let Some(body) = &self.body {
+            return Err(format!(
+                "a form's body rings out by the Q factor of its material ({}): choose the body again with the Damping you want, or choose the torus",
+                body.body.request().material.q_factor
+            ));
         }
         let mut material = self.material.clone();
         material.damping_per_second = per_second;
@@ -2660,17 +2845,20 @@ impl SceneInstrument {
             return Err("a played strike must name at least one voice".into());
         }
         let mut seen = std::collections::BTreeSet::new();
+        let native = self.native_modes();
         for act in strikes {
-            if !self
-                .shape
-                .resident_voices()
-                .any(|voice| voice.mode_ref == act.mode_ref)
-                || !seen.insert(&act.mode_ref)
-            {
-                return Err(format!(
-                    "a played strike must name each current scene voice once; {:?} is not one",
-                    act.mode_ref
-                ));
+            if !native.contains(&act.mode_ref) || !seen.insert(&act.mode_ref) {
+                return Err(if self.body.is_some() {
+                    format!(
+                        "a played strike must name each mode the form's body rings once (a voice's own, <voice>/body/<k>); {:?} is not one",
+                        act.mode_ref
+                    )
+                } else {
+                    format!(
+                        "a played strike must name each current scene voice once; {:?} is not one",
+                        act.mode_ref
+                    )
+                });
             }
             if act
                 .amplitude
@@ -2681,6 +2869,174 @@ impl SceneInstrument {
             }
         }
         self.session.strike_field_when(strikes, at_samples_elapsed)
+    }
+
+    /// A strike at points lowered onto the body that rings: on the torus, the voices of `tuning` by their shape terms at
+    /// each point (`ShapeBasis::strike_at_tuned`); on a form's body, those voices' body modes by their shapes at the form's
+    /// sample nearest each point (`FormBody::strike_at`, its exciter law). Refused whole, in words.
+    pub fn strike_at_lowered(
+        &self,
+        points: &[StrikeAtInput],
+        tuning: Tuning,
+    ) -> Result<Vec<StrikeInput>, String> {
+        let Some(body) = &self.body else {
+            return self.shape.strike_at_tuned(points, tuning);
+        };
+        let voices: Vec<BodyVoice> = body
+            .voices
+            .iter()
+            .zip(self.shape.resident_voices())
+            .filter(|(_, resident)| resident.tuning == tuning)
+            .map(|(voice, _)| voice.clone())
+            .collect();
+        body.body.strike_at(points, &voices)
+    }
+
+    /// The `ql.strike-at/v1` receipt of a strike [`Self::strike_at_lowered`]: on the torus, each voice's coupling at the points; on a
+    /// form's body, the body and each mode's impulse.
+    pub fn strike_at_lowered_receipt(
+        &self,
+        points: &[StrikeAtInput],
+        impulses: &[StrikeInput],
+    ) -> Value {
+        let Some(body) = &self.body else {
+            return self.shape.strike_at_receipt(points, impulses);
+        };
+        json!({
+            "schema": STRIKE_AT_RECEIPT,
+            "points": points,
+            "body": body.body.preparation_ref(),
+            "samples": points.iter().map(|point| body.body.points()[body.body.sample_at(point)].sample_id).collect::<Vec<_>>(),
+            "modes": impulses,
+            "law": EXCITER_LAW,
+            "standing": BODY_STANDING,
+        })
+    }
+
+    /// The event's field continued on the body that rings: one modes continuation of the same voices
+    /// (`CoupledFieldSession::replace_field_state`); while a form rings, the composed M2 lowered onto the form's modes for
+    /// those voices at their new pitches (`lowered_m2`), and the form's shapes read again where a voice's weight moved.
+    fn continue_field(
+        &mut self,
+        input: CoupledInput,
+        shape: &ShapeBasis,
+        strike: bool,
+    ) -> Result<Value, String> {
+        let Some(body) = &self.body else {
+            return self.session.replace_field_state(input, strike);
+        };
+        let mut voices = None;
+        let mut field = self.session.replace_field_lowered(input, strike, |basis| {
+            let next = body_voices(basis, shape)?;
+            let m2 = lowered_m2(&body.body, basis, &next, strike)?;
+            voices = Some(next);
+            Ok(m2)
+        })?;
+        let voices = voices.ok_or("the body's voices were not lowered")?;
+        if voices
+            .iter()
+            .zip(&body.voices)
+            .any(|(now, was)| now.weight != was.weight)
+        {
+            let shapes = body
+                .body
+                .samples(&voices, self.geometry.attachment)
+                .into_iter()
+                .map(|sample| sample.mode_shapes)
+                .collect();
+            field = self.session.replace_shapes(body.body.state_ref(), shapes)?;
+        }
+        if let Some(body) = self.body.as_mut() {
+            body.voices = voices;
+        }
+        Ok(field)
+    }
+
+    /// Judges a form for this scene's body without any native act: prepared for its event and subject at its rate, and
+    /// within the native owner's shape budget for every resident voice through every mode.
+    fn judge_body(&self, request: BodyRequest) -> Result<FormBody, String> {
+        let event = &self
+            .session
+            .current_basis()
+            .m2_input
+            .stamp
+            .identity
+            .event_ref;
+        if &request.event_ref != event {
+            return Err(format!(
+                "a form's body is prepared for this scene's event {event}: this one was prepared for {}",
+                request.event_ref
+            ));
+        }
+        let subject = &self.opened.field.subject_ref;
+        if &request.subject_ref != subject {
+            return Err(format!(
+                "a form's body is prepared for this scene's subject {subject}: this one was prepared for {}",
+                request.subject_ref
+            ));
+        }
+        let rate = self.opened.field.sample_rate;
+        if request.sample_rate != rate {
+            return Err(format!(
+                "this body was prepared at {} Hz; the scene runs at {rate} Hz",
+                request.sample_rate
+            ));
+        }
+        let body = FormBody::prepare(request)?;
+        let modes = self.shape.resident_voices().count() * body.modes().len();
+        let points = body.points().len();
+        if modes == 0 || points > NATIVE_SHAPE_BUDGET / modes {
+            return Err(format!(
+                "{} voices through {} modes of this form at its {points} points pass the native owner's budget of {NATIVE_SHAPE_BUDGET} shape terms: ring fewer modes or sample the form more coarsely",
+                self.shape.resident_voices().count(),
+                body.modes().len()
+            ));
+        }
+        Ok(body)
+    }
+
+    /// What the scene rings (`torus-body`, O-I #852; `TORUS_BODY_LAW`): a form made a body from `request`, or the torus
+    /// (`None`). One body act on the native owner at its cursor under the clock in force; the Carrier's drive follows the new
+    /// body and the receiver hears it. Refused in words, changing nothing, for a body this scene cannot ring. Returns the field.
+    pub fn set_body(&mut self, request: Option<BodyRequest>) -> Result<Value, String> {
+        let body = request
+            .map(|request| self.judge_body(request))
+            .transpose()?;
+        self.choose_body(body)
+    }
+
+    /// Rings `body` (`None`: the torus), judged already.
+    fn choose_body(&mut self, body: Option<FormBody>) -> Result<Value, String> {
+        let field = SceneField {
+            clock: self.session.clock_in_force()?,
+            ..self.opened.field.clone()
+        };
+        let basis = self.session.current_basis();
+        let (chosen, m2, input) = match body {
+            Some(body) => {
+                let voices = body_voices(basis, &self.shape)?;
+                let m2 = lowered_m2(&body, basis, &voices, false)?;
+                let input = body.field_input(
+                    &field,
+                    &voices,
+                    self.geometry.attachment,
+                    self.material.audio_gain_per_metre,
+                )?;
+                (Some(SceneBody { body, voices }), m2, input)
+            }
+            None => (
+                None,
+                basis.m2_input.clone(),
+                torus_field(&field, &self.shape, &self.geometry, &self.material)?,
+            ),
+        };
+        self.session.replace_body(m2, input)?;
+        self.body = chosen;
+        // The body act left the new voices undriven and heard by their declared gains.
+        self.carrier = None;
+        self.heard = self.declared_gains();
+        self.sync_carrier()?;
+        Ok(self.session.last_field().clone())
     }
 
     /// Played excitation of the torus surface: the performer strikes the body at
@@ -2721,8 +3077,8 @@ impl SceneInstrument {
                 ..*point
             })
             .collect();
-        let impulses = self.shape.strike_at_tuned(&struck, tuning)?;
-        let mut receipt = self.shape.strike_at_receipt(points, &impulses);
+        let impulses = self.strike_at_lowered(&struck, tuning)?;
+        let mut receipt = self.strike_at_lowered_receipt(points, &impulses);
         receipt["strike"] = json!(strike);
         let lands = match at_samples_elapsed {
             Some(at) => json!(at.to_string()),

@@ -310,6 +310,35 @@ public:
         require(next.reached <= 9007199254740991.0, "carrier pulse beyond exact steps");
         std::swap(carrier_, next);
     }
+    // The body chosen for this continuation (O-I #852; DLW manual §21.2 "The body is what rings"): the voices, their shapes and the
+    // geometry, material and model become `next`'s, ringing from its supplied states, as a body opened on them would. The event,
+    // subject, sample rate, clock, driver relation, cursor and last sample stand; nothing drives the new voices and they are heard by
+    // their supplied gains until the carrier and the gains are set again. One body act: one generation. An act admitted for a later
+    // sample names the standing body's voices, so a body is chosen once every such act has landed. `next` is validated whole, as a
+    // new body is, and every allocation completes before the commit.
+    void replace_body(std::uint64_t expected, ContinuationInput next) {
+        require(expected == source_.generation && expected != UINT64_MAX, "stale/overflow field generation");
+        require(pending_strikes() == 0,
+                "a strike waits for its sample on the body standing: a body is chosen once it has landed");
+        require(next.event_ref == source_.event_ref && next.subject_ref == source_.subject_ref &&
+                next.sample_rate == source_.sample_rate, "a body is chosen for the same event, subject and sample rate");
+        const auto &a = next.clock, &b = source_.clock;
+        require(next.driver_numerator == source_.driver_numerator && next.driver_denominator == source_.driver_denominator &&
+                a.inscription.turns == b.inscription.turns && a.inscription.half_degrees == b.inscription.half_degrees &&
+                a.lensing.turns == b.lensing.turns && a.lensing.half_degrees == b.lensing.half_degrees &&
+                std::equal(std::begin(a.grid_origin_half_degrees), std::end(a.grid_origin_half_degrees),
+                           std::begin(b.grid_origin_half_degrees)) &&
+                std::equal(std::begin(a.rate_numerators), std::end(a.rate_numerators), std::begin(b.rate_numerators)) &&
+                a.rate_denominator == b.rate_denominator &&
+                std::equal(std::begin(a.rate_remainders), std::end(a.rate_remainders), std::begin(b.rate_remainders)) &&
+                a.generation == b.generation, "a body is chosen under the clock in force: choosing it moves no clock");
+        next.generation = source_.generation + 1;
+        ContinuousField chosen(std::move(next));
+        chosen.elapsed_ = elapsed_;
+        chosen.driver_remainder_ = driver_remainder_;
+        chosen.last_ = last_;
+        *this = std::move(chosen);
+    }
     // Where the body is heard from (the Torus's receiver, O-I 856; QL-MEF #289): one output gain per prepared mode, in mode order.
     // A receiving setting, not a body act: the states, clock, cursor and generation stand, and so does every mode's dynamics. The
     // next rendered block reaches the new gains linearly from those it was heard by, so a move never clicks; gains equal to those in

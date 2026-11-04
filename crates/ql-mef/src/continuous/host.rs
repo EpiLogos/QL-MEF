@@ -194,6 +194,13 @@ pub enum HostOperation {
     TorusReceiver {
         receiver: Option<super::scene_field::ReceiverInput>,
     },
+    /// scene only: what rings (O-I #852, `TORUS_BODY_LAW`; DLW manual §21.2 Body). A form
+    /// made a body (`ql.form-body-request/v1`, prepared by the owner) rings the scene's
+    /// resident voices through its own modes; `null` is the torus. One body act at the
+    /// cursor under the clock in force; a body this scene cannot ring is refused in words.
+    TorusBody {
+        body: Option<Box<crate::form_instrument::body::BodyRequest>>,
+    },
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -515,7 +522,8 @@ impl FieldHost {
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }
                 | HostOperation::TorusRender { .. }
-                | HostOperation::TorusReceiver { .. },
+                | HostOperation::TorusReceiver { .. }
+                | HostOperation::TorusBody { .. },
                 _,
             ) => unreachable!("non-stage commands returned before stage dispatch"),
         };
@@ -699,6 +707,12 @@ impl FieldHost {
                     None
                 })
             }
+            HostOperation::TorusBody { body } => {
+                instrument.set_body(body.map(|body| *body)).map(|field| {
+                    extra.insert("influence".into(), instrument.influence());
+                    Some(field)
+                })
+            }
             _ => unreachable!("only Torus operations reach the Torus dispatch"),
         };
         let torus = instrument.torus_reading();
@@ -864,6 +878,7 @@ impl FieldHost {
                 | HostOperation::TorusRestore { .. }
                 | HostOperation::TorusRender { .. }
                 | HostOperation::TorusReceiver { .. }
+                | HostOperation::TorusBody { .. }
         ) {
             return self.torus_operation(request);
         }
@@ -974,7 +989,8 @@ impl FieldHost {
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }
                 | HostOperation::TorusRender { .. }
-                | HostOperation::TorusReceiver { .. },
+                | HostOperation::TorusReceiver { .. }
+                | HostOperation::TorusBody { .. },
                 _,
             ) => unreachable!("reads, reception and stage operations returned before dispatch"),
         };

@@ -415,6 +415,82 @@ fn setting_the_body_state_takes_one_generation_and_exactly_the_states_asked() {
     }
 }
 
+/// O-I #852: the body chosen for the continuation. The reply is judged by the
+/// chosen body's own guard against the standing receipt: its identity, voices
+/// and samples are the chosen ones, one generation is stepped, the cursor and
+/// the clock stand, and the voices ring from the states the frame supplies.
+#[test]
+fn choosing_a_body_takes_one_generation_and_rings_its_voices_from_their_supplied_states() {
+    let (m2, field, guard, mut receipt) = fixture();
+    receipt["samples_elapsed"] = json!("512");
+    let mut body: Value = serde_json::to_value(&m2).unwrap();
+    body["resonator"]["geometry_ref"] = json!("controlled:fold");
+    body["resonator"]["material_ref"] = json!("controlled:paper");
+    let mut second = body["resonator"]["modes"][0].clone();
+    second["mode_ref"] = json!("controlled:mode/0/body/1");
+    second["amplitude"] = json!([0.001, -0.0005]);
+    second["frequency_hz"] = json!(321.0);
+    body["resonator"]["modes"][0]["mode_ref"] = json!("controlled:mode/0/body/0");
+    body["resonator"]["modes"][0]["amplitude"] = json!([0.0, 0.0]);
+    body["resonator"]["modes"]
+        .as_array_mut()
+        .unwrap()
+        .push(second);
+    let body: M2Request = serde_json::from_value(body).unwrap();
+    let mut on_body = field.clone();
+    on_body.audio_gains = vec![1.0, 0.5];
+    on_body.samples[0].mode_shapes = vec![[0.0, 0.0, 1.0], [0.0, 0.0, -0.5]];
+    on_body.shape_ref = Some("controlled:fold/state".into());
+    let frame = serde_json::to_value(body.execute().unwrap()).unwrap();
+    let chosen = ReceiptGuard::new(&frame, &on_body).unwrap();
+    let request = json!({"operation":"replace-body", "m2":frame, "field":on_body});
+    let mut reply = chosen.fixed.clone();
+    reply.as_object_mut().unwrap().extend(
+        json!({"generation":"2", "samples_elapsed":"512", "clock":receipt["clock"],
+            "amplitudes_metres":[[0.0, 0.0], [0.001, -0.0005]], "audio":[],
+            "targets":[{"identity":0,"constituent":"#3-0","position":[0.0,0.0,0.0005]}],
+            "presentation_units_per_metre":1.0, "m2_identity":frame["identity"]})
+        .as_object()
+        .unwrap()
+        .clone(),
+    );
+    chosen.validate(&request, Some(&receipt), &reply).unwrap();
+    // The standing body's guard admits no reply of another body.
+    assert!(guard.validate(&request, Some(&receipt), &reply).is_err());
+    for (path, moved) in [
+        ("/generation", json!("1")),
+        ("/generation", json!("3")),
+        ("/samples_elapsed", json!("513")),
+        ("/amplitudes_metres/1/0", json!(0.002)),
+        ("/clock/inscription/turns", json!("0")),
+        ("/geometry_ref", json!("controlled:one-sample")),
+        ("/shape_ref", json!("controlled:one-sample")),
+    ] {
+        let mut bad = reply.clone();
+        *bad.pointer_mut(path).unwrap() = moved;
+        assert!(
+            chosen.validate(&request, Some(&receipt), &bad).is_err(),
+            "choosing the body moved {path}"
+        );
+    }
+    let mut short = reply.clone();
+    short["amplitudes_metres"] = json!([[0.0, 0.0]]);
+    assert!(chosen.validate(&request, Some(&receipt), &short).is_err());
+    // A body is chosen for the same event, subject and rate: refused before any transport.
+    let mut elsewhere = on_body.clone();
+    elsewhere.subject_ref = "controlled:subject/two".into();
+    let other = ReceiptGuard::new(&frame, &elsewhere).unwrap();
+    assert!(guard.chooses(&other).is_err());
+    let mut faster = on_body.clone();
+    faster.sample_rate = 96000;
+    assert!(
+        guard
+            .chooses(&ReceiptGuard::new(&frame, &faster).unwrap())
+            .is_err()
+    );
+    guard.chooses(&chosen).unwrap();
+}
+
 #[test]
 fn exact_cursor_strings_reject_aliases_and_overflow_without_panicking() {
     for text in [
