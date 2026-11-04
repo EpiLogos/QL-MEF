@@ -1495,6 +1495,9 @@ pub const TORUS_SET_LANDING_LAW: &str = "a setting sent for a later sample waits
 /// Where the Torus is heard from (`torus-receiver`, O-I 856; QL-MEF #289 packet N; DLW manual §21.2 View and Rules).
 pub const TORUS_RECEIVER: &str = "ql.torus-receiver/v1";
 pub const TORUS_RECEIVER_LAW: &str = "Receiver Off is the world's context: every voice is heard by the declared gain, wherever the camera stands, and a camera move asks nothing of the owner. Receiver On is the listener's own context: the body is heard where they stand. Each voice is heard by the declared gain × how strongly the surface near the listener moves in it against how strongly the whole surface does: the root mean square of its shape term χ (the term a strike meets and the picture draws along the normal) over the samples of the torus, each weighted by how near it stands to the listener (a Gaussian in its distance beyond the nearest, as wide as the listener stands from the surface and never narrower than the sampling's spacing), over its root mean square over every sample; and, beyond one tube radius of the surface, × the tube radius over the distance. The body is turned back by its clock attachment first. Far off, every voice is heard as declared, quieter by the distance; near, a voice the surface under you rings in is loudest, and one whose nodal line you stand on is heard least. Switching context is the explicit `torus-receiver` act. The place is read at each block's start, and the block reaches the gains it gives linearly from those it was heard by; the body, its clock, its event and its generation never move by it. The place is the listener's and is kept nowhere: not in the Torus's reading, a checkpoint, a render, a take or a receipt, and a take renders in the world's context";
+/// What a block says of the gains it reached (`torus_heard`, O-I #849): a host that continues the owner reaches them over the samples
+/// the owner did.
+pub const TORUS_HEARD_LAW: &str = "a block names each part of it that reached gains a receiver moved, in order: the part's first sample, its length, and the gain each voice reaches by its end, by mode_ref in the owner's mode order. The part reaches them linearly from the gains it was heard by over exactly its samples, as `torus-receiver` and the place read at each part's start ask, so a host that continues the owner reaches them over the same samples however it renders them. A part that reached nothing new is not named. It names gains, never the place";
 /// The farthest a receiver may stand from the scene's origin, in metres (the native owner's coordinate bound).
 pub const TORUS_RECEIVER_METRES_MAX: f64 = 1e6;
 
@@ -1559,6 +1562,8 @@ pub struct SceneInstrument {
     receiver: Option<[f64; 3]>,
     /// The output gains the native owner hears the voices by, in its mode order.
     heard: Vec<f64>,
+    /// The owner holds `heard` unreached: the next part it renders reaches it (`TORUS_HEARD_LAW`).
+    moving: bool,
     /// What a receiver hears the body by, made for the voices' shape terms now.
     hearing: Option<Hearing>,
     /// The form the body is made from (`torus-body`, `TORUS_BODY_LAW`); `None` while the torus rings.
@@ -1747,6 +1752,7 @@ impl SceneInstrument {
             struck_through: 0,
             receiver: None,
             heard: Vec::new(),
+            moving: false,
             hearing: None,
             body: None,
         };
@@ -2021,16 +2027,21 @@ impl SceneInstrument {
     /// One block of the owner's sound (`advance`). A setting that waits for a sample within the
     /// block is made at its sample: the block runs to it, the setting is made, and the block runs
     /// on; one at the block's end is made as the cursor reaches it. Answers the block's field, its
-    /// PCM whole, and a record of each setting made (`TORUS_SET_LANDING_LAW`). With no setting
-    /// waiting it is the owner's one block.
-    pub fn advance(&mut self, frames: u32, muted: bool) -> Result<(Value, Vec<Value>), String> {
+    /// PCM whole, a record of each setting made (`TORUS_SET_LANDING_LAW`), and each part that reached
+    /// new gains (`TORUS_HEARD_LAW`). With no setting waiting it is the owner's one block.
+    pub fn advance(
+        &mut self,
+        frames: u32,
+        muted: bool,
+    ) -> Result<(Value, Vec<Value>, Vec<Value>), String> {
         let now = self.samples_now();
         let end = now
             .checked_add(u64::from(frames))
             .ok_or("the block ends past the last sample")?;
+        let mut reached = Vec::new();
         if self.waiting.first().is_none_or(|waiting| waiting.at > end) {
-            self.hear()?;
-            return Ok((self.session.advance_field(frames, muted)?, Vec::new()));
+            let field = self.advance_part(now, frames, muted, &mut reached)?;
+            return Ok((field, Vec::new(), reached));
         }
         let mut audio: Vec<Value> = Vec::with_capacity(frames as usize);
         let mut landed = Vec::new();
@@ -2045,8 +2056,7 @@ impl SceneInstrument {
             if to > cursor {
                 let part =
                     u32::try_from(to - cursor).map_err(|_| "a block part past the ceiling")?;
-                self.hear()?;
-                let field = self.session.advance_field(part, muted)?;
+                let field = self.advance_part(cursor, part, muted, &mut reached)?;
                 let block = field["audio"]
                     .as_array()
                     .filter(|block| block.len() == part as usize)
@@ -2062,7 +2072,24 @@ impl SceneInstrument {
         }
         let mut field = self.session.last_field().clone();
         field["audio"] = Value::Array(audio);
-        Ok((field, landed))
+        Ok((field, landed, reached))
+    }
+
+    /// One part of a block from sample `at`: the owner is given the gains the voices are heard by now and renders the part,
+    /// reaching them over exactly its samples; a part that reached new gains is named in `reached` (`TORUS_HEARD_LAW`).
+    fn advance_part(
+        &mut self,
+        at: u64,
+        frames: u32,
+        muted: bool,
+        reached: &mut Vec<Value>,
+    ) -> Result<Value, String> {
+        self.hear()?;
+        let field = self.session.advance_field(frames, muted)?;
+        if std::mem::take(&mut self.moving) {
+            reached.push(json!({"at_samples_elapsed": at.to_string(), "frames": frames, "gains": self.heard_gains()}));
+        }
+        Ok(field)
     }
 
     /// Every voice heard by the declared gain: the world's context. A form's body is heard at its pickup
@@ -2186,6 +2213,7 @@ impl SceneInstrument {
         if gains != self.heard {
             self.session.set_gains_field(&gains)?;
             self.heard = gains;
+            self.moving = true;
         }
         Ok(())
     }
@@ -2209,6 +2237,7 @@ impl SceneInstrument {
         if gains != self.heard {
             self.session.set_gains_field(&gains)?;
             self.heard = gains;
+            self.moving = true;
         }
         self.receiver = place;
         Ok(self.receiver_reading())
@@ -2219,11 +2248,18 @@ impl SceneInstrument {
         json!({
             "schema": TORUS_RECEIVER,
             "context": if self.receiver.is_some() { "personal" } else { "world" },
-            "gains": self.native_modes().iter().zip(&self.heard)
-                .map(|(mode, gain)| json!({"mode_ref": mode, "gain": gain}))
-                .collect::<Vec<_>>(),
+            "gains": self.heard_gains(),
             "law": if self.body.is_some() { FORM_BODY_HEARING_LAW } else { TORUS_RECEIVER_LAW },
         })
+    }
+
+    /// The gain each voice is heard by, by mode_ref in the owner's mode order.
+    fn heard_gains(&self) -> Vec<Value> {
+        self.native_modes()
+            .iter()
+            .zip(&self.heard)
+            .map(|(mode, gain)| json!({"mode_ref": mode, "gain": gain}))
+            .collect()
     }
 
     /// Makes a waiting setting at the cursor, its sample, as `torus-set` makes one; names it.
@@ -3084,9 +3120,10 @@ impl SceneInstrument {
         };
         self.session.replace_body(m2, input)?;
         self.body = chosen;
-        // The body act left the new voices undriven and heard by their declared gains.
+        // The body act left the new voices undriven and heard by their declared gains, a move unreached on the old body dropped.
         self.carrier = None;
         self.heard = self.declared_gains();
+        self.moving = false;
         self.sync_carrier()?;
         Ok(self.session.last_field().clone())
     }

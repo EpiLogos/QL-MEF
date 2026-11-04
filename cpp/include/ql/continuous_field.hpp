@@ -91,6 +91,9 @@ inline constexpr std::size_t max_pending_strikes = 256;
 // The most steps of the pulse one sample may carry: the M1′ session's fastest rate (40,000 steps a
 // second) at the lowest supported sample rate (8 kHz) is five.
 inline constexpr double max_carrier_steps_per_sample = 8;
+// The most samples a receiver's move is reached over when a host names its length (`move_gains`): the owner's block ceiling, the
+// longest part of a block the owner reaches one over.
+inline constexpr std::uint64_t max_gain_ramp_frames = 8192;
 inline bool finite(Complex x) { return std::isfinite(x.real()) && std::isfinite(x.imag()); }
 inline void require(bool condition, const char *message) {
     if (!condition) throw std::invalid_argument(message);
@@ -134,8 +137,20 @@ class ContinuousField {
     std::vector<Pending> pending_;
     Carrier carrier_;
     // The output gains the receiver last moved from (O-I 856): the next rendered block reaches the gains in force from these,
-    // linearly, and then they are left. Empty while no move waits to be reached.
+    // linearly, and then they are left. Empty while no move waits to be reached. Its room for one gain per mode is made with the
+    // field, so a move named on the audio thread (`move_gains`) allocates nothing.
     std::vector<double> heard_from_;
+    // The samples a move is reached over when a host named them (`move_gains`; 0: over the next rendered block, as the owner
+    // reaches one), the samples of it already rendered, and whether a handed-over move waits for its length (`await_gain_ramp`).
+    std::uint64_t ramp_frames_ = 0, ramp_done_ = 0;
+    bool ramp_awaits_ = false;
+    // The gain mode `i` is heard by at the cursor: the one in force, or where a move under way stands.
+    double heard_now(std::size_t i) const noexcept {
+        if (heard_from_.empty()) return modes_[i].input.audio_gain_per_metre;
+        if (ramp_awaits_ || ramp_done_ == 0) return heard_from_[i];
+        const double reached = double(ramp_done_) / double(ramp_frames_);
+        return heard_from_[i] + (modes_[i].input.audio_gain_per_metre - heard_from_[i]) * reached;
+    }
     std::size_t landed_ = 0;
     std::uint64_t elapsed_ = 0, driver_remainder_ = 0;
     double last_ = 0;
@@ -172,6 +187,7 @@ public:
                 source_.samples.size() <= 16777216 / source_.modes.size(), "shape-function budget exceeded");
         modes_.reserve(source_.modes.size());
         pending_.reserve(max_pending_strikes);
+        heard_from_.reserve(source_.modes.size());
         for (std::size_t i = 0; i < source_.modes.size(); ++i) {
             for (std::size_t j = 0; j < i; ++j)
                 require(source_.modes[i].reference != source_.modes[j].reference, "duplicate mode identity");
@@ -231,6 +247,7 @@ public:
         pending_.clear();
         for (auto &act : c.pending) pending_.push_back({act.at_samples_elapsed, std::move(act.impulses)});
         heard_from_ = std::move(c.heard_from);
+        heard_from_.reserve(modes_.size());
     }
     const ContinuationInput &source() const noexcept { return source_; }
     const std::vector<Sample> &samples() const noexcept { return source_.samples; }
@@ -241,6 +258,8 @@ public:
         Continuation c{source_, elapsed_, driver_remainder_, last_,
                        {carrier_.steps_per_second, carrier_.anchor_samples, carrier_.anchor_steps, carrier_.reached, carrier_.impulses},
                        {}, heard_from_};
+        // a move under way is handed over from where it stands, still to be reached
+        for (std::size_t i = 0; i < c.heard_from.size(); ++i) c.heard_from[i] = heard_now(i);
         for (std::size_t i = 0; i < modes_.size(); ++i) c.input.modes[i].amplitude_metres = modes_[i].state;
         c.pending.reserve(pending_.size() - landed_);
         for (std::size_t i = landed_; i < pending_.size(); ++i) c.pending.push_back({pending_[i].at, pending_[i].impulses});
@@ -447,8 +466,7 @@ public:
         require(gains.size() == modes_.size(), "gain/mode basis mismatch");
         for (double gain : gains) require(std::isfinite(gain) && std::abs(gain) <= 1e6, "nonfinite/excessive output gain");
         std::vector<double> from(modes_.size());
-        for (std::size_t i = 0; i < modes_.size(); ++i)
-            from[i] = heard_from_.empty() ? modes_[i].input.audio_gain_per_metre : heard_from_[i];
+        for (std::size_t i = 0; i < modes_.size(); ++i) from[i] = heard_now(i);
         bool moved = false;
         for (std::size_t i = 0; i < modes_.size(); ++i) moved = moved || from[i] != gains[i];
         for (std::size_t i = 0; i < modes_.size(); ++i) {
@@ -457,6 +475,37 @@ public:
         }
         if (moved) heard_from_.swap(from);
         else heard_from_.clear();
+        ramp_frames_ = 0; ramp_done_ = 0; ramp_awaits_ = false;
+    }
+    // The same move for a host continuing the owner a frame at a time (O-I #849 round 14: the Torus in Live's one engine): reached
+    // linearly from what is heard now over the next `frames` samples however they are rendered, sample for sample as the owner's
+    // block of `frames` reaches it. A move waiting for its length (`await_gain_ramp`) is reached from the gains it waits at. The
+    // audio thread's: it allocates nothing. False, changing nothing, for gains that are not one finite, bounded gain per mode, or a
+    // length outside 1 to max_gain_ramp_frames.
+    bool move_gains(const double *gains, std::size_t n, std::uint64_t frames) noexcept {
+        if (!gains || n != modes_.size() || frames == 0 || frames > max_gain_ramp_frames || heard_from_.capacity() < n)
+            return false;
+        for (std::size_t i = 0; i < n; ++i)
+            if (!std::isfinite(gains[i]) || std::abs(gains[i]) > 1e6) return false;
+        const bool under_way = !heard_from_.empty();
+        if (!under_way) heard_from_.resize(n); // within the room made with the field
+        bool moved = false;
+        for (std::size_t i = 0; i < n; ++i) {
+            const double from = under_way ? heard_now(i) : modes_[i].input.audio_gain_per_metre;
+            heard_from_[i] = from;
+            moved = moved || from != gains[i];
+            modes_[i].input.audio_gain_per_metre = gains[i];
+            source_.modes[i].audio_gain_per_metre = gains[i];
+        }
+        if (!moved) heard_from_.clear();
+        ramp_frames_ = moved ? frames : 0; ramp_done_ = 0; ramp_awaits_ = false;
+        return true;
+    }
+    // A receiver move this field was handed over with and has not reached waits for `move_gains` to say over how many samples it
+    // is reached: the owner reaches it over its next block, whose length a host continuing it learns from the owner's advance
+    // (`torus_heard`). Until then the body is heard by the gains the move leaves. No move waiting: nothing.
+    void await_gain_ramp() noexcept {
+        if (!heard_from_.empty() && ramp_done_ == 0) ramp_awaits_ = true;
     }
     // One buffer is one bounded block. Validation/preflight precedes mutation.
     // Audio gain is explicit linear output gain, not a claim of sound pressure.
@@ -475,6 +524,8 @@ public:
         // pretending an unbounded integration is numerically safe forever.
         // Strikes landing in this block may all reach any one mode.
         const std::uint64_t end = elapsed_ + frames;
+        // The samples a receiver's move is reached over: those its host named, or this block's.
+        const std::uint64_t ramp = ramp_frames_ ? ramp_frames_ : frames;
         double landing = 0;
         for (std::size_t i = landed_; i < pending_.size() && pending_[i].at <= end; ++i)
             for (const auto &impulse : pending_[i].impulses) landing += std::abs(impulse.second);
@@ -507,13 +558,26 @@ public:
                     m.state = m.step * m.state + m.forcing;
                     value += m.state.real() * m.input.audio_gain_per_metre;
                 }
-            } else {
-                // The block a receiver's move is reached in: each gain from the one it was heard by to the one in force.
-                const double reached = double(sample + 1) / double(frames);
+            } else if (ramp_awaits_) {
+                // A handed-over move waiting for its length: heard by the gains it leaves.
+                for (std::size_t i = 0; i < modes_.size(); ++i) {
+                    auto &m = modes_[i];
+                    m.state = m.step * m.state + m.forcing;
+                    value += m.state.real() * heard_from_[i];
+                }
+            } else if (ramp_done_ + sample < ramp) {
+                // The samples a receiver's move is reached over: each gain from the one it was heard by to the one in force.
+                const double reached = double(ramp_done_ + sample + 1) / double(ramp);
                 for (std::size_t i = 0; i < modes_.size(); ++i) {
                     auto &m = modes_[i];
                     m.state = m.step * m.state + m.forcing;
                     value += m.state.real() * (heard_from_[i] + (m.input.audio_gain_per_metre - heard_from_[i]) * reached);
+                }
+            } else {
+                // reached within this block: the gains in force
+                for (auto &m : modes_) {
+                    m.state = m.step * m.state + m.forcing;
+                    value += m.state.real() * m.input.audio_gain_per_metre;
                 }
             }
             last_ = value;
@@ -521,7 +585,10 @@ public:
         }
         while (due < pending_.size() && pending_[due].at == end) land(pending_[due++]);
         landed_ = due;
-        heard_from_.clear();
+        if (!heard_from_.empty() && !ramp_awaits_) {
+            ramp_done_ += frames;
+            if (ramp_done_ >= ramp) { heard_from_.clear(); ramp_frames_ = 0; ramp_done_ = 0; }
+        }
         elapsed_ = end; source_.clock = next; driver_remainder_ = total % denominator;
         return true;
     }

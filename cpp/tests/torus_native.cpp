@@ -1,15 +1,27 @@
 // The continuation a native host takes over (O-I #849): handed over as it stands it continues sample for
-// sample, a strike by mode index is the strike by name without allocating, silence stills the body, and the
-// Torus's keys strike their moving points by QL's played-address law (<ql/torus_keys.hpp>).
+// sample, a strike by mode index is the strike by name without allocating, silence stills the body, the
+// Torus's keys strike their moving points by QL's played-address law (<ql/torus_keys.hpp>), and a receiver's
+// move is reached over the owner's samples however the host renders them.
 #include <ql/continuous_field.hpp>
 #include <ql/torus_keys.hpp>
 #include <algorithm>
 #include <array>
 #include <cassert>
-#include <cstring>
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
+#include <new>
 #include <vector>
+
+// Every allocation this test makes, counted (a move named on the audio thread makes none).
+static std::size_t allocations = 0;
+void *operator new(std::size_t n) {
+    ++allocations;
+    if (void *p = std::malloc(n ? n : 1)) return p;
+    throw std::bad_alloc();
+}
+void operator delete(void *p) noexcept { std::free(p); }
+void operator delete(void *p, std::size_t) noexcept { std::free(p); }
 
 using ql::Complex;
 static ql::ContinuationInput input() {
@@ -27,10 +39,19 @@ static std::vector<float> run(ql::ContinuousField &f, std::size_t frames, std::s
     for (std::size_t at = 0; at < frames; at += block) assert(f.render_audio(out.data() + at, std::min(block, frames - at)));
     return out;
 }
-static bool same(const ql::ContinuousField &a, const ql::ContinuousField &b) {
+// The clock field by field (its struct carries padding a byte compare would read). Its generation counts render calls, so fields
+// rendered in different parts agree on all but it: calls=false leaves it out.
+static bool same_clock(const QL_CoupledClock &x, const QL_CoupledClock &y, bool calls) {
+    const auto lift = [](QL_PhaseLift p, QL_PhaseLift q) { return p.turns == q.turns && p.half_degrees == q.half_degrees; };
+    for (int i = 0; i < 3; ++i) if (x.grid_origin_half_degrees[i] != y.grid_origin_half_degrees[i]) return false;
+    for (int i = 0; i < 2; ++i) if (x.rate_numerators[i] != y.rate_numerators[i] || x.rate_remainders[i] != y.rate_remainders[i]) return false;
+    return lift(x.inscription, y.inscription) && lift(x.lensing, y.lensing) && x.rate_denominator == y.rate_denominator &&
+           (!calls || x.generation == y.generation);
+}
+static bool same(const ql::ContinuousField &a, const ql::ContinuousField &b, bool calls = true) {
     auto x = a.receipt(), y = b.receipt();
     if (x.generation != y.generation || x.samples_elapsed != y.samples_elapsed || x.last_unmuted_sample != y.last_unmuted_sample ||
-        std::memcmp(&x.clock, &y.clock, sizeof x.clock) != 0 || a.pending_strikes() != b.pending_strikes()) return false;
+        !same_clock(x.clock, y.clock, calls) || a.pending_strikes() != b.pending_strikes()) return false;
     for (std::size_t i = 0; i < a.source().modes.size(); ++i) if (a.amplitude(i) != b.amplitude(i)) return false;
     std::array<float, 9> p{}, q{};
     return a.write_targets(p.data(), 9) && b.write_targets(q.data(), 9) && p == q;
@@ -141,5 +162,59 @@ int main() {
                         [&] { auto l = law; l.sample_rate = 44100; return l; }()}) {
         refused = false; try { ql::TorusKeys k(broken, played); } catch (const std::invalid_argument &) { refused = true; } assert(refused);
     }
-    std::cout << "continuation handover, strike by index, silence and the Torus's keys passed\n";
+    // 5. A receiver's move a host continuing the owner a frame at a time reaches as the owner does (O-I #849 round 14): `move_gains`
+    // names the samples the owner's block reaches it over, and however the host renders them — a frame at a time, in uneven parts,
+    // or past them in one block — every sample is the owner's. Named on the audio thread it allocates nothing, and nor does rendering
+    // it. A move naming no gain per mode, a gain not finite or past the bound, or a length outside 1 to max_gain_ramp_frames changes
+    // nothing. A move the owner handed over unreached waits for its length, heard by the gains it leaves, and is then reached from
+    // them; one under way is handed over from where it stands.
+    ql::ContinuousField owner(input()), framed(input()), parted(input()), whole(input());
+    for (auto *x : {&owner, &framed, &parted, &whole}) { run(*x, 1001, 333); x->strike({{"mode:earth", {0.02, 0}}}); }
+    owner.set_gains({2.5, 0.5});
+    const double gains[2] = {2.5, 0.5};
+    std::vector<float> by_frame(1536), by_part(1536), by_whole(1536);
+    const std::size_t made = allocations;
+    assert(framed.move_gains(gains, 2, 512) && parted.move_gains(gains, 2, 512) && whole.move_gains(gains, 2, 512));
+    for (std::size_t n = 0; n < 1536; ++n) assert(framed.render_audio(by_frame.data() + n, 1));
+    assert(allocations == made);
+    const auto owned = run(owner, 1536, 512);
+    for (std::size_t at = 0, k = 0; at < 1536; ++k) {
+        const std::size_t part = std::min<std::size_t>(std::array<std::size_t, 4>{100, 300, 211, 413}[k % 4], 1536 - at);
+        assert(parted.render_audio(by_part.data() + at, part)); at += part;
+    }
+    assert(whole.render_audio(by_whole.data(), 1536));
+    assert(by_frame == owned && by_part == owned && by_whole == owned && same(owner, framed, false) && same(owner, parted, false) && same(owner, whole, false));
+    std::vector<float> unmoved(512);
+    ql::ContinuousField at_once(input());
+    run(at_once, 1001, 333); at_once.strike({{"mode:earth", {0.02, 0}}});
+    at_once.set_gains({2.5, 0.5});
+    for (std::size_t n = 0; n < 512; ++n) assert(at_once.render_audio(unmoved.data() + n, 1));
+    // the defect this mends: a move reached in a host's one-frame render is not the owner's block
+    assert(!std::equal(unmoved.begin(), unmoved.end(), owned.begin()));
+    const double one[1] = {1.0}, nan_gain[2] = {1.0, std::nan("")}, past_bound[2] = {1.0, 2e6};
+    assert(!framed.move_gains(one, 1, 512) && !framed.move_gains(nan_gain, 2, 512) && !framed.move_gains(past_bound, 2, 512) &&
+           !framed.move_gains(gains, 2, 0) && !framed.move_gains(gains, 2, ql::max_gain_ramp_frames + 1) &&
+           !framed.move_gains(nullptr, 2, 512));
+    ql::ContinuousField twin(framed.handover());
+    assert(run(framed, 512, 1) == run(twin, 512, 512));
+    // Handed over unreached: heard by the gains it leaves while it waits, then reached from them over the samples named.
+    ql::ContinuousField giver(input()), stays(input());
+    for (auto *x : {&giver, &stays}) { run(*x, 1001, 333); x->strike({{"mode:earth", {0.02, 0}}}); }
+    giver.set_gains({2.5, 0.5});
+    ql::ContinuousField taker(giver.handover());
+    taker.await_gain_ramp();
+    assert(run(taker, 64, 1) == run(stays, 64, 64));
+    const std::size_t named = allocations;
+    assert(taker.move_gains(gains, 2, 512) && allocations == named);
+    stays.set_gains({2.5, 0.5});
+    assert(run(taker, 1024, 1) == run(stays, 1024, 512));
+    // Under way: handed over from where it stands.
+    ql::ContinuousField midway(input());
+    run(midway, 1001, 333); midway.strike({{"mode:earth", {0.02, 0}}});
+    assert(midway.move_gains(gains, 2, 512));
+    run(midway, 128, 1);
+    const auto mid = midway.handover();
+    assert(mid.heard_from.size() == 2 && mid.heard_from[0] == 2.0 + (2.5 - 2.0) * (128.0 / 512.0) &&
+           mid.heard_from[1] == 1.5 + (0.5 - 1.5) * (128.0 / 512.0));
+    std::cout << "continuation handover, strike by index, silence, the Torus's keys and a receiver's move reached over the owner's samples passed\n";
 }
