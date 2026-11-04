@@ -23,7 +23,9 @@ pub const TORUS_RELEASE_LAW: &str = "a key's release moves no native state: the 
 /// How the body a native host plays is silenced (`ql::ContinuousField::silence`).
 pub const TORUS_SILENCE_LAW: &str = "silence stills what was struck at the cursor: every resident state at rest and the acts waiting for later samples dropped, one body act; the voices with the drive their material supplies, the receiver's gains, the shapes, the clock, the cursor and the Carrier's drive stand, so a driven body is driven again from rest";
 /// How long a handed-over law stands.
-pub const TORUS_NATIVE_STANDS: &str = "the law stands until the owner's Torus moves (a setting, a restore, the event or its voices): the host takes the Torus again then; a setting sent for a later sample is in force only once it has landed, so the Torus is handed over after it lands";
+pub const TORUS_NATIVE_STANDS: &str = "the law stands until the owner's Torus moves (a setting, a restore, the body chosen, the event or its voices): the host takes the Torus again then; a setting sent for a later sample is in force only once it has landed, so the Torus is handed over after it lands";
+/// Why a form's body is handed over with no key law (O-I #849 with #376/#852).
+pub const TORUS_BODY_KEYS_REFUSED: &str = "a form's body rings, and a key strikes it at the form's sample nearest the key's point (the body's exciter law), which the torus's key law does not play: no key law is handed over; the owner strikes every act on the body and names each body mode's impulse in its receipt (strike_at.modes), which a native host strikes as it stands";
 const TORUS_NATIVE_STANDING: &str = "the owner's own continuation and played-address law, handed over at its cursor for a native host to continue; the host adds no voice, pitch, place, weight or envelope";
 
 impl FieldSession {
@@ -145,8 +147,10 @@ fn continuation_agrees(handed: &Value, receipt: &Value) -> Result<()> {
 impl SceneInstrument {
     /// The Torus for a native audio host (`torus-native`, `ql.torus-native/v1`): the continuation as it
     /// stands at the cursor and the played-address law of the tuning in force, each voice by the native
-    /// mode it sounds through. A read: nothing moves. Refused in words while a setting waits for a later
-    /// sample (the law changes there) or when the tuning in force holds no voices.
+    /// mode it sounds through. While a form's body rings, the continuation is the body's modes and the
+    /// key law is refused in words (`keys_refused`: a key strikes the form by its exciter law). A read:
+    /// nothing moves. Refused in words while a setting waits for a later sample (the law changes there)
+    /// or when the tuning in force holds no voices.
     pub fn torus_native(&mut self) -> Result<Value> {
         let reading = self.torus_reading();
         if let Some(first) = reading["waiting"]
@@ -157,6 +161,10 @@ impl SceneInstrument {
                 "a Torus setting waits for sample {}: the law changes there, so the Torus is handed over once it has landed",
                 first["at_samples_elapsed"].as_str().unwrap_or("later")
             ));
+        }
+        if reading["body"]["kind"] == "form" {
+            let continuation = self.session_mut().handover_field()?;
+            return Ok(self.handed(continuation, Value::Null, "form"));
         }
         let tuning = self.tuning();
         let shape = self.shape();
@@ -227,21 +235,32 @@ impl SceneInstrument {
                 ));
             }
         }
+        Ok(self.handed(continuation, keys, "torus"))
+    }
+
+    /// The `ql.torus-native/v1` document of `continuation` and its key law (`null` for a form's body,
+    /// with the refusal in words), at the field as it stands.
+    fn handed(&self, continuation: Value, keys: Value, body: &str) -> Value {
         let field = self.session().last_field();
-        Ok(json!({
+        let mut handed = json!({
             "schema": TORUS_NATIVE,
             "instance_ref": self.instance_ref(),
             "event_ref": field["event_ref"],
             "subject_ref": field["subject_ref"],
             "generation": field["generation"],
             "at_samples_elapsed": field["samples_elapsed"],
+            "body": body,
             "continuation": continuation,
             "keys": keys,
             "release": {"law": TORUS_RELEASE_LAW},
             "silence": {"law": TORUS_SILENCE_LAW},
             "stands": TORUS_NATIVE_STANDS,
             "standing": TORUS_NATIVE_STANDING,
-        }))
+        });
+        if handed["keys"].is_null() {
+            handed["keys_refused"] = json!(TORUS_BODY_KEYS_REFUSED);
+        }
+        handed
     }
 }
 
