@@ -77,6 +77,47 @@ pub struct HelixPlace {
     pub cover_degrees: u16,
 }
 
+impl HelixPlace {
+    /// The place at a ring arc (0..12): helix = arc ≥ 6, position = arc mod 6.
+    pub fn of_arc(arc: u8) -> Self {
+        let arc = arc % crate::spanda_field::RING_SIZE;
+        let half = crate::spanda_field::RING_HALF;
+        Self {
+            helix: arc / half,
+            position: arc % half,
+            arc,
+            cover_degrees: u16::from(arc) * 60,
+        }
+    }
+}
+
+/// Where a place of the ring stands on the turning torus after `pulse_steps`
+/// ([`POINT_LAW`]): a key's place, or a codon's (O-I #771, a singlet strikes at
+/// its codon's place, carried by the same law). The place never moves; only the
+/// torus has turned.
+pub fn point_of(place: HelixPlace, pulse_steps: f64) -> KeyPoint {
+    let ring = f64::from(crate::spanda_field::RING_SIZE);
+    let half = f64::from(crate::spanda_field::RING_HALF);
+    // Arcs on the cover, in [0, 12); `rem_euclid` can round up to 12.
+    let mut arcs = (f64::from(place.arc) + pulse_steps).rem_euclid(ring);
+    if arcs >= ring {
+        arcs = 0.0;
+    }
+    let sheet_arcs = arcs.rem_euclid(half);
+    let sheet_arcs = if sheet_arcs >= half { 0.0 } else { sheet_arcs };
+    let pi = std::f64::consts::PI;
+    KeyPoint {
+        place,
+        pulse_steps,
+        cover_degrees: arcs * 60.0,
+        sheet: u8::from(arcs >= half),
+        arc: (arcs.floor() as u8) % crate::spanda_field::RING_SIZE,
+        // Half the cover angle round the tube; the cover angle mod 360° round the ring.
+        theta: arcs * (pi / half),
+        phi: sheet_arcs * (pi / (half / 2.0)),
+    }
+}
+
 /// Where a key's place stands on the turning torus after `pulse_steps`.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize)]
 pub struct KeyPoint {
@@ -196,27 +237,7 @@ impl JankoSurface {
     /// The key's moving point after `pulse_steps` of the pulse ([`POINT_LAW`]).
     /// The place is the key's own; only the torus has turned.
     pub fn point(&self, key: JankoKey, pulse_steps: f64) -> KeyPoint {
-        let place = Self::helix_place(key);
-        let ring = f64::from(crate::spanda_field::RING_SIZE);
-        let half = f64::from(crate::spanda_field::RING_HALF);
-        // Arcs on the cover, in [0, 12); `rem_euclid` can round up to 12.
-        let mut arcs = (f64::from(place.arc) + pulse_steps).rem_euclid(ring);
-        if arcs >= ring {
-            arcs = 0.0;
-        }
-        let sheet_arcs = arcs.rem_euclid(half);
-        let sheet_arcs = if sheet_arcs >= half { 0.0 } else { sheet_arcs };
-        let pi = std::f64::consts::PI;
-        KeyPoint {
-            place,
-            pulse_steps,
-            cover_degrees: arcs * 60.0,
-            sheet: u8::from(arcs >= half),
-            arc: (arcs.floor() as u8) % crate::spanda_field::RING_SIZE,
-            // Half the cover angle round the tube; the cover angle mod 360° round the ring.
-            theta: arcs * (pi / half),
-            phi: sheet_arcs * (pi / (half / 2.0)),
-        }
+        point_of(Self::helix_place(key), pulse_steps)
     }
 
     pub fn project(&self, key: JankoKey) -> JankoSurfaceProjection {

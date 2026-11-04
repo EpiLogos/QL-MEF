@@ -202,10 +202,11 @@ earlier input composes bit-for-bit as before.
 | `torus-set {edit, at_samples_elapsed?}` | Rate, Carrier, Shape, Tuning, Polyphony, tempo: no body state; the Carrier's drive follows the re-anchored pulse (`set-carrier`). Fundamental: one modes continuation of the same resident voices, no strike, no reshape. For a later sample it waits and moves nothing (`TORUS_SET_LANDING_LAW`) | unchanged, or +1 for a Fundamental made now |
 | `advance {frames, muted}` with settings waiting | the block runs to each waiting setting's sample, the setting is made there as above, and the block runs on; `torus_set_landed` names each (`at_samples_elapsed`, `edit`, `applied`, `moved`, or `refused`) with `torus` and `influence` | +1 for each Fundamental made in the block |
 | `torus-play {keys, amplitude, at_samples_elapsed?}` | each key's moving point at the pulse (`janko::JankoSurface::point`) struck on the tuning in force: one `strike-at` | +1 |
+| `torus-singlet {codon, amplitude, at_samples_elapsed?}` | the codon's place on the ring (O-I #771, `SINGLET_PLACE_LAW`: the arc the ring reads it at, `spanda_field::ring_places`, the inverse of `codon_advance`; both arcs for the eight nonet-collision codons) carried by the pulse by the key's law (`janko::point_of`, `POINT_LAW`), struck on the tuning in force: one `strike-at`; no note is counted. A codon past 63 is refused in words | +1 |
 | `torus-release {keys}` | none: the body rings on | unchanged |
 | `torus-receiver {receiver: {at_metres} \| null}` | where the Torus is heard from (O-I 856): the output gains only (`set-gains`), from the next block; body, clock, event and cursor stand (`TORUS_RECEIVER_LAW`) | unchanged |
 
-A strike for a later sample (`torus-play`, `strike-at`) reads the settings in
+A strike for a later sample (`torus-play`, `torus-singlet`, `strike-at`) reads the settings in
 force at its sample, the waiting ones before it made: its points, Strike,
 tuning and Polyphony. A setting that would land before a strike already played
 for a later sample is refused; at most `TORUS_SETS_WAITING_MAX` (64) wait, and
@@ -245,7 +246,9 @@ gain, never the place.
 Every answer carries `torus`; `torus-set` adds `influence` (its `tuning`,
 sounding `voices`, `boundaries`, `resident_tunings`, `fundamental_hz`);
 `torus-play` adds `torus_play` (`ql.torus-play/v1`: each note's place, point and
-own cell) and `strike_at` (`ql.strike-at/v1`). Not built, and disclosed as such
+own cell) and `strike_at` (`ql.strike-at/v1`); `torus-singlet` adds
+`torus_singlet` (`ql.torus-singlet/v1`: the codon, its places and points, the
+pulse and the law) and `strike_at`. Not built, and disclosed as such
 in every played note: a per-note voice bank sounding each note's own cell (QL-MEF
 #287 packet A). Tests: `crates/ql-mef/tests/{m1_prime_session,scene_tuning,torus_host}.rs`
 (the carrier heard on the rendered PCM: silence at 0 % unstruck, a note at the

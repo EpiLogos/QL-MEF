@@ -1,11 +1,13 @@
 //! The M1′ session (O-I #850; DLW manual §21.2): the pulse and its bands,
 //! Free and Sync rate, the Fundamental, the comma, the shapes, Polyphony, and
 //! a key's moving point on the torus (PROGRAMME R34; Jankó figure §4a).
-use ql_mef::janko::{JankoKey, JankoSurface};
+use ql_core::Codon64;
+use ql_mef::janko::{HelixPlace, JankoKey, JankoSurface, point_of};
 use ql_mef::m1_prime::{
     Band, Figure, Fundamental, NoteLength, PYTHAGOREAN_COMMA, Rate, Session, Settings,
     SettingsEdit, Shape, Tuning, pythagorean_comma_cents,
 };
+use ql_mef::spanda_field::ring_places;
 use std::f64::consts::TAU;
 
 const SR: u32 = 48_000;
@@ -279,6 +281,40 @@ fn a_held_key_strikes_a_moving_point_and_always_the_same_place_of_its_helix() {
     // A semitone (the next row) is the half-turn across the tube at the same ring place.
     assert!((pratibimba.phi - bimba.phi).abs() < 1e-12);
     assert!((pratibimba.theta - bimba.theta - std::f64::consts::PI).abs() < 1e-12);
+}
+
+#[test]
+fn a_ring_place_is_carried_by_the_one_point_law_a_key_and_a_codon_share() {
+    // O-I #771: a singlet strikes at its codon's place on the ring, carried by the turning
+    // torus as a key's place is (janko POINT_LAW). One law, so a key and a codon standing at
+    // one arc stand at one point at every step of the pulse.
+    let surface = JankoSurface::new();
+    for row in 0..2 {
+        for column in 0..6 {
+            let key = JankoKey::new(row, column);
+            let place = JankoSurface::helix_place(key);
+            assert_eq!(HelixPlace::of_arc(place.arc), place, "{key:?}");
+            for steps in [0.0, 0.25, 1.0, 5.5, 11.75, 12.0, 40.3] {
+                assert_eq!(point_of(place, steps), surface.point(key, steps));
+            }
+        }
+    }
+    // Codon 8 is one of the eight the nonet collision gives two places: arcs 9 and 10 of the
+    // first lens, the second helix's fourth and fifth positions, struck where the pulse has carried them.
+    let places = ring_places(Codon64::new(8));
+    assert_eq!(
+        places.iter().map(|p| (p.lens, p.arc)).collect::<Vec<_>>(),
+        [(0, 9), (0, 10)]
+    );
+    let carried = point_of(HelixPlace::of_arc(9), 4.0);
+    assert_eq!((carried.place.helix, carried.place.position), (1, 3));
+    assert_eq!(
+        carried.arc, 1,
+        "nine arcs on, four steps: the cover's first sheet again"
+    );
+    assert!((carried.cover_degrees - 60.0).abs() < 1e-12);
+    assert!((carried.theta - std::f64::consts::PI / 6.0).abs() < 1e-12);
+    assert!((carried.phi - std::f64::consts::PI / 3.0).abs() < 1e-12);
 }
 
 #[test]

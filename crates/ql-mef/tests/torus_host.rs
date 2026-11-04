@@ -10,6 +10,7 @@ use std::time::Duration;
 
 use ql_mef::continuous::host::{FieldHost, HostOperation, HostRequest};
 use ql_mef::continuous::scene_field::{BINDING_REQUEST, BindingRequest, SceneConfig};
+use ql_mef::janko::{HelixPlace, JankoKey, JankoSurface, point_of};
 use serde_json::{Value, json};
 
 fn worker() -> PathBuf {
@@ -102,6 +103,8 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[]}),
         json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25]}}),
         json!({"operation":"torus-receiver","receiver":null}),
+        json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0]}),
+        json!({"operation":"torus-singlet","codon":8,"amplitude":[0.2,0.0],"at_samples_elapsed":"4800"}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_ok(),
@@ -124,6 +127,11 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-receiver","receiver":{"at":[4.5,0.0,0.25]}}),
         json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25],"distance":2.0}}),
         json!({"operation":"torus-receiver","place":[4.5,0.0,0.25]}),
+        json!({"operation":"torus-singlet","amplitude":[0.2,0.0]}),
+        json!({"operation":"torus-singlet","codon":5}),
+        json!({"operation":"torus-singlet","codon":300,"amplitude":[0.2,0.0]}),
+        json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0],"arc":6}),
+        json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0],"at":"4800"}),
     ] {
         assert!(
             serde_json::from_value::<HostOperation>(command.clone()).is_err(),
@@ -351,6 +359,169 @@ fn a_key_strikes_its_moving_point_and_always_the_same_helix_place() {
     let released = d.send(json!({"operation":"torus-release","keys":key}));
     assert_eq!(released["status"], "ok");
     assert!(released["torus"]["notes"].as_array().unwrap().is_empty());
+}
+
+/// Advances the field `frames` samples, muted, in blocks the host takes.
+fn run_on(d: &mut Driver, mut frames: u64) {
+    while frames > 0 {
+        let block = frames.min(8192);
+        let advanced = d.send(json!({"operation":"advance","frames":block,"muted":true}));
+        assert_eq!(advanced["status"], "ok", "{advanced}");
+        frames -= block;
+    }
+}
+
+/// The steps the pulse had turned at a struck point.
+fn steps_of(point: &Value) -> f64 {
+    point["pulse_steps"].as_f64().unwrap()
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_clips_note_strikes_its_keys_point_at_its_own_sample() {
+    // O-I #771 (MT1 ruled: a key's point is dynamic, from its helix and the pulse). A Live clip plays
+    // its notes as torus-play acts at their own samples; each strikes its key's point where the pulse
+    // stands at that sample, not where it stood when the act was sent.
+    let free =
+        json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":40.0}}});
+    let key = JankoKey::new(2, 1);
+    let keys = json!([{"row":2,"column":1}]);
+    let mut d = Driver::open();
+    assert_eq!(d.send(free.clone())["status"], "ok");
+    let at = cursor(&d) + 24_000;
+    let played = d.send(
+        json!({"operation":"torus-play","keys":keys,"amplitude":[0.2,0.0],
+        "at_samples_elapsed":at.to_string()}),
+    );
+    assert_eq!(played["status"], "ok", "{played}");
+    assert_eq!(
+        played["strike_at"]["at_samples_elapsed"],
+        json!(at.to_string())
+    );
+    let point = played["torus_play"]["notes"][0]["point"].clone();
+    let struck = &played["strike_at"]["points"][0];
+    assert_eq!(
+        (&struck["theta"], &struck["phi"]),
+        (&point["theta"], &point["phi"]),
+        "the point passed to strikeAt is the note's point"
+    );
+    assert_eq!(
+        point,
+        json!(JankoSurface::new().point(key, steps_of(&point))),
+        "the key's helix place carried by the pulse (POINT_LAW)"
+    );
+    assert_eq!(
+        steps_of(&point),
+        played["torus_play"]["pulse"]["steps"].as_f64().unwrap()
+    );
+    // The same key struck now stands elsewhere; struck once the field has run to the note's sample,
+    // it stands at the note's point.
+    let mut e = Driver::open();
+    assert_eq!(e.send(free)["status"], "ok");
+    assert_eq!(cursor(&e) + 24_000, at);
+    let now = e.send(json!({"operation":"torus-play","keys":keys,"amplitude":[0.2,0.0]}));
+    let now = now["torus_play"]["notes"][0]["point"].clone();
+    assert!(
+        (steps_of(&point) - steps_of(&now) - 20.0).abs() < 1e-9,
+        "half a second at forty steps a second: {point} against {now}"
+    );
+    assert_ne!(now["theta"], point["theta"]);
+    run_on(&mut e, 24_000);
+    assert_eq!(cursor(&e), at);
+    let there = e.send(json!({"operation":"torus-play","keys":keys,"amplitude":[0.2,0.0]}));
+    assert_eq!(there["torus_play"]["notes"][0]["point"], point);
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_singlet_strikes_its_codons_place_on_the_ring_where_the_turning_torus_has_carried_it() {
+    // O-I #771, the owner's ruling of 4 Nov 2026: a singlet's place is the arc the ring reads its codon
+    // at (spanda_field::codon_advance, the epogdoon's inverse), carried by the turning torus by the
+    // point law a key's place is (janko POINT_LAW); a nonet-collision codon strikes both its arcs.
+    let mut d = Driver::open();
+    assert_eq!(
+        d.send(
+            json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":40.0}}})
+        )["status"],
+        "ok"
+    );
+    let before = d.generation();
+    let one = d.send(json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0]}));
+    assert_eq!(one["status"], "ok", "{one}");
+    assert_eq!(d.generation(), before + 1, "a singlet is one strike");
+    let singlet = &one["torus_singlet"];
+    assert_eq!(singlet["schema"], "ql.torus-singlet/v1");
+    assert_eq!(singlet["codon"], 5);
+    assert_eq!(singlet["places"], json!([{"lens":0,"arc":6}]));
+    let law = singlet["law"].as_str().unwrap();
+    for source in ["codon_advance", "epogdoon", "POINT_LAW", "O-I #771"] {
+        assert!(law.contains(source), "the law names {source}: {law}");
+    }
+    let point = &singlet["points"][0];
+    let steps = steps_of(point);
+    assert_eq!(*point, json!(point_of(HelixPlace::of_arc(6), steps)));
+    assert_eq!(steps, singlet["pulse"]["steps"].as_f64().unwrap());
+    let struck = one["strike_at"]["points"].as_array().unwrap();
+    assert_eq!(struck.len(), 1);
+    assert_eq!(
+        (&struck[0]["theta"], &struck[0]["phi"]),
+        (&point["theta"], &point["phi"]),
+        "the point passed to strikeAt is the codon's carried place"
+    );
+    assert_eq!(struck[0]["amplitude"], json!([0.2, 0.0]));
+    assert_eq!(
+        one["strike_at"]["strike"],
+        json!(0.7),
+        "the body's Strike share"
+    );
+    // Codon 8 takes two of the nonet's nine: arcs 9 and 10 of the first lens, both struck in one act.
+    let two = d.send(json!({"operation":"torus-singlet","codon":8,"amplitude":[0.2,0.0]}));
+    assert_eq!(two["status"], "ok", "{two}");
+    assert_eq!(d.generation(), before + 2);
+    assert_eq!(
+        two["torus_singlet"]["places"],
+        json!([{"lens":0,"arc":9},{"lens":0,"arc":10}])
+    );
+    let points = two["torus_singlet"]["points"].as_array().unwrap();
+    let struck = two["strike_at"]["points"].as_array().unwrap();
+    assert_eq!((points.len(), struck.len()), (2, 2));
+    for ((point, struck), arc) in points.iter().zip(struck).zip([9, 10]) {
+        assert_eq!(*point, json!(point_of(HelixPlace::of_arc(arc), steps)));
+        assert_eq!(
+            (&struck["theta"], &struck["phi"]),
+            (&point["theta"], &point["phi"])
+        );
+    }
+    // A singlet for a later sample strikes where the pulse will have carried its place there.
+    let at = cursor(&d) + 24_000;
+    let later = d.send(
+        json!({"operation":"torus-singlet","codon":63,"amplitude":[0.2,0.0],
+        "at_samples_elapsed":at.to_string()}),
+    );
+    assert_eq!(later["status"], "ok", "{later}");
+    assert_eq!(
+        later["strike_at"]["at_samples_elapsed"],
+        json!(at.to_string())
+    );
+    assert_eq!(
+        later["torus_singlet"]["places"],
+        json!([{"lens":5,"arc":11}])
+    );
+    let point = &later["torus_singlet"]["points"][0];
+    assert!((steps_of(point) - steps - 20.0).abs() < 1e-9, "{point}");
+    assert_eq!(
+        *point,
+        json!(point_of(HelixPlace::of_arc(11), steps_of(point)))
+    );
+    // There are 64 codons: another is refused in words, and nothing moves.
+    let standing = d.generation();
+    let refused = d.send(json!({"operation":"torus-singlet","codon":64,"amplitude":[0.2,0.0]}));
+    assert_eq!(refused["status"], "refused", "{refused}");
+    assert!(
+        refused["error"].as_str().unwrap().contains("0 to 63"),
+        "{refused}"
+    );
+    assert_eq!(d.generation(), standing);
 }
 
 #[test]

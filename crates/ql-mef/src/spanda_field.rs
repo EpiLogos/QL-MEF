@@ -172,6 +172,29 @@ pub fn ring_codon_advance(tick12: u8, cycle: u64) -> Codon64 {
     codon_advance(RING_QUATERNION_LUT[usize::from(tick12 % RING_SIZE)], cycle)
 }
 
+/// One place of the ring a codon is read at: a lens class of the 72-space and
+/// its arc (0..12) on the ring of twelve.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+pub struct RingPlace {
+    pub lens: u8,
+    pub arc: u8,
+}
+
+/// Where the ring reads a codon (O-I #771): the inverse of [`codon_advance`],
+/// every 72-space index whose epogdoon is the codon, as (lens, arc) with
+/// arc = index mod 12. Fifty-six codons stand at one place; the eight the
+/// nonet collision gives two of the nine (0, 8, … 56) stand at two arcs side
+/// by side in one lens.
+pub fn ring_places(codon: Codon64) -> Vec<RingPlace> {
+    (0..PARASHAKTI_TOTAL)
+        .filter(|index| epogdoon(*index) == codon.address())
+        .map(|index| RingPlace {
+            lens: index / RING_SIZE,
+            arc: index % RING_SIZE,
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -209,5 +232,40 @@ mod tests {
             seen[epogdoon(i) as usize] = true;
         }
         assert!(seen.iter().all(|s| *s));
+    }
+
+    /// A codon's place on the ring (O-I #771, DLW §21.2 "A singlet"): the arc
+    /// the ring reads it at, the inverse of `codon_advance`. Every codon has
+    /// one; the eight that the nonet collision takes two of the nine to have two,
+    /// side by side; the 72 places are the 72-space whole, and the live ring
+    /// reads each codon at a tick of its lens's cycle.
+    #[test]
+    fn every_codon_stands_where_the_ring_reads_it() {
+        let mut places = 0;
+        let mut doubled = Vec::new();
+        for address in 0..64u8 {
+            let codon = Codon64::new(address);
+            let at = ring_places(codon);
+            assert!((1..=2).contains(&at.len()), "{address}: {at:?}");
+            for place in &at {
+                let index =
+                    resonance_index(place.lens, place.arc / RING_HALF, place.arc % RING_HALF)
+                        .expect("a place of the 72-space");
+                assert_eq!(epogdoon(index), address, "{place:?}");
+                assert!(
+                    (0..RING_SIZE)
+                        .any(|tick| ring_codon_advance(tick, u64::from(place.lens)) == codon),
+                    "the live ring reads {address} at {place:?}"
+                );
+            }
+            if at.len() == 2 {
+                assert_eq!(at[0].lens, at[1].lens);
+                assert_eq!(at[1].arc, at[0].arc + 1, "{address}: {at:?}");
+                doubled.push(address);
+            }
+            places += at.len();
+        }
+        assert_eq!(places, usize::from(PARASHAKTI_TOTAL));
+        assert_eq!(doubled, [0, 8, 16, 24, 32, 40, 48, 56]);
     }
 }
