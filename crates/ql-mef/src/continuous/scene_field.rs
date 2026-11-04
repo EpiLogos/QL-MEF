@@ -1374,6 +1374,14 @@ impl TorusRenderAct {
     }
 }
 
+/// The Fundamental a session's settings ask of the scene's event: `None` for the map's own.
+fn fundamental_hz(settings: &m1_prime::Settings) -> Option<f64> {
+    match settings.fundamental {
+        m1_prime::Fundamental::Map => None,
+        m1_prime::Fundamental::Hz { hz } => Some(hz),
+    }
+}
+
 /// An exact decimal sample cursor.
 fn exact_sample(text: &str, what: &str) -> Result<u64, String> {
     if text.is_empty()
@@ -1412,6 +1420,17 @@ pub const CLASS_SOUNDS_LAW: &str = "each of the twelve classes stands at the one
 /// The standing of a played note's own cell.
 const NOTE_CELL_STANDING: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental. Disclosed per note; the native owner sounds the resident voices of the tuning in force at the struck point, so a per-note voice bank sounding each cell's own eight is not built (QL-MEF #287 packet A)";
 
+/// The most Torus settings that wait for their samples at once (`torus-set` with `at_samples_elapsed`, O-I 855).
+pub const TORUS_SETS_WAITING_MAX: usize = 64;
+pub const TORUS_SET_LANDING_LAW: &str = "a setting sent for a later sample waits for it and moves nothing until then; the block that reaches its sample runs to it, the setting is made there as `torus-set` makes it at the cursor, and the block runs on, so it is heard from that sample exactly, as a strike is. A Fundamental made there is the block's one modes continuation. Settings wait in the order of their samples and are judged when sent; one that cannot be made when its sample comes is named so with its reason, and the block runs on. A strike for a later sample reads the settings in force at its sample, so a setting may not land before a strike already played for a later sample";
+
+/// A Torus setting admitted for a later sample of the owner's clock (`torus-set` with `at_samples_elapsed`).
+#[derive(Debug, Clone)]
+struct WaitingSet {
+    at: u64,
+    edit: m1_prime::SettingsEdit,
+}
+
 /// What a played Torus act did: the field, the notes and the strike.
 #[derive(Debug, Clone)]
 pub struct TorusPlayOutcome {
@@ -1441,6 +1460,10 @@ pub struct SceneInstrument {
     /// The last offline render's owner, kept so the next part of the same take continues it.
     render: Option<TorusRender>,
     renders: u64,
+    /// Settings sent for later samples, in the order of their samples (`TORUS_SET_LANDING_LAW`).
+    waiting: Vec<WaitingSet>,
+    /// The latest sample a strike that read the Torus's settings was played for.
+    struck_through: u64,
 }
 
 /// An offline render's own owner, its continuation token and the sample (the live owner's
@@ -1519,6 +1542,8 @@ impl SceneInstrument {
             opened: scene,
             render: None,
             renders: 0,
+            waiting: Vec::new(),
+            struck_through: 0,
         };
         instrument.sync_carrier()?;
         Ok(instrument)
@@ -1617,6 +1642,12 @@ impl SceneInstrument {
         reading["carrier"]["metres_per_step"] =
             json!(self.torus.carrier_step() * self.material.strike_metres);
         reading["carrier"]["native"] = json!(self.carrier.is_some());
+        reading["waiting"] = json!(
+            self.waiting
+                .iter()
+                .map(|waiting| json!({"at_samples_elapsed": waiting.at.to_string(), "edit": waiting.edit}))
+                .collect::<Vec<_>>()
+        );
         reading
     }
 
@@ -1627,38 +1658,181 @@ impl SceneInstrument {
     /// moves the body only at the pulse's later steps. A refused edit changes
     /// nothing. Returns the field when the owner's modes moved.
     pub fn torus_set(&mut self, edit: &m1_prime::SettingsEdit) -> Result<Option<Value>, String> {
+        self.torus_edit(edit).map(|(_, field)| field)
+    }
+
+    /// `torus_set`, answering also the names of the settings that moved.
+    fn torus_edit(
+        &mut self,
+        edit: &m1_prime::SettingsEdit,
+    ) -> Result<(Vec<&'static str>, Option<Value>), String> {
         if edit.is_empty() {
             return Err("a Torus edit names at least one setting".into());
         }
         let mut next = self.torus.clone();
         let moved = next.edit(edit, self.samples_now())?;
-        if !self.shape.resident(next.settings().tuning) {
-            if next.settings().tuning == Tuning::Maqam {
-                return Err(maqam_absence(self.session.current_basis(), None));
-            }
-            return Err(format!(
-                "this scene holds no {} voices: its event admits none",
-                next.settings().tuning.code()
-            ));
-        }
+        self.holds(next.settings().tuning)?;
         let field = if moved.contains(&"fundamental") {
-            let hz = match next.settings().fundamental {
-                m1_prime::Fundamental::Map => None,
-                m1_prime::Fundamental::Hz { hz } => Some(hz),
-            };
-            Some(self.set_fundamental(hz)?)
+            Some(self.set_fundamental(fundamental_hz(next.settings()))?)
         } else {
             None
         };
         self.torus = next;
         // Every edit re-anchors the pulse where it stands; the native drive follows.
         self.sync_carrier()?;
-        Ok(field)
+        Ok((moved, field))
     }
 
-    /// The Fundamental on the SAME resident voices: one modes continuation,
-    /// no strike and no reshape (one ratio keeps every weight).
-    fn set_fundamental(&mut self, hz: Option<f64>) -> Result<Value, String> {
+    /// Refuses, in words, a tuning whose voices this scene does not hold.
+    fn holds(&self, tuning: Tuning) -> Result<(), String> {
+        if self.shape.resident(tuning) {
+            return Ok(());
+        }
+        if tuning == Tuning::Maqam {
+            return Err(maqam_absence(self.session.current_basis(), None));
+        }
+        Err(format!(
+            "this scene holds no {} voices: its event admits none",
+            tuning.code()
+        ))
+    }
+
+    /// One edit of the Torus session made at sample `at` of the owner's clock (`torus-set` with
+    /// `at_samples_elapsed`, O-I 855; `TORUS_SET_LANDING_LAW`). At the cursor it is made now. For a
+    /// later sample it waits, judged now as it will be made there, and moves nothing: the block
+    /// that reaches its sample makes it there (`advance`). A refused setting changes nothing.
+    pub fn torus_set_when(
+        &mut self,
+        edit: &m1_prime::SettingsEdit,
+        at: Option<u64>,
+    ) -> Result<Option<Value>, String> {
+        let now = self.samples_now();
+        let Some(at) = at.filter(|at| *at != now) else {
+            return self.torus_set(edit);
+        };
+        if at < now {
+            return Err(format!(
+                "a setting at sample {at} is behind the owner's cursor {now}: that sound is already rendered"
+            ));
+        }
+        if edit.is_empty() {
+            return Err("a Torus edit names at least one setting".into());
+        }
+        if self.waiting.len() >= TORUS_SETS_WAITING_MAX {
+            return Err(format!(
+                "at most {TORUS_SETS_WAITING_MAX} settings wait for their samples: send this one nearer its sample"
+            ));
+        }
+        if self.struck_through > at {
+            return Err(format!(
+                "a setting at sample {at} would land before the strike already played for sample {}: that strike read the settings in force when it was played",
+                self.struck_through
+            ));
+        }
+        // Judged as it will be made: on the session the settings waiting before it leave.
+        let place = self.waiting.partition_point(|waiting| waiting.at <= at);
+        let mut next = self.torus_at(at);
+        let moved = next.edit(edit, at)?;
+        self.holds(next.settings().tuning)?;
+        if moved.contains(&"fundamental") {
+            self.fundamental_event(fundamental_hz(next.settings()))?;
+        }
+        for later in &self.waiting[place..] {
+            next.edit(&later.edit, later.at)
+                .and_then(|_| self.holds(next.settings().tuning))
+                .map_err(|why| {
+                    format!(
+                        "a setting at sample {at} would leave the one waiting for sample {} unable to be made: {why}",
+                        later.at
+                    )
+                })?;
+        }
+        self.waiting.insert(
+            place,
+            WaitingSet {
+                at,
+                edit: edit.clone(),
+            },
+        );
+        Ok(None)
+    }
+
+    /// The Torus's session as it will stand at sample `at`: the session now, with every setting
+    /// that waits for a sample at or before `at` made at its sample.
+    fn torus_at(&self, at: u64) -> m1_prime::Session {
+        let mut session = self.torus.clone();
+        for waiting in self.waiting.iter().take_while(|waiting| waiting.at <= at) {
+            let mut next = session.clone();
+            // One that cannot be made there is refused when its sample comes; the session stands without it.
+            if next.edit(&waiting.edit, waiting.at).is_ok()
+                && self.holds(next.settings().tuning).is_ok()
+            {
+                session = next;
+            }
+        }
+        session
+    }
+
+    /// One block of the owner's sound (`advance`). A setting that waits for a sample within the
+    /// block is made at its sample: the block runs to it, the setting is made, and the block runs
+    /// on; one at the block's end is made as the cursor reaches it. Answers the block's field, its
+    /// PCM whole, and a record of each setting made (`TORUS_SET_LANDING_LAW`). With no setting
+    /// waiting it is the owner's one block.
+    pub fn advance(&mut self, frames: u32, muted: bool) -> Result<(Value, Vec<Value>), String> {
+        let now = self.samples_now();
+        let end = now
+            .checked_add(u64::from(frames))
+            .ok_or("the block ends past the last sample")?;
+        if self.waiting.first().is_none_or(|waiting| waiting.at > end) {
+            return Ok((self.session.advance_field(frames, muted)?, Vec::new()));
+        }
+        let mut audio: Vec<Value> = Vec::with_capacity(frames as usize);
+        let mut landed = Vec::new();
+        let mut cursor = now;
+        loop {
+            let due = self
+                .waiting
+                .first()
+                .map(|waiting| waiting.at)
+                .filter(|at| *at <= end);
+            let to = due.unwrap_or(end);
+            if to > cursor {
+                let part =
+                    u32::try_from(to - cursor).map_err(|_| "a block part past the ceiling")?;
+                let field = self.session.advance_field(part, muted)?;
+                let block = field["audio"]
+                    .as_array()
+                    .filter(|block| block.len() == part as usize)
+                    .ok_or("the owner did not answer with its block of sound")?;
+                audio.extend(block.iter().cloned());
+                cursor = to;
+            }
+            if due.is_none() {
+                break;
+            }
+            let waiting = self.waiting.remove(0);
+            landed.push(self.land(waiting));
+        }
+        let mut field = self.session.last_field().clone();
+        field["audio"] = Value::Array(audio);
+        Ok((field, landed))
+    }
+
+    /// Makes a waiting setting at the cursor, its sample, as `torus-set` makes one; names it.
+    fn land(&mut self, waiting: WaitingSet) -> Value {
+        let at = waiting.at.to_string();
+        match self.torus_edit(&waiting.edit) {
+            Ok((moved, _)) => {
+                json!({"at_samples_elapsed": at, "edit": waiting.edit, "applied": true, "moved": moved})
+            }
+            Err(why) => json!({"at_samples_elapsed": at, "edit": waiting.edit, "applied": false,
+                "moved": [], "refused": why}),
+        }
+    }
+
+    /// The scene's event and shape under a Fundamental (`None`: the map's), the SAME resident
+    /// voices: judged without any native act.
+    fn fundamental_event(&self, hz: Option<f64>) -> Result<(CoupledInput, ShapeBasis), String> {
         let mut event = self.event();
         event.fundamental_hz = hz;
         let event = next_generation(&event, self.event.m2.stamp.identity.profile_generation)?;
@@ -1667,6 +1841,13 @@ impl SceneInstrument {
         if !shape.same_body(&self.shape) {
             return Err("a Fundamental edit cannot change the scene's shapes".into());
         }
+        Ok((input, shape))
+    }
+
+    /// The Fundamental on the SAME resident voices: one modes continuation,
+    /// no strike and no reshape (one ratio keeps every weight).
+    fn set_fundamental(&mut self, hz: Option<f64>) -> Result<Value, String> {
+        let (input, shape) = self.fundamental_event(hz)?;
         let field = self.session.replace_field_state(input.clone(), false)?;
         self.event = input;
         self.shape = shape;
@@ -1694,9 +1875,11 @@ impl SceneInstrument {
             return Err("a Jankó key's row is 0 to 5".into());
         }
         let at = at_samples_elapsed.unwrap_or_else(|| self.samples_now());
-        let steps = self.torus.steps_at(at);
+        // The session as it will stand at the act's sample: a setting sent for a sample before it is in force there (O-I 855).
+        let landing = self.torus_at(at);
+        let steps = landing.steps_at(at);
         // Strike: the share of the key's velocity that excites the body (manual §21.2; the element's under Body source Tattva).
-        let strike = self.torus.settings().strike;
+        let strike = landing.settings().strike;
         let amplitude = [amplitude[0] * strike, amplitude[1] * strike];
         let surface = crate::janko::JankoSurface::new();
         let points: Vec<crate::janko::KeyPoint> =
@@ -1714,7 +1897,7 @@ impl SceneInstrument {
         )
         .map_err(|_| "the event carries no Vimarśā seed to read a note's cell from")?;
         let map_hz = self.event.map_hz()?;
-        let scale = self.torus.fundamental_hz(map_hz) / map_hz;
+        let scale = landing.fundamental_hz(map_hz) / map_hz;
         let cells = points
             .iter()
             .map(|point| {
@@ -1731,7 +1914,7 @@ impl SceneInstrument {
             })
             .collect::<Result<Vec<_>, String>>()?;
         let outcome = self.strike_at_when(&strikes, at_samples_elapsed)?;
-        let admission = self.torus.strike(keys, at);
+        let admission = self.torus.strike_under(keys, at, &landing);
         let notes: Vec<Value> = admission
             .admitted
             .iter()
@@ -1745,10 +1928,10 @@ impl SceneInstrument {
             "schema": TORUS_PLAY_RECEIPT,
             "notes": notes,
             "made_way": admission.made_way,
-            "polyphony": self.torus.settings().polyphony,
+            "polyphony": landing.settings().polyphony,
             "strike": strike,
-            "tuning": self.tuning(),
-            "pulse": self.torus.pulse(at),
+            "tuning": landing.settings().tuning,
+            "pulse": landing.pulse(at),
             "at_samples_elapsed": outcome.receipt["at_samples_elapsed"],
             "law": crate::janko::POINT_LAW,
         });
@@ -2249,13 +2432,21 @@ impl SceneInstrument {
         points: &[StrikeAtInput],
         at_samples_elapsed: Option<u64>,
     ) -> Result<StrikeAtOutcome, String> {
-        let impulses = self.shape.strike_at_tuned(points, self.tuning())?;
+        // The tuning in force at the act's sample: a setting sent for a sample before it is in force there (O-I 855).
+        let tuning = match at_samples_elapsed {
+            Some(at) => self.torus_at(at).settings().tuning,
+            None => self.tuning(),
+        };
+        let impulses = self.shape.strike_at_tuned(points, tuning)?;
         let mut receipt = self.shape.strike_at_receipt(points, &impulses);
         let lands = match at_samples_elapsed {
             Some(at) => json!(at.to_string()),
             None => self.session.last_field()["samples_elapsed"].clone(),
         };
         let field = self.strike_when(&impulses, at_samples_elapsed)?;
+        if let Some(at) = at_samples_elapsed {
+            self.struck_through = self.struck_through.max(at);
+        }
         receipt["at_samples_elapsed"] = lands;
         Ok(StrikeAtOutcome { field, receipt })
     }

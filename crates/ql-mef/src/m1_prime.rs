@@ -679,12 +679,36 @@ impl Session {
     /// Polyphony allows, the oldest make way. A key already sounding is struck
     /// again as a new note (the old one makes way for it).
     pub fn strike(&mut self, keys: &[JankoKey], samples: u64) -> NoteAdmission {
+        let (steps, polyphony) = (self.steps_at(samples), self.settings.polyphony);
+        self.admit(keys, samples, steps, polyphony)
+    }
+
+    /// The same strike counted now for a later sample, under the session as it will stand there
+    /// (`landing`: this session with the settings that wait to be made before that sample): each
+    /// key's arc at the pulse there, and the Polyphony in force there (O-I 855).
+    pub fn strike_under(
+        &mut self,
+        keys: &[JankoKey],
+        samples: u64,
+        landing: &Self,
+    ) -> NoteAdmission {
+        self.admit(
+            keys,
+            samples,
+            landing.steps_at(samples),
+            landing.settings.polyphony,
+        )
+    }
+
+    fn admit(
+        &mut self,
+        keys: &[JankoKey],
+        samples: u64,
+        steps: f64,
+        polyphony: u8,
+    ) -> NoteAdmission {
         let mut admission = NoteAdmission::default();
-        let arc = |key: JankoKey, session: &Self| {
-            crate::janko::JankoSurface::new()
-                .point(key, session.steps_at(samples))
-                .arc
-        };
+        let surface = crate::janko::JankoSurface::new();
         for key in keys {
             if let Some(index) = self.notes.iter().position(|note| note.key == *key) {
                 admission.made_way.extend(self.notes.remove(index));
@@ -692,13 +716,13 @@ impl Session {
             let note = Note {
                 id: self.next_note,
                 key: *key,
-                arc: arc(*key, self),
+                arc: surface.point(*key, steps).arc,
                 struck_at_samples: samples,
             };
             self.next_note += 1;
             self.notes.push_back(note);
             admission.admitted.push(note);
-            while self.notes.len() > usize::from(self.settings.polyphony) {
+            while self.notes.len() > usize::from(polyphony) {
                 admission.made_way.extend(self.notes.pop_front());
             }
         }

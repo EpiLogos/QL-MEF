@@ -125,8 +125,13 @@ pub enum HostOperation {
     /// scene only: one edit of the Torus session. Rate, Carrier, Shape,
     /// Tuning, Polyphony and the set's tempo move no native state; the
     /// Fundamental is one modes continuation of the same resident voices.
+    /// `at_samples_elapsed` as for `strike` (O-I 855): an edit for a later
+    /// sample waits, moving nothing, and the `advance` whose block reaches its
+    /// sample makes it there, naming it in `torus_set_landed`.
     TorusSet {
         edit: Box<crate::m1_prime::SettingsEdit>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        at_samples_elapsed: Option<String>,
     },
     /// scene only: keys of the Jankó surface strike their moving points on
     /// the voices of the tuning in force (one strike at points); each key is a
@@ -193,10 +198,15 @@ fn exact_cursor(text: &str) -> Result<u64, String> {
 
 /// The sample a played act lands at, read as an exact host cursor.
 fn landing(at_samples_elapsed: Option<&str>) -> Result<Option<u64>, String> {
+    landing_of("a strike", at_samples_elapsed)
+}
+
+/// The sample an act (`what`) lands at, read as an exact host cursor.
+fn landing_of(what: &str, at_samples_elapsed: Option<&str>) -> Result<Option<u64>, String> {
     at_samples_elapsed
         .map(|text| {
             exact_cursor(text).map_err(|error| {
-                format!("a strike's at_samples_elapsed must be an exact sample cursor: {error}")
+                format!("{what}'s at_samples_elapsed must be an exact sample cursor: {error}")
             })
         })
         .transpose()
@@ -603,9 +613,14 @@ impl FieldHost {
         let mut extra = serde_json::Map::new();
         let outcome: Result<Option<Value>, String> = match request.command {
             HostOperation::TorusState {} => Ok(None),
-            HostOperation::TorusSet { edit } => instrument.torus_set(&edit).inspect(|_| {
-                extra.insert("influence".into(), instrument.influence());
-            }),
+            HostOperation::TorusSet {
+                edit,
+                at_samples_elapsed,
+            } => landing_of("a setting", at_samples_elapsed.as_deref())
+                .and_then(|at| instrument.torus_set_when(&edit, at))
+                .inspect(|_| {
+                    extra.insert("influence".into(), instrument.influence());
+                }),
             HostOperation::TorusPlay {
                 keys,
                 amplitude,
@@ -826,14 +841,23 @@ impl FieldHost {
         };
         // A strike at points answers with the field and its own receipt.
         let mut strike_at_receipt: Option<Value> = None;
+        // A block that made Torus settings at their samples answers with their records.
+        let mut torus_set_landed: Option<Value> = None;
         let result = match (request.command, &mut self.session) {
             (HostOperation::Read {}, owner) => owner.session_mut().read_field(),
-            (HostOperation::Advance { frames, muted }, owner) => {
-                if frames > 8192 {
-                    Err("native block ceiling exceeded".into())
-                } else {
-                    owner.session_mut().advance_field(frames, muted)
-                }
+            (HostOperation::Advance { frames, .. }, _) if frames > 8192 => {
+                Err("native block ceiling exceeded".into())
+            }
+            (HostOperation::Advance { frames, muted }, Owner::Scene(instrument)) => {
+                instrument.advance(frames, muted).map(|(field, landed)| {
+                    if !landed.is_empty() {
+                        torus_set_landed = Some(Value::Array(landed));
+                    }
+                    field
+                })
+            }
+            (HostOperation::Advance { frames, muted }, Owner::Supplied(session)) => {
+                session.advance_field(frames, muted)
             }
             (
                 HostOperation::Strike {
@@ -915,6 +939,13 @@ impl FieldHost {
                 response["field"] = field;
                 if let Some(receipt) = strike_at_receipt {
                     response["strike_at"] = receipt;
+                }
+                // The settings made in the block, with the session and the voices they leave.
+                if let (Some(landed), Owner::Scene(instrument)) = (torus_set_landed, &self.session)
+                {
+                    response["torus_set_landed"] = landed;
+                    response["torus"] = instrument.torus_reading();
+                    response["influence"] = instrument.influence();
                 }
                 if let (true, Owner::Scene(instrument)) = (determinant, &self.session) {
                     response["influence"] = instrument.influence();
