@@ -91,7 +91,7 @@ function setup(options = {}) {
         current.generation = String(BigInt(current.generation) + 1n);
         current.amplitudes_metres[0][0] += 0.01;
         current.targets[0].position[2] += 0.25;
-      } else if (request.command.operation === 'torus-play' || (request.command.operation === 'torus-set' &&
+      } else if (request.command.operation === 'torus-play' || request.command.operation === 'torus-singlet' || (request.command.operation === 'torus-set' &&
         request.command.edit?.fundamental !== undefined && port.fundamentalMoves !== false)) {
         // Controlled protocol case (host.rs torus_operation): a played Torus act
         // is one strike at points; a Fundamental edit one modes continuation.
@@ -128,7 +128,7 @@ function setup(options = {}) {
         reply.current = port.scoreCurrent ?? true;
         reply.resolved_event_ref = port.scoreEventRef ?? current.event_ref;
       }
-      if (['torus-state', 'torus-set', 'torus-play', 'torus-release', 'torus-checkpoint', 'torus-restore'].includes(request.command.operation))
+      if (['torus-state', 'torus-set', 'torus-play', 'torus-singlet', 'torus-release', 'torus-checkpoint', 'torus-restore'].includes(request.command.operation))
         reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [] };
       if (request.command.operation === 'torus-set')
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
@@ -157,6 +157,10 @@ function setup(options = {}) {
       }
       if (request.command.operation === 'torus-play')
         reply.torus_play = { schema: 'ql.torus-play/v1', notes: request.command.keys.map((key, id) => ({ id, key })), made_way: [] };
+      // Controlled protocol case (host.rs torus_operation, O-I #771): a singlet is one strike at its codon's places.
+      if (request.command.operation === 'torus-singlet')
+        reply.torus_singlet = { schema: 'ql.torus-singlet/v1', codon: request.command.codon,
+          places: request.command.codon === 8 ? [{ lens: 0, arc: 9 }, { lens: 0, arc: 10 }] : [{ lens: 0, arc: 6 }], points: [] };
       if (port.effect) reply = port.effect(reply);
       if (port.delay) await port.delay;
       return reply;
@@ -830,6 +834,26 @@ test('a played Torus act is one generation and keeps its receipt; a release move
   // A host whose play did not move the cursor disagrees with the law.
   port.torusStep = 0n;
   await assert.rejects(session.torusPlay([{ row: 0, column: 0 }]), /disagree/);
+  session.dispose();
+});
+
+test('a singlet is one strike at its codon\'s place and keeps its receipt; a refused one moves nothing', async () => {
+  // O-I #771: an applied M3 event that leaves the cell non-dual strikes the codon at its place on the ring.
+  const { session, calls, port } = setup();
+  await session.torusSinglet(8, { amplitude: [0.1, 0], at_samples_elapsed: '4800' });
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-singlet', codon: 8, amplitude: [0.1, 0], at_samples_elapsed: '4800' });
+  assert.equal(session.reading.acknowledged.generation, '2', 'both arcs of a nonet-collision codon are one strike at points');
+  assert.deepEqual(session.lastTorusSinglet.places, [{ lens: 0, arc: 9 }, { lens: 0, arc: 10 }]);
+  assert.deepEqual(session.journal().acts.map(act => act.operation), ['torus-singlet']);
+  // Refused before any exchange: no codon past the 64, an impulse past the policy.
+  const sent = calls.length;
+  await assert.rejects(session.torusSinglet(64), /codon is 0 to 63/);
+  await assert.rejects(session.torusSinglet(2.5), /codon is 0 to 63/);
+  await assert.rejects(session.torusSinglet(5, { amplitude: [1.5, 0] }), /within 1\.0/);
+  assert.equal(calls.length, sent);
+  // A host whose singlet did not move the cursor disagrees with the law.
+  port.torusStep = 0n;
+  await assert.rejects(session.torusSinglet(5), /disagree/);
   session.dispose();
 });
 

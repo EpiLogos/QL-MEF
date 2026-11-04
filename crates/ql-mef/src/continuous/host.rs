@@ -144,6 +144,19 @@ pub enum HostOperation {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         at_samples_elapsed: Option<String>,
     },
+    /// scene only: a singlet strikes at its codon's place on the ring (O-I
+    /// #771, `scene_field::SINGLET_PLACE_LAW`): the arc the ring reads the
+    /// codon at, carried by the turning torus by the point law a key's place
+    /// is (both arcs for a nonet-collision codon), as one strike at points on
+    /// the voices of the tuning in force. No note is counted. A performance
+    /// act, not a determinant; `at_samples_elapsed` as for `strike`.
+    TorusSinglet {
+        codon: u8,
+        #[serde(deserialize_with = "super::number::pair")]
+        amplitude: [f64; 2],
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        at_samples_elapsed: Option<String>,
+    },
     /// scene only: release keys from the count of notes. The body rings on,
     /// so no native state moves.
     TorusRelease {
@@ -497,6 +510,7 @@ impl FieldHost {
                 | HostOperation::TorusState {}
                 | HostOperation::TorusSet { .. }
                 | HostOperation::TorusPlay { .. }
+                | HostOperation::TorusSinglet { .. }
                 | HostOperation::TorusRelease { .. }
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }
@@ -607,7 +621,8 @@ impl FieldHost {
 
     /// Dispatches the Torus's M1′ session operations (O-I #850). Scene-only.
     /// Every answer carries the session reading as `torus`; a played act adds
-    /// its `torus_play` and `strike_at` receipts, and an edit its influence
+    /// its `torus_play` and `strike_at` receipts, a singlet its `torus_singlet`
+    /// and `strike_at` receipts, and an edit its influence
     /// reading (the tuning and the voices' frequencies the owner reports). An
     /// operation that moves no native state answers with the last
     /// acknowledged field, its generation unchanged.
@@ -638,6 +653,17 @@ impl FieldHost {
                 .and_then(|at| instrument.torus_play(&keys, amplitude, at))
                 .map(|outcome| {
                     extra.insert("torus_play".into(), outcome.receipt);
+                    extra.insert("strike_at".into(), outcome.strike_at);
+                    Some(outcome.field)
+                }),
+            HostOperation::TorusSinglet {
+                codon,
+                amplitude,
+                at_samples_elapsed,
+            } => landing(at_samples_elapsed.as_deref())
+                .and_then(|at| instrument.torus_singlet(codon, amplitude, at))
+                .map(|outcome| {
+                    extra.insert("torus_singlet".into(), outcome.receipt);
                     extra.insert("strike_at".into(), outcome.strike_at);
                     Some(outcome.field)
                 }),
@@ -832,6 +858,7 @@ impl FieldHost {
             HostOperation::TorusState {}
                 | HostOperation::TorusSet { .. }
                 | HostOperation::TorusPlay { .. }
+                | HostOperation::TorusSinglet { .. }
                 | HostOperation::TorusRelease { .. }
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }
@@ -942,6 +969,7 @@ impl FieldHost {
                 | HostOperation::TorusState {}
                 | HostOperation::TorusSet { .. }
                 | HostOperation::TorusPlay { .. }
+                | HostOperation::TorusSinglet { .. }
                 | HostOperation::TorusRelease { .. }
                 | HostOperation::TorusCheckpoint {}
                 | HostOperation::TorusRestore { .. }

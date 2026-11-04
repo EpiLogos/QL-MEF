@@ -1323,6 +1323,9 @@ pub struct StrikeAtOutcome {
 
 /// The receipt of one played Torus act (`torus-play`).
 pub const TORUS_PLAY_RECEIPT: &str = "ql.torus-play/v1";
+/// The receipt of one singlet struck on the Torus (`torus-singlet`, O-I #771).
+pub const TORUS_SINGLET_RECEIPT: &str = "ql.torus-singlet/v1";
+pub const SINGLET_PLACE_LAW: &str = "a singlet strikes at its codon's place on the ring: the arc the ring reads the codon at, the inverse of spanda_field::codon_advance (index = lens·12 + arc of the 72-space, codon = epogdoon(index) = ⌊8·index/9⌋, so arc = index mod 12); the eight codons the nonet collision gives two of the nine indices (0, 8, … 56) strike both their arcs, side by side in one lens, as Binding draws both; the turning torus carries the place by the point law a key's place is carried by (janko::POINT_LAW: α = 60°·(arc + steps), φ = α mod 360°, θ = α/2), at the pulse's steps at the act's sample. The owner's ruling on O-I #771, 4 Nov 2026: a derived reading of codon_advance and POINT_LAW, not a new place";
 /// The Torus as it stands at a sample, kept so it rings on again from there (O-I 855).
 pub const TORUS_CHECKPOINT: &str = "ql.torus-checkpoint/v1";
 pub const TORUS_CHECKPOINT_LAW: &str = "a checkpoint keeps the Torus as it stands at its sample: the body as it rings (each resident voice's state, in the native owner's mode order), its form (the shapes' reference), the forces it answers to (the session's settings, which give the Carrier's drive, and the body's damping), the M1′ session (the pulse's steps, so its arc and the comma gathered, the Klein bottle's steps left and the sounding notes), and the scene's event with the seeds it carries. Set again at a later sample, the body rings on from those states and the pulse runs on from those steps; an event or a damping that has moved since comes back first as a modes continuation of the same voices. Acts admitted for samples after the checkpoint are not kept: they are the performance's, and the owner's journal keeps them";
@@ -1449,6 +1452,14 @@ struct WaitingSet {
 /// What a played Torus act did: the field, the notes and the strike.
 #[derive(Debug, Clone)]
 pub struct TorusPlayOutcome {
+    pub field: Value,
+    pub receipt: Value,
+    pub strike_at: Value,
+}
+
+/// What a struck singlet did: the field, the codon's places and points, and the strike.
+#[derive(Debug, Clone)]
+pub struct TorusSingletOutcome {
     pub field: Value,
     pub receipt: Value,
     pub strike_at: Value,
@@ -2147,6 +2158,55 @@ impl SceneInstrument {
             "law": crate::janko::POINT_LAW,
         });
         Ok(TorusPlayOutcome {
+            field: outcome.field,
+            receipt,
+            strike_at: outcome.receipt,
+        })
+    }
+
+    /// A singlet struck on the Torus (`torus-singlet`, O-I #771): the codon
+    /// strikes at its place on the ring ([`SINGLET_PLACE_LAW`]), each place at
+    /// its point where the pulse stands at the act's sample, as one strike at
+    /// points. No note is counted: a singlet is an M3 event's, not a key's.
+    /// A refused act changes nothing.
+    pub fn torus_singlet(
+        &mut self,
+        codon: u8,
+        amplitude: [f64; 2],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<TorusSingletOutcome, String> {
+        if codon >= 64 {
+            return Err(format!(
+                "a singlet's codon is 0 to 63; there is no codon {codon}"
+            ));
+        }
+        let at = at_samples_elapsed.unwrap_or_else(|| self.samples_now());
+        let landing = self.torus_at(at);
+        let steps = landing.steps_at(at);
+        let places = crate::spanda_field::ring_places(ql_core::Codon64::new(codon));
+        let points: Vec<crate::janko::KeyPoint> = places
+            .iter()
+            .map(|place| crate::janko::point_of(crate::janko::HelixPlace::of_arc(place.arc), steps))
+            .collect();
+        let strikes: Vec<StrikeAtInput> = points
+            .iter()
+            .map(|point| StrikeAtInput {
+                theta: point.theta,
+                phi: point.phi,
+                amplitude,
+            })
+            .collect();
+        let outcome = self.strike_at_when(&strikes, at_samples_elapsed)?;
+        let receipt = json!({
+            "schema": TORUS_SINGLET_RECEIPT,
+            "codon": codon,
+            "places": places,
+            "points": points,
+            "pulse": landing.pulse(at),
+            "at_samples_elapsed": outcome.receipt["at_samples_elapsed"],
+            "law": SINGLET_PLACE_LAW,
+        });
+        Ok(TorusSingletOutcome {
             field: outcome.field,
             receipt,
             strike_at: outcome.receipt,
