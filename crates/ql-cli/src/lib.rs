@@ -1582,7 +1582,7 @@ mod tests {
         let json =
             execute_cli(&["context-frame".into(), "team-space".into(), "--json".into()]).unwrap();
         let value: serde_json::Value = serde_json::from_str(&json).unwrap();
-        assert_eq!(value["contract"], "ql.vak-team-space/v1");
+        assert_eq!(value["contract"], "ql.vak-team-space/v2");
         assert_eq!(value["rows"].as_array().unwrap().len(), 7);
         assert_eq!(value["rows"][4]["anima"]["voice"], "Anima");
         assert_eq!(

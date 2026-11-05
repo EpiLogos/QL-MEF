@@ -7,13 +7,15 @@ MEMBERS = ('ql-foundations','ql-operation','ql-experience-prepare','ql-evidence-
 METHODS = {'ql-operation','bimba-cypher','refraction-adapter-authoring','ql-experience-prepare','ql-experience-walk','quaternal-tarot','quaternal-i-ching'}
 # Anima/Aletheia team skills (docs/integrations/epi-logos/ANIMA-ALETHEIA-TEAMS.md). darshana, repl and
 # vak-coordinate-frame are reference Skills, not Methods.
-TEAM_METHODS = {'vak-evaluate','anima-orchestration','day-night-pass','klein-mode','ouroboros','symbolic-protein-reading',
+TEAM_METHODS = {'vak-evaluate','anima-orchestration','prospective-retrospective-pass','klein-mode','ouroboros','symbolic-protein-reading',
                 'relational-graph-traverse','wikilink-resonance-scan','cross-source-dissonance-detect','gnosis-retrieve',
                 'thought-distil','anansi','aletheia-stack-traverse','aletheia-module-audit','aletheia-improvement-propose',
                 'aletheia-self-extend','aletheia-plugin-integrate','aletheia-ql-gate','aletheia-m-gate','aletheia-s-gate',
                 'aletheia-m-prime-gate','aletheia-rupa-gate','aletheia-collab-gate',
                 'anima-expressive-composition','aletheia-expressive-return','chronos-act-continuity'}
-METHODS |= TEAM_METHODS
+# Ta-Onta's six Methods (O-I #754); ta-onta-methodology is a METHODOLOGY, not a Method.
+TA_ONTA_METHODS = {'ta-onta-enter','ta-onta-form','ta-onta-find','ta-onta-time','ta-onta-compose','ta-onta-return'}
+METHODS |= TEAM_METHODS | TA_ONTA_METHODS
 def sha(b: bytes) -> str: return hashlib.sha256(b).hexdigest()
 def main() -> int:
     ap=argparse.ArgumentParser(description=__doc__)

@@ -34,7 +34,7 @@ pub const INSTRUMENT_CELLS: &str = "ql.instrument-cells/v1";
 pub const INSTRUMENT_CELL_CHECK: &str = "ql.instrument-cell-check/v1";
 
 /// Stable contract id of the serialised team space.
-pub const TEAM_SPACE_CONTRACT: &str = "ql.vak-team-space/v1";
+pub const TEAM_SPACE_CONTRACT: &str = "ql.vak-team-space/v2";
 /// The proving Positions of the first two situated roles (L5 lock §15).
 pub const ANIMA_PROVING_POSITION: &str = "central:position:project:O-I:anima-4";
 pub const ALETHEIA_PROVING_POSITION: &str = "central:position:project:O-I:aletheia-5";
@@ -48,10 +48,10 @@ const ALETHEIA_LEAD: &str = "agent/aletheia";
 // Values held once here because only a skill or document holds them.
 // ---------------------------------------------------------------------------
 
-/// Day questions by CP, with the frame whose voice usually asks them
-/// (`skills/day-night-pass`, "Day pass"). CP 4.0 is asked by "the frame
+/// Prospective questions by CP, with the frame whose voice usually asks them
+/// (`skills/prospective-retrospective-pass`, "Prospective pass"). CP 4.0 is asked by "the frame
 /// assigned by orchestration", so it has no fixed frame.
-const DAY: [(ContentPosition, &str, Option<ContextFrameId>); 6] = [
+const PROSPECTIVE: [(ContentPosition, &str, Option<ContextFrameId>); 6] = [
     (ContentPosition::Ground, "What do we have?", None),
     (
         ContentPosition::Definition,
@@ -80,7 +80,7 @@ const DAY: [(ContentPosition, &str, Option<ContextFrameId>); 6] = [
     ),
 ];
 
-struct Night {
+struct Retrospective {
     position: ContentPosition,
     prime: &'static str,
     question: &'static str,
@@ -90,9 +90,10 @@ struct Night {
     moirai_mode: Option<&'static str>,
 }
 
-/// Night′ questions (`skills/day-night-pass`, "Night′ pass"), in CP order.
-const NIGHT: [Night; 6] = [
-    Night {
+/// Retrospective questions (`skills/prospective-retrospective-pass`,
+/// "Retrospective pass"), in CP order: the prime positions P0′–P5′.
+const RETROSPECTIVE: [Retrospective; 6] = [
+    Retrospective {
         position: ContentPosition::Ground,
         prime: "P0′",
         question: "What don't we know?",
@@ -100,7 +101,7 @@ const NIGHT: [Night; 6] = [
         frame: ContextFrameId::Cf1,
         moirai_mode: None,
     },
-    Night {
+    Retrospective {
         position: ContentPosition::Definition,
         prime: "P1′",
         question: "What evidence exists?",
@@ -108,7 +109,7 @@ const NIGHT: [Night; 6] = [
         frame: ContextFrameId::Cf3,
         moirai_mode: Some("Klotho"),
     },
-    Night {
+    Retrospective {
         position: ContentPosition::Operation,
         prime: "P2′",
         question: "What blocks us?",
@@ -116,7 +117,7 @@ const NIGHT: [Night; 6] = [
         frame: ContextFrameId::Cf3,
         moirai_mode: None,
     },
-    Night {
+    Retrospective {
         position: ContentPosition::Pattern,
         prime: "P3′",
         question: "What repeats?",
@@ -124,7 +125,7 @@ const NIGHT: [Night; 6] = [
         frame: ContextFrameId::Cf4,
         moirai_mode: None,
     },
-    Night {
+    Retrospective {
         position: ContentPosition::Context,
         prime: "P4′",
         question: "What sources inform?",
@@ -132,7 +133,7 @@ const NIGHT: [Night; 6] = [
         frame: ContextFrameId::Cf5,
         moirai_mode: Some("Lachesis"),
     },
-    Night {
+    Retrospective {
         position: ContentPosition::Integration,
         prime: "P5′",
         question: "What crystallises?",
@@ -144,7 +145,7 @@ const NIGHT: [Night; 6] = [
 
 /// Specialists other than Moirai, with their frame and, for Agora, the frame
 /// it fuses into (`ANIMA-ALETHEIA-TEAMS.md` §2). Moirai's seats come from
-/// [`NIGHT`]: one actor in three modes, distributed by the thought it answers.
+/// [`RETROSPECTIVE`]: one actor in three modes, distributed by the thought it answers.
 const SEATS: [(Specialist, ContextFrameId, Option<ContextFrameId>); 5] = [
     (Specialist::Anansi, ContextFrameId::Cf1, None),
     (Specialist::Janus, ContextFrameId::Cf2, None),
@@ -168,7 +169,7 @@ const GATES: [(u8, &str, &str, Option<ContextFrameId>); 6] = [
     (6, "aletheia-collab-gate", "Collaboration", None),
 ];
 
-/// Thought meanings returned by Night′ answers (`skills/vak-coordinate-frame`).
+/// Thought meanings returned by retrospective answers (`skills/vak-coordinate-frame`).
 const T_READINGS: [(&str, &str); 6] = [
     ("T0", "Question"),
     ("T1", "Trace"),
@@ -219,8 +220,8 @@ pub struct Row {
     pub name: &'static str,
     pub anima: Voice,
     pub aletheia: Vec<Seat>,
-    pub day: Option<DayQuestion>,
-    pub night: Vec<NightQuestion>,
+    pub prospective: Option<ProspectiveQuestion>,
+    pub retrospective: Vec<RetrospectiveQuestion>,
     pub gate: Option<u8>,
     pub instruments: Vec<String>,
 }
@@ -241,13 +242,13 @@ pub struct Seat {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct DayQuestion {
+pub struct ProspectiveQuestion {
     pub position: String,
     pub question: &'static str,
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct NightQuestion {
+pub struct RetrospectiveQuestion {
     pub position: String,
     pub prime: &'static str,
     pub question: &'static str,
@@ -384,7 +385,9 @@ fn skill_text(name: &str) -> Option<&'static str> {
             include_str!("../../../skills/aletheia-improvement-propose/SKILL.md")
         }
         "klein-mode" => include_str!("../../../skills/klein-mode/SKILL.md"),
-        "day-night-pass" => include_str!("../../../skills/day-night-pass/SKILL.md"),
+        "prospective-retrospective-pass" => {
+            include_str!("../../../skills/prospective-retrospective-pass/SKILL.md")
+        }
         "vak-coordinate-frame" => include_str!("../../../skills/vak-coordinate-frame/SKILL.md"),
         "vak-evaluate" => include_str!("../../../skills/vak-evaluate/SKILL.md"),
         _ => return None,
@@ -423,10 +426,10 @@ fn skill_labels(skill: &str, pairs: &[(&str, &str)]) -> Vec<Value> {
         .collect()
 }
 
-fn night_answerer(night: &Night) -> String {
-    match night.moirai_mode {
+fn retrospective_answerer(question: &Retrospective) -> String {
+    match question.moirai_mode {
         Some(mode) => format!("Moirai as {mode}"),
-        None => constitutional_voice(night.frame).to_string(),
+        None => constitutional_voice(question.frame).to_string(),
     }
 }
 
@@ -470,11 +473,11 @@ fn vak_block_instrument() -> Instrument {
         .iter()
         .enumerate()
         .map(|(i, p)| {
-            let (_, day, _) = DAY[i];
-            let night = NIGHT[i].question;
+            let (_, prospective, _) = PROSPECTIVE[i];
+            let retrospective = RETROSPECTIVE[i].question;
             label(
                 &wire(p),
-                &format!("{p:?}: Day {day} Night′ {night}"),
+                &format!("{p:?}: prospective {prospective} retrospective {retrospective}"),
                 &kernel("position"),
                 PROFILE_CONTRACT,
             )
@@ -537,8 +540,8 @@ fn vak_block_instrument() -> Instrument {
         .iter()
         .map(|d| {
             let meaning = match d {
-                CsDirection::ForwardSynthesis => "Day: the pass forward through the pairs",
-                CsDirection::ReturningInquiry => "Night′: the pass back through the pairs",
+                CsDirection::ForwardSynthesis => "Prospective: the pass forward through the pairs",
+                CsDirection::ReturningInquiry => "Retrospective: the pass back through the pairs",
             };
             label(
                 d.marker(),
@@ -647,8 +650,8 @@ fn thought_reading_instrument() -> Instrument {
         .map(|(id, meaning)| label(id, meaning, &owner, &revision))
         .collect();
     let mut cells: Vec<String> = Vec::new();
-    for night in &NIGHT {
-        let code = night.frame.code().to_string();
+    for question in &RETROSPECTIVE {
+        let code = question.frame.code().to_string();
         if !cells.contains(&code) {
             cells.push(code);
         }
@@ -657,7 +660,7 @@ fn thought_reading_instrument() -> Instrument {
         id: "thought-reading".into(),
         organ: ALETHEIA_ORGAN,
         kind: "thought-reading",
-        source: "ql:skill:day-night-pass".into(),
+        source: "ql:skill:prospective-retrospective-pass".into(),
         answerable_by: Audience::ModelOrPerson,
         seats: vec![aletheia_ref(Specialist::Moirai)],
         cells,
@@ -999,8 +1002,8 @@ fn frames_of(agent_ref: &str) -> Vec<String> {
         }
     }
     if aletheia_ref(Specialist::Moirai) == agent_ref {
-        for night in NIGHT.iter().filter(|n| n.moirai_mode.is_some()) {
-            frames.push(night.frame.code().to_string());
+        for question in RETROSPECTIVE.iter().filter(|n| n.moirai_mode.is_some()) {
+            frames.push(question.frame.code().to_string());
         }
     }
     if agent_ref == ANIMA_LEAD || agent_ref == ALETHEIA_LEAD {
@@ -1016,14 +1019,14 @@ fn rows(instruments: &[Instrument]) -> Vec<Row> {
         .iter()
         .map(|&frame| {
             let mut aletheia: Vec<Seat> = Vec::new();
-            for night in NIGHT
+            for question in RETROSPECTIVE
                 .iter()
                 .filter(|n| n.frame == frame && n.moirai_mode.is_some())
             {
                 aletheia.push(Seat {
                     specialist: Specialist::Moirai.name(),
                     agent_ref: aletheia_ref(Specialist::Moirai),
-                    mode: night.moirai_mode,
+                    mode: question.moirai_mode,
                     office: Specialist::Moirai.office(),
                     joins_into: None,
                 });
@@ -1039,22 +1042,21 @@ fn rows(instruments: &[Instrument]) -> Vec<Row> {
                     });
                 }
             }
-            let day =
-                DAY.iter()
-                    .find(|(_, _, f)| *f == Some(frame))
-                    .map(|(position, question, _)| DayQuestion {
-                        position: wire(position),
-                        question,
-                    });
-            let night = NIGHT
+            let prospective = PROSPECTIVE.iter().find(|(_, _, f)| *f == Some(frame)).map(
+                |(position, question, _)| ProspectiveQuestion {
+                    position: wire(position),
+                    question,
+                },
+            );
+            let retrospective = RETROSPECTIVE
                 .iter()
                 .filter(|n| n.frame == frame)
-                .map(|n| NightQuestion {
+                .map(|n| RetrospectiveQuestion {
                     position: wire(&n.position),
                     prime: n.prime,
                     question: n.question,
                     reading: n.reading,
-                    answered_by: night_answerer(n),
+                    answered_by: retrospective_answerer(n),
                 })
                 .collect();
             let gate = GATES
@@ -1067,8 +1069,8 @@ fn rows(instruments: &[Instrument]) -> Vec<Row> {
                 name: frame.name(),
                 anima: voice(frame),
                 aletheia,
-                day,
-                night,
+                prospective,
+                retrospective,
                 gate,
                 instruments: instruments
                     .iter()
@@ -1185,7 +1187,7 @@ pub fn team_space() -> TeamSpace {
             "docs/integrations/epi-logos/TA-ONTA-FULL-FIELD-LOCK.md",
             "docs/integrations/epi-logos/QL-NATIVE-DECISION-AGENT-WAYFINDER.md",
             "docs/integrations/epi-logos/QL-AGENT-DECISION-CONTRACTS.md",
-            "skills/day-night-pass/SKILL.md",
+            "skills/prospective-retrospective-pass/SKILL.md",
             "skills/vak-coordinate-frame/SKILL.md",
         ],
     }
@@ -1642,13 +1644,13 @@ impl TeamSpace {
                 })
                 .collect::<Vec<_>>()
                 .join(" + ");
-            let day = row.day.as_ref().map_or("-".to_string(), |d| {
+            let prospective = row.prospective.as_ref().map_or("-".to_string(), |d| {
                 format!("{} {}", d.position, d.question)
             });
-            let night = if row.night.is_empty() {
+            let retrospective = if row.retrospective.is_empty() {
                 "-".to_string()
             } else {
-                row.night
+                row.retrospective
                     .iter()
                     .map(|n| format!("{} {}", n.prime, n.question))
                     .collect::<Vec<_>>()
@@ -1661,8 +1663,8 @@ impl TeamSpace {
                 row.expression,
                 row.anima.voice,
                 members,
-                day,
-                night,
+                prospective,
+                retrospective,
                 gate,
                 row.instruments.join(",")
             ));

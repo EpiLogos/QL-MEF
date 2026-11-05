@@ -27,7 +27,7 @@ Before any dispatch, plan, test run, synthesis or Return is chosen. Evaluate onl
 3. **CP — position.** Where the act sits on 4.0–4.5. If a position must open its own frame, say so: that is a nested frame, not a bigger task.
 4. **CF — frame and voice.** Choose the frame from `ql context-frame list`; the voice follows (`skill/ql/vak-coordinate-frame`). If the frame is CF1 `(00/00)`, do not dispatch an executor: send `agent/anima-nous` with minimal context, receive its questions and sources, then re-run this step.
 5. **CFP — thread form.** CFP0 one voice; CFP1 different tasks in parallel; CFP2 chained phases with validation between them; CFP3 the same task to several readers fused by Agora; CFP4 sustained till its task list is done; CFP5 nested; Z for an authorised compose→perform→record→rehear→recompose cycle.
-6. **CS — sequence and direction.** Pick CS0–CS5 for how much of the paired passage the act needs, and `forward-synthesis` (Day), `returning-inquiry` (Night′) or both.
+6. **CS — sequence and direction.** Pick CS0–CS5 for how much of the paired passage the act needs, and `forward-synthesis` (prospective), `returning-inquiry` (retrospective) or both.
 
 When the act must be formally determined (an Expression, a composed performance, a Factory undertaking that will carry the block as its source stamp), write the steps as `ql.vak-composition/v1` JSON — `fixtures/kernel/vak-cprime-oikonomia-v1.json` is a complete executable template of `whole` → `enter` → `cfp-form` → `cs-select` → positioned hops — and run:
 
@@ -52,7 +52,7 @@ plus, when composed, the engine's `results` for the named steps.
 
 - CPF dialogical → `skill/personal/brainstorming`.
 - CPF authorised-undertaking → `skill/ql/anima-orchestration` with the block.
-- CS with both directions → `skill/ql/day-night-pass` after the forward pass.
+- CS with both directions → `skill/ql/prospective-retrospective-pass` after the forward pass.
 
 ## Verify
 

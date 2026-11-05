@@ -1,6 +1,6 @@
 ---
 name: aletheia-self-extend
-description: "METHOD: Propose a bounded extension of the system itself — in tool and skill space (a new skill, Method, command or membrane, with owner, layer, validation gate and rollback) or in coordinate space (an enrichment or promotion of the coordinate map after the insight has been placed) — always ending at the human collaboration gate. Use when Night′ work or an audit shows the system needs a new capacity or a changed map, never to apply one."
+description: "METHOD: Propose a bounded extension of the system itself — in tool and skill space (a new skill, Method, command or membrane, with owner, layer, validation gate and rollback) or in coordinate space (an enrichment or promotion of the coordinate map after the insight has been placed) — always ending at the human collaboration gate. Use when retrospective work or an audit shows the system needs a new capacity or a changed map, never to apply one."
 ---
 
 # Aletheia self-extend
@@ -26,7 +26,7 @@ Propose a new tool, skill, Method or tool–skill membrane. Include:
 
 Propose a coordinate-map change only after:
 
-1. the Night′ insight is placed by `skill/ql/anansi` (`--place`);
+1. the retrospective insight is placed by `skill/ql/anansi` (`--place`);
 2. current versus gap register is identified;
 3. the exact coordinate to enrich or promote is named, with its source and revision;
 4. `skill/ql/aletheia-collab-gate` is requested before any write.

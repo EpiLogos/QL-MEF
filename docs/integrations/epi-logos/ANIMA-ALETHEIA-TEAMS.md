@@ -33,7 +33,7 @@
 | `agent/anima-eros` | CF3 `(0/1/2)` | `(0/1/2)` | relational scour; operation, tests and verification as its dev-work expressions |
 | `agent/anima-mythos` | CF4 `(0/1/2/3)` | `(0/1/2/3)` | pattern recognition, debugging, archetypal reading |
 | `agent/anima-psyche` | CF6 `(4.5/0)` | `(4.0/1-4.4/5)`, CT4b′ | continuity, NOW, coordination; calls on Aletheia |
-| `agent/anima-sophia` | CF7 `(5/0)` | `(5/0)` | synthesis, Night′ lead, Möbius return, finishing |
+| `agent/anima-sophia` | CF7 `(5/0)` | `(5/0)` | synthesis, retrospective lead, Möbius return, finishing |
 | `agent/anima-techne-helper` | none | none | bounded workshop helper for worktrees and terminal workspaces; no routing, no VAK |
 
 Psyche's own file writes `(4.0/1-4.4/5)` (the CT4b′ fractal doubling); the source's routing tables (`vak-coordinate-frame`, `anima-orchestration`) and QL's `constitutional_voice` place Psyche at `(4.5/0)`. QL governs: CF6.
@@ -42,7 +42,7 @@ Psyche's own file writes `(4.0/1-4.4/5)` (the CT4b′ fractal doubling); the sou
 
 | Agent / profile | CF | Source frame literal | Office |
 |---|---|---|---|
-| `agent/aletheia` / `profile/aletheia` | none | `(5/0)` orientation | the unconcealment organ: Night′ pass, knowledge metabolism, the six gates, Return; not a constitutional peer |
+| `agent/aletheia` / `profile/aletheia` | none | `(5/0)` orientation | the unconcealment organ: retrospective pass, knowledge metabolism, the six gates, Return; not a constitutional peer |
 | `agent/aletheia-anansi` | CF1 `(00/00)` | Aletheia CF0 `(0000)` | orientation and gap between blueprint and manifestation; placement with strict provenance |
 | `agent/aletheia-janus` | CF2 `(0/1)` | Aletheia CF1 + CF`(0/1)` | temporal threshold: the before/after envelope, session and day seams, sense of reading |
 | `agent/aletheia-moirai` | CF3 `(0/1/2)` | Aletheia CF2 `(0/1/2)` | distillation, one actor in three modes: Klotho (traces), Lachesis (sources), Atropos (crystallisation) |
@@ -61,7 +61,7 @@ Psyche's own file writes `(4.0/1-4.4/5)` (the CT4b′ fractal doubling); the sou
 | `S4-4p-anima/S4'/skills/vak-coordinate-frame` | `skill/ql/vak-coordinate-frame` | Anima (reference) |
 | `…/vak-evaluate` | `skill/ql/vak-evaluate` | Anima |
 | `…/anima-orchestration` | `skill/ql/anima-orchestration` | Anima |
-| `…/day-night-pass` | `skill/ql/day-night-pass` | Anima (Psyche, Sophia) |
+| `…/day-night-pass` | `skill/ql/prospective-retrospective-pass` | Anima (Psyche, Sophia) |
 | `…/klein-mode` | `skill/ql/klein-mode` | Anima (Sophia) |
 | `…/ouroboros` | `skill/ql/ouroboros` | Anima |
 | `…/darshana` (+ `darshana.py`) | `skill/ql/darshana` | Anima (reference, script carried verbatim) |
@@ -107,7 +107,7 @@ No source skill preceded these; they give the organs native operations over the 
 | ralph | `skill/personal/executing-plans` + a task list that closes only when done; Factory `verificationObligations` | CFP4 till-done |
 | ultrawork | `skill/personal/dispatching-parallel-agents` | parallel throughput |
 | tdd | `skill/personal/test-driven-development` | duplicate of the fork |
-| ultraqa | `skill/personal/verification-before-completion` + `skill/personal/systematic-debugging`; the loop is `skill/ql/day-night-pass` P2′ | Eros tests, Mythos diagnoses, Sophia signs off |
+| ultraqa | `skill/personal/verification-before-completion` + `skill/personal/systematic-debugging`; the loop is `skill/ql/prospective-retrospective-pass` P2′ | Eros tests, Mythos diagnoses, Sophia signs off |
 | plan | `skill/personal/writing-plans` | Logos |
 | ralplan | `skill/personal/writing-plans` + `skill/personal/requesting-code-review` | Logos → Mythos → Eros review chain |
 | deep-interview | `skill/personal/brainstorming` | CPF dialogical clearing |
@@ -157,7 +157,7 @@ Return doors used below: `projectcentral.now.return` (project with `project`, ro
 | `dispatch_agent` | run one team agent | Claude Code `Agent` with the member slug; `aikit task spawn`; a Factory unit with `agentRefs` |
 | `dispatch_parallel_agents` | CFP1 | several `Agent` calls in one message; independent Factory units |
 | `dispatch_fusion_agents` | CFP3 with Agora aggregation | the same brief to N members + `agent/aletheia-agora`; Factory units + barrier |
-| `dispatch_moirai_night_pass` | Klotho/Lachesis/Atropos over a Sophia disclosure | `agent/aletheia-moirai` per `skill/ql/day-night-pass`; results as `T1`/`T4`/`T5` thoughts |
+| `dispatch_moirai_night_pass` | Klotho/Lachesis/Atropos over a Sophia disclosure | `agent/aletheia-moirai` per `skill/ql/prospective-retrospective-pass`; results as `T1`/`T4`/`T5` thoughts |
 | `anima_self_invoke` | queue a task in another Anima session | `aikit gateway send` to a Position (`central:position:project:O-I:anima-4`); `aikit gateway delegate` for custody-bearing work (AIKit, Factory) |
 | `run_chain` | sequential pipeline | sequential `Agent` calls passing only the selection; Factory units with `dependencies` |
 | `subagent_create` / `_continue` / `_list` / `_remove` | background subagents | `Agent` (background) and `SendMessage`; `aikit task spawn\|list\|close` |
@@ -208,7 +208,7 @@ Return doors used below: `projectcentral.now.return` (project with `project`, ro
 | `aletheia_episodic_arc_open` / `_arc_close` / `_arc_status` | named arcs (sagas) | NOW clearings: `central.now.list\|read` for status; allocation and lifecycle are owner-token Actions (`central.now.allocate`, `central.now.lifecycle`) requested through a NOW `question` |
 | `aletheia_episodic_oracle_arc` | oracle cast as a four-face saga | QL's Nara faculty `ql epi-agent invoke` position `#4` (`nara.activity.validate`) + the cast's thoughts in NOW |
 | `aletheia_episodic_logos_stage` | Logos cycle stage episodes | thoughts in NOW carrying the stage; the formal return through `logos.return` |
-| `aletheia_episodic_mobius_arc` | Möbius return arc | `T5` + `T0` thoughts and a NOW `question` (`skill/ql/day-night-pass`) |
+| `aletheia_episodic_mobius_arc` | Möbius return arc | `T5` + `T0` thoughts and a NOW `question` (`skill/ql/prospective-retrospective-pass`) |
 | `aletheia_episodic_ingest_thoughts` | T buckets → typed episodes | `central.now.learnings.distill` over the named fixtures |
 
 ### Carried as the same tool
@@ -305,15 +305,15 @@ Skills: 38 of 65 pinned skill files match at HEAD; 7 drifted (`anima-orchestrati
 
 ## 10. Team space
 
-**Standing:** owner direction of 19 October 2026; built in `crates/ql-mef/src/team_space.rs` and read with `ql context-frame team-space [--json]` (contract `ql.vak-team-space/v1`). The command is read-only, derived from the kernel owners, and calls no model.
+**Standing:** owner direction of 19 October 2026; built in `crates/ql-mef/src/team_space.rs` and read with `ql context-frame team-space [--json]` (contract `ql.vak-team-space/v2`). The command is read-only, derived from the kernel owners, and calls no model.
 
 The team space lives inside two organs only: S4′ Anima, which composes the situated act through the C′ Vāk grammar, and S5′ Aletheia, which discloses what happened and returns it. It is the full agentic side of the Vāk system: the Context Frame language of agentic orchestration. The faces in it are LLM-bodied members. They may put small typed questions to a decision model (Kev is one) and the two leads orchestrate those subagent systems. The space is a grid; an act's Vāk block is its path through the grid.
 
 ### 10.1 The grid: seven rows
 
-Each row is a context frame. It joins the Anima voice, the Aletheia member the roster seats there, the Day and Night′ questions that frame asks, and the gate whose primary contact is that voice. Frame expressions, voices and offices come from `ContextFrameId`, `constitutional_voice` and `Specialist`; the Day and Night′ questions are held once in the module and tested against `skills/day-night-pass` and `skills/vak-coordinate-frame`; the gate contacts are tested against the gate skills.
+Each row is a context frame. It joins the Anima voice, the Aletheia member the roster seats there, the prospective and retrospective questions that frame asks, and the gate whose primary contact is that voice. Frame expressions, voices and offices come from `ContextFrameId`, `constitutional_voice` and `Specialist`; the prospective and retrospective questions are held once in the module and tested against `skills/prospective-retrospective-pass` and `skills/vak-coordinate-frame`; the gate contacts are tested against the gate skills.
 
-| CF | Anima voice | Aletheia member | Day question | Night′ question (reading) | Gate |
+| CF | Anima voice | Aletheia member | Prospective question | Retrospective question (reading) | Gate |
 |---|---|---|---|---|---|
 | CF1 `(00/00)` | Nous | Anansi | none fixed (4.0 is asked by the frame orchestration assigns) | P0′ What don't we know? (T0) | 1 QL |
 | CF2 `(0/1)` | Logos | Janus | 4.1 What must be true? | none | none |
@@ -325,7 +325,7 @@ Each row is a context frame. It joins the Anima voice, the Aletheia member the r
 
 Gate 6, the collaboration gate, is always the person. It has no row.
 
-Two points are this space's own readings. The roster seats Moirai once, at CF3, as one actor in three modes. The space distributes the modes by the thought each answers, which is how `day-night-pass` assigns them: Klotho at CF3 (T1), Lachesis at CF5 (T4), Atropos at CF7 (T5). Agora stays at CF6 as the roster has it and fuses into CF5.
+Two points are this space's own readings. The roster seats Moirai once, at CF3, as one actor in three modes. The space distributes the modes by the thought each answers, which is how `prospective-retrospective-pass` assigns them: Klotho at CF3 (T1), Lachesis at CF5 (T4), Atropos at CF7 (T5). Agora stays at CF6 as the roster has it and fuses into CF5.
 
 ### 10.2 The depth: six M domains
 
@@ -343,7 +343,7 @@ At each cell three kinds of participant stand.
 - **Decision instruments** are typed frames over the cell's closed label sets. They are `ql.agent-decision-frame/v1` heads with their legal labels, cardinality and ambiguity policy. A small model may answer one.
 - **The engine** validates: `ql vak compose`, the gate rules and the kernel operations accept or refuse.
 
-In the face rig these are three kinds of face (owner direction, 18–19 October 2026). The member is a team face. The helper that answers an instrument is an animal: a Kev decision agent, shown as the creature whose real behaviour matches its type (`Work/face-rig/CREATURE-SPEC.md` Part II). Any member may call any helper; Anima and Aletheia orchestrate the helpers. The engine and the passes it runs, such as the Day/Night′ pass and the gate rules, are processes and show as environs. An animal answers; it does not act in the cell, which is why rule 6 below keeps it apart from the members.
+In the face rig these are three kinds of face (owner direction, 18–19 October 2026). The member is a team face. The helper that answers an instrument is an animal: a Kev decision agent, shown as the creature whose real behaviour matches its type (`Work/face-rig/CREATURE-SPEC.md` Part II). Any member may call any helper; Anima and Aletheia orchestrate the helpers. The engine and the passes it runs, such as the prospective/retrospective pass and the gate rules, are processes and show as environs. An animal answers; it does not act in the cell, which is why rule 6 below keeps it apart from the members.
 
 The instruments:
 

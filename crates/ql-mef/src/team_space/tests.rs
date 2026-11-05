@@ -40,7 +40,7 @@ fn head_of<'a>(space: &'a TeamSpace, instrument: &str, head: &str) -> &'a Value 
 #[test]
 fn the_space_has_a_stable_contract_and_validates() {
     let space = space();
-    assert_eq!(space.contract, "ql.vak-team-space/v1");
+    assert_eq!(space.contract, "ql.vak-team-space/v2");
     space.validate().unwrap();
     assert_eq!(space.organs.len(), 2);
 }
@@ -129,7 +129,7 @@ fn the_grid_agrees_with_the_published_rosters() {
             let line = roster_line(&seat.agent_ref);
             match (seat.specialist, seat.mode) {
                 // The roster seats Moirai once, at CF3; the other two modes are
-                // this space's distribution by Night′ reading.
+                // this space's distribution by retrospective reading.
                 ("Moirai", Some("Klotho")) => assert!(line.contains("CF3")),
                 ("Moirai", _) => {}
                 ("Agora", _) => {
@@ -148,10 +148,10 @@ fn the_grid_agrees_with_the_published_rosters() {
 }
 
 #[test]
-fn day_and_night_questions_agree_with_the_skills() {
-    let pass = skill("day-night-pass");
+fn prospective_and_retrospective_questions_agree_with_the_skills() {
+    let pass = skill("prospective-retrospective-pass");
     let frame_skill = skill("vak-coordinate-frame");
-    for (position, question, frame) in DAY {
+    for (position, question, frame) in PROSPECTIVE {
         let key = format!("| {} ", wire(&position));
         let line = pass.lines().find(|l| l.starts_with(&key)).unwrap();
         assert!(line.contains(question), "{line}");
@@ -160,32 +160,36 @@ fn day_and_night_questions_agree_with_the_skills() {
             assert!(line.contains(constitutional_voice(frame)), "{line}");
         }
     }
-    for night in &NIGHT {
+    for retro in &RETROSPECTIVE {
         let line = pass
             .lines()
-            .find(|l| l.contains(&format!("| {} ", night.prime)))
+            .find(|l| l.contains(&format!("| {} ", retro.prime)))
             .unwrap();
-        assert!(line.contains(night.question), "{line}");
+        assert!(line.contains(retro.question), "{line}");
         assert!(
-            line.contains(&format!("({})", night.frame.code())),
+            line.contains(&format!("({})", retro.frame.code())),
             "{line}"
         );
-        if let Some(mode) = night.moirai_mode {
+        if let Some(mode) = retro.moirai_mode {
             assert!(line.contains(&format!("Moirai as {mode}")), "{line}");
         }
         assert!(
-            pass.contains(&format!("{}→`{}`", night.prime, night.reading)),
+            pass.contains(&format!("{}→`{}`", retro.prime, retro.reading)),
             "{}",
-            night.prime
+            retro.prime
         );
         let table = frame_skill
             .lines()
-            .find(|l| l.starts_with(&format!("| {} |", wire(&night.position))))
+            .find(|l| l.starts_with(&format!("| {} |", wire(&retro.position))))
             .unwrap();
-        assert!(table.contains(night.question), "{table}");
-        let day = DAY.iter().find(|d| d.0 == night.position).unwrap().1;
-        assert!(table.contains(day), "{table}");
-        assert!(table.contains(night.reading), "{table}");
+        assert!(table.contains(retro.question), "{table}");
+        let prospective = PROSPECTIVE
+            .iter()
+            .find(|d| d.0 == retro.position)
+            .unwrap()
+            .1;
+        assert!(table.contains(prospective), "{table}");
+        assert!(table.contains(retro.reading), "{table}");
     }
     for (code, meaning) in T_READINGS.iter().chain(T_PRIME_READINGS.iter()) {
         assert!(
@@ -196,12 +200,15 @@ fn day_and_night_questions_agree_with_the_skills() {
     // The space's rows carry the same questions.
     let space = space();
     let cf3 = row(&space, "CF3");
-    assert_eq!(cf3.day.as_ref().unwrap().question, "What is being done?");
-    assert_eq!(cf3.night.len(), 2);
-    assert_eq!(cf3.night[0].answered_by, "Moirai as Klotho");
-    assert_eq!(row(&space, "CF1").night[0].reading, "T0");
-    assert!(row(&space, "CF5").day.is_none());
-    assert!(row(&space, "CF2").night.is_empty());
+    assert_eq!(
+        cf3.prospective.as_ref().unwrap().question,
+        "What is being done?"
+    );
+    assert_eq!(cf3.retrospective.len(), 2);
+    assert_eq!(cf3.retrospective[0].answered_by, "Moirai as Klotho");
+    assert_eq!(row(&space, "CF1").retrospective[0].reading, "T0");
+    assert!(row(&space, "CF5").prospective.is_none());
+    assert!(row(&space, "CF2").retrospective.is_empty());
 }
 
 #[test]
@@ -442,7 +449,7 @@ fn aletheia_outcome_labels_equal_their_skills() {
         (
             "thought-reading",
             "thought-reading",
-            "day-night-pass",
+            "prospective-retrospective-pass",
             &["T0", "T5", "T0-prime", "T5-prime"],
         ),
     ];
@@ -453,7 +460,7 @@ fn aletheia_outcome_labels_equal_their_skills() {
             for e in expected {
                 assert!(labels.contains(&e.to_string()));
             }
-            assert!(skill("day-night-pass").contains("T0"));
+            assert!(skill("prospective-retrospective-pass").contains("T0"));
             continue;
         }
         assert_eq!(labels, expected, "{instrument}/{head}");
@@ -831,7 +838,7 @@ fn the_space_serialises_and_round_trips() {
     let value = serde_json::to_value(&space).unwrap();
     let text = serde_json::to_string_pretty(&value).unwrap();
     assert_eq!(serde_json::from_str::<Value>(&text).unwrap(), value);
-    assert_eq!(value["contract"], "ql.vak-team-space/v1");
+    assert_eq!(value["contract"], "ql.vak-team-space/v2");
     assert_eq!(value["rows"].as_array().unwrap().len(), 7);
     assert_eq!(value["depth"].as_array().unwrap().len(), 6);
     assert_eq!(value["gates"][5]["human_only"], true);

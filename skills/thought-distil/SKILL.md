@@ -1,6 +1,6 @@
 ---
 name: thought-distil
-description: "METHOD: Distil the thought stream of a NOW clearing (T0–T5 and their prime readings) into a reviewable learning during the Night′ rehear — only after traces and sources are present — carrying its full envelope, and hand anything that needs review to Epii's owner-side path instead of promoting it. Use for the Atropos cut, for Sophia's crystallisation, and whenever a learning is ready to leave NOW."
+description: "METHOD: Distil the thought stream of a NOW clearing (T0–T5 and their prime readings) into a reviewable learning during the retrospective rehear — only after traces and sources are present — carrying its full envelope, and hand anything that needs review to Epii's owner-side path instead of promoting it. Use for the Atropos cut, for Sophia's crystallisation, and whenever a learning is ready to leave NOW."
 ---
 
 # Thought distil

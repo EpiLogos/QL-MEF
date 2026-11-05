@@ -1,6 +1,6 @@
 ---
 name: anima-orchestration
-description: "METHOD: Turn an evaluated Vāk block into an actual dispatch — which member takes each act, in which thread form, through which native route (a Claude Code subagent, a background task, a Factory workflow unit, or a Communique to another Position) — including Night′ Moirai routing and the Möbius return. Use when Anima, after vak-evaluate, composes work across its members or calls on the Aletheia team."
+description: "METHOD: Turn an evaluated Vāk block into an actual dispatch — which member takes each act, in which thread form, through which native route (a Claude Code subagent, a background task, a Factory workflow unit, or a Communique to another Position) — including the retrospective Moirai routing and the Möbius return. Use when Anima, after vak-evaluate, composes work across its members or calls on the Aletheia team."
 ---
 
 # Anima orchestration
@@ -27,7 +27,7 @@ A `skill/ql/vak-evaluate` block with CPF `authorised-undertaking` and its author
 | CF4 `(0/1/2/3)` | `agent/anima-mythos` | pattern, debugging, archetypal reading |
 | CF5 `(4.0/1-4.4/5)` | `agent/anima` | the dispatch itself — not dispatched to |
 | CF6 `(4.5/0)` | `agent/anima-psyche` | continuity, NOW, coordination plans, Aletheia calls |
-| CF7 `(5/0)` | `agent/anima-sophia` | synthesis, Night′ lead, Möbius return, branch finishing |
+| CF7 `(5/0)` | `agent/anima-sophia` | synthesis, retrospective lead, Möbius return, branch finishing |
 | — | `agent/anima-techne-helper` | worktrees and terminal workspaces, on explicit instruction only |
 
 The Aletheia team (`agent/aletheia` and its specialists Anansi, Janus, Moirai, Mercurius, Agora, Zeithoven) is called through Psyche's and Sophia's acts, not routed by frame. Techne on a constellation is Aletheia_i in M_i′ (see the team's `TEAM.md`); Anima does not dispatch a "Techne agent".
@@ -62,19 +62,19 @@ When the work is commissioned (development, Expression production, Technè on a 
 
 The Vāk block is the unit's C′ reading; Factory owns the run, attempts, custody and Return. Generic Factory workflows need none of these fields.
 
-## Night′ Moirai routing
+## Retrospective Moirai routing
 
-| Night′ position | Moirai mode | Frame | Act |
+| Retrospective position | Moirai mode | Frame | Act |
 |---|---|---|---|
 | P1′ traces | Klotho | CF3 | assert and validate evidence |
 | P4′ discovery | Lachesis | CF5 | retrieve and triangulate sources |
 | P5′ insight | Atropos | CF7 | cut to essential synthesis, seed forward |
 
-The mode activates when the returning passage reaches its position; it is one actor (`agent/aletheia-moirai`) in three modes, not three agents. A full Night′ fusion (CFP3) runs all three and returns to Psyche and Sophia for aggregation.
+The mode activates when the returning passage reaches its position; it is one actor (`agent/aletheia-moirai`) in three modes, not three agents. A full retrospective fusion (CFP3) runs all three and returns to Psyche and Sophia for aggregation.
 
 ## Möbius return
 
-Sophia closes the Night′ pass with the P5′ insight and the P0′ questions it opens. Record them in the active NOW as thought fixtures (`ctrl --json action run central.now.thoughts.append` with `reading` `T5` and `T0`), and carry open questions as a NOW return (`projectcentral.now.return`, `kind` `question`). The next `vak-evaluate` reads them.
+Sophia closes the retrospective pass with the P5′ insight and the P0′ questions it opens. Record them in the active NOW as thought fixtures (`ctrl --json action run central.now.thoughts.append` with `reading` `T5` and `T0`), and carry open questions as a NOW return (`projectcentral.now.return`, `kind` `question`). The next `vak-evaluate` reads them.
 
 ## Human checkpoints
 
