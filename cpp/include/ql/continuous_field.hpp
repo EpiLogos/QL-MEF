@@ -54,11 +54,47 @@ struct ContinuationReceipt {
     QL_CoupledClock clock;
     double last_unmuted_sample;
 };
+// Each note's own voices (QL-MEF #287 packet A; O-I #850; DLW manual §21.2 Rules: "Each note strikes its own eight voices.
+// Polyphony counts notes."). A note is the cell its key struck, the Vimarsha reading at the struck arc (m2_vimarsha::read_seed):
+// eight voices over four boundaries, each at its own frequency. A note's voice rings in the material of the resident voice it is
+// like (that mode's damping) and is heard as that voice is heard (its output gain, a receiver's move included).
+//
+// The owner counts the notes (m1_prime::Session::admit); the bank sounds them. An act names its notes and the notes that made way
+// for them (a key struck again, or the oldest past Polyphony): those fade out over `steal_seconds`, so nothing clicks, and their
+// slots are free. A note takes the first free slot (never voiced, made way, or rung out); when all `max_bank_notes` still sound,
+// the note voiced longest ago is taken, fading as one that made way. A key's release moves no native state: a released note keeps
+// its own tail. Voicing, making way, rendering and silence are noexcept and allocation-free, on a host's audio thread.
+inline constexpr std::size_t note_voices = 8;
+// m1_prime::POLYPHONY_MAX
+inline constexpr std::size_t max_bank_notes = 32;
+inline constexpr double steal_seconds = 0.004;
+// Below this squared modal amplitude a note's voice is silent and no longer rendered (judged sample by sample, so any block
+// partition renders alike).
+inline constexpr double bank_silent_norm = 1e-60;
+// One voice of a note as it is struck: the resident mode it is like, its own frequency and its impulse (modal metres).
+struct NoteVoice { std::size_t like = 0; double frequency_hz = 0; Complex impulse{0, 0}; };
+// One note of an act: its owner's id (m1_prime::Note::id) and its eight voices.
+struct NoteAct { std::uint64_t id = 0; std::array<NoteVoice, note_voices> voices{}; };
+// One voice of a bank note as it rings: the mode it is like, its frequency and its resident state.
+struct BankVoice { std::size_t like = 0; double frequency_hz = 0; Complex state{0, 0}; };
+// One slot of the bank as it stands: whether it holds a note (`held`: not when its last note made way), that note's id, the
+// order its last note was voiced in, its voices, and the voices of a note that made way there, still fading.
+struct BankNote {
+    std::size_t slot = 0;
+    bool held = false;
+    std::uint64_t id = 0, order = 0;
+    std::array<BankVoice, note_voices> voices{}, fading{};
+};
 // An act admitted for a later sample and not yet landed, by prepared mode index, as a continuation hands it over.
 struct PendingAct {
     std::uint64_t at_samples_elapsed;
     std::vector<std::pair<std::size_t, Complex>> impulses;
+    // An act voicing notes (QL-MEF #287): its notes and the ids of the notes that made way for them; no impulses.
+    std::vector<NoteAct> notes{};
+    std::vector<std::uint64_t> made_way{};
 };
+// The most notes one act may name as making way: each of its notes a key struck again, and as many again past Polyphony.
+inline constexpr std::size_t max_made_way = 2 * max_bank_notes;
 // The M1′ pulse's drive of the body as `set_carrier` set it, and the whole steps it has landed (`reached`).
 struct CarrierDrive {
     double steps_per_second = 0;
@@ -78,6 +114,9 @@ struct Continuation {
     CarrierDrive carrier;
     std::vector<PendingAct> pending;
     std::vector<double> heard_from;
+    // The bank as it stands (QL-MEF #287): every slot ever voiced, and the order the last note was voiced in.
+    std::vector<BankNote> bank{};
+    std::uint64_t bank_order = 0;
 };
 // One played excitation act: an impulse added to a named resident mode. The
 // mode reference is the supplied M2 identity; the amplitude is modal metres.
@@ -117,7 +156,111 @@ class ContinuousField {
     struct Prepared { Mode input; Complex step, forcing, state; };
     // A strike admitted for a later sample: its impulses by prepared mode index, landing as the cursor
     // reaches `at`. Kept in sample order (admission order within a sample); [0, landed_) have landed.
-    struct Pending { std::uint64_t at; std::vector<std::pair<std::size_t, Complex>> impulses; };
+    struct Pending {
+        std::uint64_t at;
+        std::vector<std::pair<std::size_t, Complex>> impulses;
+        std::vector<NoteAct> notes{};
+        std::vector<std::uint64_t> made_way{};
+    };
+    // A note's voice as it rings (QL-MEF #287): the mode it is like, its frequency, its step and its state.
+    struct Voiced { std::size_t like = 0; double frequency_hz = 0; Complex step{0, 0}, state{0, 0}; };
+    struct Slot {
+        std::uint64_t id = 0, order = 0;
+        std::array<Voiced, note_voices> voices{}, fading{};
+        bool held = false, ringing = false;
+    };
+    std::array<Slot, max_bank_notes> bank_{};
+    std::uint64_t bank_order_ = 0;
+    // The per-sample factor a voice that makes way fades by: a thousandth over steal_seconds.
+    double fade_ = 0;
+    Complex step_of(std::size_t like, double hz) const noexcept {
+        return std::exp(Complex(-modes_[like].input.damping_per_second, 2 * pi * hz) / double(source_.sample_rate));
+    }
+    bool admits(const NoteAct &note) const noexcept {
+        for (const auto &v : note.voices)
+            if (v.like >= modes_.size() || !std::isfinite(v.frequency_hz) || v.frequency_hz <= 0 ||
+                v.frequency_hz >= source_.sample_rate * 0.45 || !finite(v.impulse) || std::abs(v.impulse) > 1e6)
+                return false;
+        return true;
+    }
+    // A slot's note makes way: its voices fade out, and the slot is free.
+    void fade(Slot &slot) noexcept {
+        for (std::size_t k = 0; k < note_voices; ++k) {
+            slot.fading[k] = slot.voices[k];
+            slot.fading[k].step *= fade_;
+            slot.voices[k].state = Complex(0, 0);
+        }
+        slot.held = false;
+    }
+    void make_way(std::uint64_t id) noexcept {
+        for (auto &slot : bank_)
+            if (slot.held && slot.id == id) fade(slot);
+    }
+    // A note takes the first free slot; with every slot sounding, the one voiced longest ago, whose note fades.
+    void voice(const NoteAct &note) noexcept {
+        std::size_t at = max_bank_notes;
+        for (std::size_t s = 0; s < max_bank_notes && at == max_bank_notes; ++s)
+            if (!bank_[s].held || !bank_[s].ringing) at = s;
+        if (at == max_bank_notes) {
+            at = 0;
+            for (std::size_t s = 1; s < max_bank_notes; ++s)
+                if (bank_[s].order < bank_[at].order) at = s;
+        }
+        auto &slot = bank_[at];
+        if (slot.held) fade(slot);
+        for (std::size_t k = 0; k < note_voices; ++k) {
+            const auto &v = note.voices[k];
+            slot.voices[k] = {v.like, v.frequency_hz, step_of(v.like, v.frequency_hz), v.impulse};
+        }
+        slot.id = note.id;
+        slot.order = ++bank_order_;
+        slot.held = slot.ringing = true;
+    }
+    static bool among(std::uint64_t id, const std::uint64_t *ids, std::size_t m) noexcept {
+        for (std::size_t j = 0; j < m; ++j)
+            if (ids[j] == id) return true;
+        return false;
+    }
+    // The whole act judged before anything moves: 1 to 32 notes, each a note of this body named once and not already held (unless
+    // it is among those making way), and at most `max_made_way` made way. A note of the act that is itself among them (its key
+    // struck twice, or past Polyphony at once) made way as it came and is not voiced.
+    bool judges(const NoteAct *notes, std::size_t n, const std::uint64_t *made_way, std::size_t m) const noexcept {
+        if (!notes || n == 0 || n > max_bank_notes || m > max_made_way || (m && !made_way)) return false;
+        for (std::size_t i = 0; i < n; ++i) {
+            if (!admits(notes[i])) return false;
+            for (std::size_t j = 0; j < i; ++j)
+                if (notes[j].id == notes[i].id) return false;
+            const bool leaves = among(notes[i].id, made_way, m);
+            for (const auto &slot : bank_)
+                if (slot.held && slot.id == notes[i].id && !leaves) return false;
+        }
+        return true;
+    }
+    // The gain mode `i` is heard by at `sample` of the block being rendered, as the resident voices are (render_audio).
+    double heard_at(std::size_t i, std::size_t sample, std::uint64_t ramp) const noexcept {
+        const double gain = modes_[i].input.audio_gain_per_metre;
+        if (heard_from_.empty()) return gain;
+        if (ramp_awaits_) return heard_from_[i];
+        if (ramp_done_ + sample < ramp) return heard_from_[i] + (gain - heard_from_[i]) * (double(ramp_done_ + sample + 1) / double(ramp));
+        return gain;
+    }
+    // The bank's voices at one sample: each rung on by its step and heard as the mode it is like.
+    double ring_bank(std::size_t sample, std::uint64_t ramp) noexcept {
+        double value = 0;
+        for (auto &slot : bank_) {
+            if (!slot.ringing) continue;
+            bool sounding = false;
+            for (auto *lane : {&slot.voices, &slot.fading})
+                for (auto &v : *lane) {
+                    if (std::norm(v.state) < bank_silent_norm) continue;
+                    v.state = v.step * v.state;
+                    value += v.state.real() * heard_at(v.like, sample, ramp);
+                    sounding = true;
+                }
+            slot.ringing = sounding;
+        }
+        return value;
+    }
     // The M1′ pulse's drive of the body between strikes (the Torus's Carrier, O-I #850; DLW manual
     // §21.2). The pulse stands at `anchor_steps` at sample `anchor_samples` and runs at
     // `steps_per_second` since, the session's own law (m1_prime::Session::steps_at); `reached` is
@@ -156,6 +299,9 @@ class ContinuousField {
     double last_ = 0;
     void land(const Pending &act) noexcept {
         for (const auto &[mode, impulse] : act.impulses) modes_[mode].state += impulse;
+        for (auto id : act.made_way) make_way(id);
+        for (const auto &note : act.notes)
+            if (!among(note.id, act.made_way.data(), act.made_way.size())) voice(note);
     }
     Prepared prepare(const Mode &m) const {
         reference(m.reference); reference(m.source_coordinate);
@@ -187,6 +333,7 @@ public:
                 source_.samples.size() <= 16777216 / source_.modes.size(), "shape-function budget exceeded");
         modes_.reserve(source_.modes.size());
         pending_.reserve(max_pending_strikes);
+        fade_ = std::exp(std::log(1e-3) / (steal_seconds * double(source_.sample_rate)));
         heard_from_.reserve(source_.modes.size());
         for (std::size_t i = 0; i < source_.modes.size(); ++i) {
             for (std::size_t j = 0; j < i; ++j)
@@ -233,11 +380,16 @@ public:
             require(act.at_samples_elapsed > c.samples_elapsed &&
                         (i == 0 || c.pending[i - 1].at_samples_elapsed <= act.at_samples_elapsed),
                     "a continuation's waiting acts stand after its cursor, in sample order");
-            require(!act.impulses.empty() && act.impulses.size() <= modes_.size(), "invalid strike count");
+            require(act.notes.empty() ? !act.impulses.empty() && act.impulses.size() <= modes_.size()
+                                      : act.impulses.empty() && act.notes.size() <= max_bank_notes &&
+                                            act.made_way.size() <= max_made_way,
+                    "invalid strike count");
             for (const auto &[mode, impulse] : act.impulses)
                 require(mode < modes_.size() && finite(impulse) && std::abs(impulse) <= 1e6,
                         "a continuation's waiting act names no prepared mode or an invalid impulse");
+            for (const auto &note : act.notes) require(admits(note), "a continuation's waiting note is not a note of this body");
         }
+        restore_bank(c.bank, c.bank_order);
         require(c.heard_from.empty() || c.heard_from.size() == modes_.size(), "gain/mode basis mismatch");
         for (double gain : c.heard_from) require(std::isfinite(gain) && std::abs(gain) <= 1e6, "nonfinite/excessive output gain");
         elapsed_ = c.samples_elapsed;
@@ -245,13 +397,95 @@ public:
         last_ = c.last_unmuted_sample;
         carrier_ = {drive.steps_per_second, drive.anchor_steps, drive.anchor_samples, drive.reached, std::move(c.carrier.impulses)};
         pending_.clear();
-        for (auto &act : c.pending) pending_.push_back({act.at_samples_elapsed, std::move(act.impulses)});
+        for (auto &act : c.pending)
+            pending_.push_back({act.at_samples_elapsed, std::move(act.impulses), std::move(act.notes), std::move(act.made_way)});
         heard_from_ = std::move(c.heard_from);
         heard_from_.reserve(modes_.size());
     }
     const ContinuationInput &source() const noexcept { return source_; }
     const std::vector<Sample> &samples() const noexcept { return source_.samples; }
     Complex amplitude(std::size_t i) const { return modes_.at(i).state; }
+    // The bank as it stands (QL-MEF #287): every slot ever voiced, in slot order (a free slot's id is 0). Off the audio thread.
+    std::vector<BankNote> bank() const {
+        std::vector<BankNote> out;
+        for (std::size_t s = 0; s < max_bank_notes; ++s) {
+            const auto &slot = bank_[s];
+            if (slot.order == 0) continue;
+            BankNote note{s, slot.held, slot.id, slot.order, {}, {}};
+            for (std::size_t k = 0; k < note_voices; ++k) {
+                note.voices[k] = {slot.voices[k].like, slot.voices[k].frequency_hz, slot.voices[k].state};
+                note.fading[k] = {slot.fading[k].like, slot.fading[k].frequency_hz, slot.fading[k].state};
+            }
+            out.push_back(note);
+        }
+        return out;
+    }
+    std::uint64_t bank_order() const noexcept { return bank_order_; }
+    // Voices an act's notes at the cursor (QL-MEF #287), for a host's audio thread: noexcept and allocation-free. The notes named
+    // in `made_way` fade and free their slots, then each note takes a slot; the whole act is judged first, and false refuses it
+    // with nothing moved. A made-way id the bank does not hold (taken at a full bank, or rung before the body was chosen) moves
+    // nothing. One act, one generation.
+    bool voice_now(const NoteAct *notes, std::size_t n, const std::uint64_t *made_way, std::size_t m) noexcept {
+        if (!judges(notes, n, made_way, m)) return false;
+        for (std::size_t j = 0; j < m; ++j) make_way(made_way[j]);
+        for (std::size_t i = 0; i < n; ++i)
+            if (!among(notes[i].id, made_way, m)) voice(notes[i]);
+        ++source_.generation;
+        return true;
+    }
+    // The same act at a sample of the continuation (as `strike` at a sample): admitted now, one generation, voiced by render_audio
+    // exactly before sample `at_samples_elapsed` is rendered (at the cursor, now). Off the audio thread: it allocates.
+    void voice(const std::vector<NoteAct> &notes, const std::vector<std::uint64_t> &made_way, std::uint64_t at_samples_elapsed) {
+        require(at_samples_elapsed >= elapsed_, "a note's sample is behind the continuation cursor: that sound is already rendered");
+        require(at_samples_elapsed == elapsed_ || pending_.size() - landed_ < max_pending_strikes, "too many strikes wait for their samples");
+        require(!notes.empty() && notes.size() <= max_bank_notes, "an act voices 1 to 32 notes");
+        require(made_way.size() <= max_made_way, "an act names at most 64 notes making way");
+        for (std::size_t i = 0; i < notes.size(); ++i) {
+            require(admits(notes[i]), "a note names no prepared mode, a frequency outside the audio band or an invalid impulse");
+            for (std::size_t j = 0; j < i; ++j) require(notes[j].id != notes[i].id, "one act voices a note twice");
+        }
+        if (at_samples_elapsed > elapsed_) {
+            Pending act{at_samples_elapsed, {}, notes, made_way};
+            pending_.erase(pending_.begin(), pending_.begin() + std::ptrdiff_t(landed_));
+            landed_ = 0;
+            auto place = std::upper_bound(pending_.begin(), pending_.end(), at_samples_elapsed,
+                                          [](std::uint64_t at, const Pending &p) { return at < p.at; });
+            pending_.insert(place, std::move(act));
+            ++source_.generation;
+            return;
+        }
+        require(voice_now(notes.data(), notes.size(), made_way.data(), made_way.size()), "a note already sounds: it is voiced once");
+    }
+    // The bank set as a checkpoint kept it (O-I 855, with `set_state`): every slot it names, in slot order, and the order the last
+    // note was voiced in. Validation precedes the commit; slots it does not name stand empty.
+    void restore_bank(const std::vector<BankNote> &bank, std::uint64_t order) {
+        std::array<Slot, max_bank_notes> next{};
+        for (std::size_t i = 0; i < bank.size(); ++i) {
+            const auto &note = bank[i];
+            require(note.slot < max_bank_notes && (i == 0 || bank[i - 1].slot < note.slot) && note.order >= 1 && note.order <= order,
+                    "a bank names its slots once, in order, voiced no later than its last note");
+            for (std::size_t j = 0; j < i; ++j)
+                require(!(note.held && bank[j].held && bank[j].id == note.id), "a bank holds a note once");
+            auto &slot = next[note.slot];
+            slot.id = note.id;
+            slot.order = note.order;
+            slot.held = note.held;
+            const auto set = [&](const BankVoice &from, Voiced &to, bool faded) {
+                require(from.like < modes_.size() && std::isfinite(from.frequency_hz) && from.frequency_hz >= 0 &&
+                            from.frequency_hz < source_.sample_rate * 0.45 && finite(from.state) && std::abs(from.state) <= 1e6,
+                        "a bank voice names no prepared mode, a frequency outside the audio band or an invalid state");
+                to = {from.like, from.frequency_hz, step_of(from.like, from.frequency_hz), from.state};
+                if (faded) to.step *= fade_;
+            };
+            for (std::size_t k = 0; k < note_voices; ++k) {
+                set(note.voices[k], slot.voices[k], false);
+                set(note.fading[k], slot.fading[k], true);
+            }
+            slot.ringing = true;
+        }
+        bank_ = next;
+        bank_order_ = order;
+    }
     ContinuationReceipt receipt() const noexcept { return {source_.generation, elapsed_, source_.clock, last_}; }
     // The continuation as it stands (`Continuation`): a read, nothing moves. Off the audio thread: it copies the whole input.
     Continuation handover() const {
@@ -262,7 +496,10 @@ public:
         for (std::size_t i = 0; i < c.heard_from.size(); ++i) c.heard_from[i] = heard_now(i);
         for (std::size_t i = 0; i < modes_.size(); ++i) c.input.modes[i].amplitude_metres = modes_[i].state;
         c.pending.reserve(pending_.size() - landed_);
-        for (std::size_t i = landed_; i < pending_.size(); ++i) c.pending.push_back({pending_[i].at, pending_[i].impulses});
+        for (std::size_t i = landed_; i < pending_.size(); ++i)
+            c.pending.push_back({pending_[i].at, pending_[i].impulses, pending_[i].notes, pending_[i].made_way});
+        c.bank = bank();
+        c.bank_order = bank_order_;
         return c;
     }
     // Same material/sample topology only. Initial amplitude is not reapplied on
@@ -387,6 +624,11 @@ public:
     // act: one generation. noexcept and allocation-free, so a native host calls it on its audio thread.
     void silence() noexcept {
         for (auto &m : modes_) m.state = Complex(0, 0);
+        for (auto &slot : bank_) {
+            for (auto &v : slot.voices) v.state = Complex(0, 0);
+            for (auto &v : slot.fading) v.state = Complex(0, 0);
+            slot.ringing = false;
+        }
         landed_ = pending_.size();
         ++source_.generation;
     }
@@ -399,6 +641,16 @@ public:
         require(states.size() == modes_.size(), "state/mode basis mismatch");
         for (const auto &state : states)
             require(finite(state) && std::abs(state) <= 1e6, "invalid resident modal state");
+        for (std::size_t i = 0; i < modes_.size(); ++i) modes_[i].state = states[i];
+        ++source_.generation;
+    }
+    // The body and its bank as they rang at a checkpoint, set again in one body act (QL-MEF #287 with O-I 855).
+    void set_state(std::uint64_t expected, const std::vector<Complex> &states, const std::vector<BankNote> &bank, std::uint64_t order) {
+        require(expected == source_.generation && expected != UINT64_MAX, "stale/overflow field generation");
+        require(states.size() == modes_.size(), "state/mode basis mismatch");
+        for (const auto &state : states)
+            require(finite(state) && std::abs(state) <= 1e6, "invalid resident modal state");
+        restore_bank(bank, order);
         for (std::size_t i = 0; i < modes_.size(); ++i) modes_[i].state = states[i];
         ++source_.generation;
     }
@@ -580,6 +832,7 @@ public:
                     value += m.state.real() * m.input.audio_gain_per_metre;
                 }
             }
+            value += ring_bank(sample, ramp);
             last_ = value;
             output[sample] = muted ? 0.0f : static_cast<float>(value);
         }
@@ -607,6 +860,14 @@ public:
             for (std::size_t j = 0; j < modes_.size(); ++j)
                 for (unsigned axis = 0; axis < 3; ++axis)
                     p[axis] += sample.mode_shapes[j][axis] * modes_[j].state.real();
+            // The notes are drawn as they are heard (QL-MEF #287; O-I 851): each ringing voice of the bank moves the sample along the
+            // shape of the mode it is like, by its own state, as the resident voices move it by theirs.
+            for (const auto &slot : bank_) {
+                if (!slot.ringing) continue;
+                for (const auto *lane : {&slot.voices, &slot.fading})
+                    for (const auto &v : *lane)
+                        for (unsigned axis = 0; axis < 3; ++axis) p[axis] += sample.mode_shapes[v.like][axis] * v.state.real();
+            }
             const double c = std::cos(angles[unsigned(sample.attachment)]), s = std::sin(angles[unsigned(sample.attachment)]);
             xyz[i * 3] = static_cast<float>((c * p[0] - s * p[1]) * presentation_units_per_metre);
             xyz[i * 3 + 1] = static_cast<float>((s * p[0] + c * p[1]) * presentation_units_per_metre);

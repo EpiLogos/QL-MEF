@@ -216,6 +216,11 @@ pub const MAX_STRIKE_POINTS: usize = 64;
 /// The declared scene material policy's cap on any modal amplitude, in metres
 /// (the cap `SceneInstrument::strike` and the stage already hold).
 pub const STRIKE_CAP_METRES: f64 = 1.0;
+/// The voices of one note (QL-MEF #287 packet A; `ql::note_voices`): each note strikes its own cell, eight voices over its own
+/// four boundaries (owner, 1 November 2026: "polyphony counts notes").
+pub const NOTE_VOICES: usize = 8;
+/// The most notes the native bank holds at once (`ql::max_bank_notes`, m1_prime::POLYPHONY_MAX).
+pub const NOTE_BANK_MAX: usize = 32;
 
 /// One struck point of the torus surface: an impulse (modal metres, as in
 /// [`StrikeInput`]) given to the body at the point (θ, φ) rather than to a
@@ -665,6 +670,101 @@ impl FieldSession {
             );
         }
         self.operation("set-state", json!({"amplitudes":amplitudes}))
+    }
+    /// The body and its bank as they rang at a checkpoint (QL-MEF #287 with O-I 855), set again in one body act: `bank` is the
+    /// worker's own `bank` reading as the checkpoint kept it, `bank_order` the order its last note was voiced in.
+    pub fn set_state_banked(
+        &mut self,
+        amplitudes: &[[f64; 2]],
+        bank: &Value,
+        bank_order: &str,
+    ) -> Result<Value> {
+        if !bank
+            .as_array()
+            .is_some_and(|slots| slots.len() <= NOTE_BANK_MAX)
+            || !bank_order
+                .parse::<u64>()
+                .is_ok_and(|n| n.to_string() == bank_order)
+        {
+            return Err(
+                "a kept bank names at most 32 slots and the order its last note was voiced in"
+                    .into(),
+            );
+        }
+        let modes = self.receipt["amplitudes_metres"]
+            .as_array()
+            .map_or(0, Vec::len);
+        if amplitudes.len() != modes
+            || amplitudes
+                .iter()
+                .flatten()
+                .any(|x| !x.is_finite() || x.abs() > 1e6)
+        {
+            return Err(
+                "a body state names one finite resident state within 1e6 metres for every mode"
+                    .into(),
+            );
+        }
+        self.operation(
+            "set-state",
+            json!({"amplitudes":amplitudes, "bank": bank, "bank_order": bank_order}),
+        )
+    }
+    /// Each note its own voices (QL-MEF #287 packet A): an act's notes voiced in the native bank, the notes the owner counted as
+    /// making way for them (`made_way`, their ids) fading out, now or at `at_samples_elapsed` (as a strike at a sample). Each note
+    /// is its id (decimal) and eight voices, each the mode it is like (`mode_ref`), its own `frequency_hz` and its `amplitude`
+    /// (modal metres). Malformed acts are refused here without transport; the worker re-validates them.
+    pub fn voice_notes(
+        &mut self,
+        notes: &[Value],
+        made_way: &[u64],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<Value> {
+        if let Some(at) = at_samples_elapsed {
+            let cursor: u64 = self.receipt["samples_elapsed"]
+                .as_str()
+                .and_then(|text| text.parse().ok())
+                .ok_or("invalid acknowledged native cursor")?;
+            if at < cursor {
+                return Err(format!(
+                    "a note at sample {at} is behind the owner's cursor {cursor}: that sound is already rendered"
+                ));
+            }
+        }
+        if notes.is_empty() || notes.len() > NOTE_BANK_MAX || made_way.len() > 2 * NOTE_BANK_MAX {
+            return Err("an act voices 1 to 32 notes, and at most 64 make way for them".into());
+        }
+        for note in notes {
+            let voices = note["voices"].as_array().filter(|v| v.len() == NOTE_VOICES);
+            let well = note["id"]
+                .as_str()
+                .is_some_and(|id| id.parse::<u64>().is_ok_and(|n| n.to_string() == id))
+                && voices.is_some_and(|voices| {
+                    voices.iter().all(|v| {
+                        v["mode_ref"]
+                            .as_str()
+                            .is_some_and(|r| !r.is_empty() && r.len() <= 2048)
+                            && v["frequency_hz"]
+                                .as_f64()
+                                .is_some_and(|f| f.is_finite() && f > 0.0)
+                            && v["amplitude"].as_array().is_some_and(|z| {
+                                z.len() == 2
+                                    && z.iter().all(|x| {
+                                        x.as_f64().is_some_and(|x| x.is_finite() && x.abs() <= 1e6)
+                                    })
+                            })
+                    })
+                });
+            if !well {
+                return Err("a note is its id and eight voices, each a mode, a frequency and a finite amplitude".into());
+            }
+        }
+        let made_way: Vec<String> = made_way.iter().map(u64::to_string).collect();
+        let mut act = json!({"notes": notes, "made_way": made_way});
+        if let Some(at) = at_samples_elapsed {
+            act["at_samples_elapsed"] = json!(at.to_string());
+        }
+        self.operation("voice-notes", act)
     }
     pub fn read(&mut self) -> Result<Value> {
         self.exchange_checked(&json!({"schema":"ql.field-control/v1", "operation":"read"}))

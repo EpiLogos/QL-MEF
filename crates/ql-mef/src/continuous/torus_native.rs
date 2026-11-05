@@ -19,9 +19,9 @@ pub const CONTINUOUS_HANDOVER: &str = "ql.continuous-handover/v1";
 pub const TORUS_KEYS: &str = "ql.torus-keys/v1";
 
 /// What a key's release does to the body a native host plays.
-pub const TORUS_RELEASE_LAW: &str = "a key's release moves no native state: the body rings on with its own damping, and the owner counts the notes (torus-release); past Polyphony the oldest notes make way in the count, and the body rings on";
+pub const TORUS_RELEASE_LAW: &str = "a key's release moves no native state: the body rings on with its own damping and a released note keeps its own tail, and the owner counts the notes (torus-release; the key law's `release` on a host). Past Polyphony the oldest notes make way in the count: where notes sound their own cells (`cells`, Logic on the torus) a note that makes way fades out in the bank (NOTE_VOICES_LAW); otherwise the body rings on";
 /// How the body a native host plays is silenced (`ql::ContinuousField::silence`).
-pub const TORUS_SILENCE_LAW: &str = "silence stills what was struck at the cursor: every resident state at rest and the acts waiting for later samples dropped, one body act; the voices with the drive their material supplies, the receiver's gains, the shapes, the clock, the cursor and the Carrier's drive stand, so a driven body is driven again from rest";
+pub const TORUS_SILENCE_LAW: &str = "silence stills what was struck at the cursor: every resident state and every note's voice in the bank at rest and the acts waiting for later samples dropped, one body act; the voices with the drive their material supplies, the receiver's gains, the shapes, the clock, the cursor and the Carrier's drive stand, so a driven body is driven again from rest";
 /// How long a handed-over law stands.
 pub const TORUS_NATIVE_STANDS: &str = "the law stands until the owner's Torus moves (a setting, a restore, the body chosen, the event or its voices): the host takes the Torus again then; a setting sent for a later sample is in force only once it has landed, so the Torus is handed over after it lands";
 /// Why a form's body is handed over with no key law (O-I #849 with #376/#852).
@@ -141,7 +141,47 @@ fn continuation_agrees(handed: &Value, receipt: &Value) -> Result<()> {
             .is_some_and(|gains| gains.is_empty() || gains.len() == modes.len()),
         "the receiver's gains",
     )?;
-    require(handed["pending"].is_array(), "the waiting acts")
+    require(handed["pending"].is_array(), "the waiting acts")?;
+    // The notes as they ring (QL-MEF #287): each slot the field's, each voice by the mode it is like, at the state the field reads.
+    let (bank, read) = (
+        handed["bank"]
+            .as_array()
+            .ok_or("the continuation names no bank")?,
+        receipt["bank"]
+            .as_array()
+            .ok_or("the field names no bank")?,
+    );
+    require(
+        bank.len() == read.len() && handed["bank_order"] == receipt["bank_order"],
+        "the bank",
+    )?;
+    for (slot, read) in bank.iter().zip(read) {
+        require(
+            ["slot", "held", "id", "order"]
+                .iter()
+                .all(|key| slot[*key] == read[*key]),
+            "a bank slot",
+        )?;
+        for lane in ["voices", "fading"] {
+            let (voices, read) = (
+                slot[lane].as_array().ok_or("a bank slot names no voices")?,
+                read[lane].as_array().ok_or("a bank slot names no voices")?,
+            );
+            require(voices.len() == read.len(), "a bank slot's voices")?;
+            for (voice, read) in voices.iter().zip(read) {
+                let like = voice["mode"]
+                    .as_u64()
+                    .and_then(|mode| modes.get(mode as usize));
+                require(
+                    like.is_some_and(|mode| mode["mode_ref"] == read["mode_ref"])
+                        && voice["frequency_hz"] == read["frequency_hz"]
+                        && voice["state"] == read["amplitude"],
+                    "a note's voice",
+                )?;
+            }
+        }
+    }
+    Ok(())
 }
 
 impl SceneInstrument {
@@ -225,6 +265,44 @@ impl SceneInstrument {
             "cap_metres": STRIKE_CAP_METRES,
             "law": crate::janko::POINT_LAW,
         });
+        let mut keys = keys;
+        // Each note its own voices (QL-MEF #287 packet A): each arc's cell, each voice by the native mode it is like, and the
+        // count of notes as it stands, so a host counts on from where the owner stands.
+        if let Some(cells) = self.note_cells()? {
+            let cells = cells
+                .iter()
+                .map(|cell| {
+                    cell.iter()
+                        .map(|voice| {
+                            let like = resident
+                                .iter()
+                                .position(|reference| *reference == voice.mode_ref)
+                                .ok_or_else(|| {
+                                    format!("the voice {} is not resident", voice.mode_ref)
+                                })?;
+                            Ok(json!({
+                                "like": like,
+                                "like_ref": voice.mode_ref,
+                                "frequency_hz": voice.frequency_hz,
+                                "longitude_radians": voice.longitude_radians,
+                                "weight": voice.weight,
+                                "phase_radians": voice.phase_radians,
+                                "m": voice.m,
+                                "n": voice.n,
+                            }))
+                        })
+                        .collect::<Result<Vec<_>>>()
+                })
+                .collect::<Result<Vec<_>>>()?;
+            keys["cells"] = json!(cells);
+            keys["polyphony"] = json!(torus.settings().polyphony);
+            keys["notes"] =
+                json!(torus.sounding().iter().map(|note| json!({
+                "id": note.id.to_string(), "row": note.key.row, "column": note.key.column,
+            })).collect::<Vec<_>>());
+            keys["next_note"] = json!(torus.next_note().to_string());
+            keys["voice_law"] = json!(super::scene_field::NOTE_VOICES_LAW);
+        }
         let continuation = self.session_mut().handover_field()?;
         for voice in &voices {
             let mode = voice["mode"].as_u64().unwrap_or(u64::MAX) as usize;
@@ -275,7 +353,20 @@ mod tests {
                 "lensing":{"turns":"1","half_degrees":17,"double_cover_half_degrees":737},
                 "grid_origins":[3,9,21],"rate_numerators":["9","8"],"rate_denominator":8,"rate_remainders":["0","4"],"generation":"4"},
             "amplitudes_metres":[[0.01,0.005],[-0.01,0.0]],
-            "targets":[{"identity":1,"constituent":"#3-5-5/0","position":[0.0,0.0,0.0]}]})
+            "targets":[{"identity":1,"constituent":"#3-5-5/0","position":[0.0,0.0,0.0]}],
+            "bank":[{"slot":0,"held":true,"id":"3","order":"1","voices":lane("mode_ref","amplitude",0.001),"fading":lane("mode_ref","amplitude",0.0)}],
+            "bank_order":"1"})
+    }
+    /// A note's eight voices as the field reads them (`mode_ref`, `amplitude`) or as they are handed over (`mode`, `state`).
+    fn lane(mode: &str, state: &str, re: f64) -> Value {
+        Value::Array(
+            (0..8u32)
+                .map(|k| {
+                    let like = if mode == "mode" { json!(k % 2) } else { json!(["a", "b"][k as usize % 2]) };
+                    json!({mode: like, "frequency_hz": 300.0 + 40.0 * f64::from(k), state: [re, 0.0]})
+                })
+                .collect(),
+        )
     }
     fn handed() -> Value {
         json!({"schema":CONTINUOUS_HANDOVER,"event_ref":"e","subject_ref":"s","geometry_ref":"g","material_ref":"m","model_ref":"model",
@@ -284,7 +375,9 @@ mod tests {
                 "grid_origins":[3,9,21],"rate_numerators":["9","8"],"rate_denominator":8,"rate_remainders":["0","4"],"generation":"4"},
             "modes":[{"mode_ref":"a","state_metres":[0.01,0.005]},{"mode_ref":"b","state_metres":[-0.01,0.0]}],
             "samples":[{"identity":1,"constituent":"#3-5-5/0","mode_shapes":[[0.0,0.0,1.0],[0.0,0.0,0.0]]}],
-            "carrier":{"impulses":[]},"pending":[],"heard_from":[2.0,2.0]})
+            "carrier":{"impulses":[]},"pending":[],"heard_from":[2.0,2.0],
+            "bank":[{"slot":0,"held":true,"id":"3","order":"1","voices":lane("mode","state",0.001),"fading":lane("mode","state",0.0)}],
+            "bank_order":"1"})
     }
 
     /// One way a handover can be broken: what it breaks, and how.
@@ -293,7 +386,7 @@ mod tests {
     #[test]
     fn a_continuation_is_admitted_only_as_the_field_it_was_handed_over_with() {
         assert_eq!(continuation_agrees(&handed(), &field()), Ok(()));
-        let broken: [Breaking; 9] = [
+        let broken: [Breaking; 12] = [
             ("contract", |h| {
                 h["schema"] = json!("ql.continuous-handover/v0")
             }),
@@ -313,6 +406,11 @@ mod tests {
                 h["carrier"]["impulses"] = json!([[0.0, 0.0]])
             }),
             ("the receiver's gains", |h| h["heard_from"] = json!([2.0])),
+            ("the bank", |h| h["bank_order"] = json!("2")),
+            ("a bank slot", |h| h["bank"][0]["held"] = json!(false)),
+            ("a note's voice", |h| {
+                h["bank"][0]["voices"][3]["state"] = json!([0.002, 0.0])
+            }),
         ];
         for (why, breaking) in broken {
             let mut h = handed();

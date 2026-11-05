@@ -131,7 +131,70 @@ J *response(const ql::ContinuousField &field, const std::vector<float> &audio, b
             put(point, "position", position); json_object_array_add(points, point);
         }
     }
-    put(o, "targets", points); put(o, "presentation_units_per_metre", json_object_new_double(scale)); return o;
+    put(o, "targets", points); put(o, "presentation_units_per_metre", json_object_new_double(scale));
+    // The bank as it rings (QL-MEF #287): each slot ever voiced, its note, its voices and the voices still fading.
+    auto bank = json_object_new_array();
+    for (const auto &note : field.bank()) {
+        auto one = json_object_new_object();
+        put(one, "slot", json_object_new_uint64(note.slot)); put(one, "held", json_object_new_boolean(note.held));
+        integer(one, "id", note.id); integer(one, "order", note.order);
+        for (auto [key, lane] : {std::pair{"voices", &note.voices}, std::pair{"fading", &note.fading}}) {
+            auto voices = json_object_new_array();
+            for (const auto &v : *lane) {
+                auto voice = json_object_new_object();
+                string(voice, "mode_ref", field.source().modes[v.like].reference);
+                put(voice, "frequency_hz", json_object_new_double(v.frequency_hz));
+                auto z = json_object_new_array();
+                json_object_array_add(z, json_object_new_double(v.state.real())); json_object_array_add(z, json_object_new_double(v.state.imag()));
+                put(voice, "amplitude", z); json_object_array_add(voices, voice);
+            }
+            put(one, key, voices);
+        }
+        json_object_array_add(bank, one);
+    }
+    put(o, "bank", bank); integer(o, "bank_order", field.bank_order());
+    return o;
+}
+// The mode a note's voice is like, by its reference (QL-MEF #287).
+std::size_t mode_index(const ql::ContinuousField &field, const std::string &ref) {
+    const auto &modes = field.source().modes;
+    for (std::size_t i = 0; i < modes.size(); ++i) if (modes[i].reference == ref) return i;
+    throw std::invalid_argument("a note's voice names no prepared mode");
+}
+// An act's notes as the owner sends them: each its id and eight voices, the mode each is like, its frequency and its impulse.
+std::vector<ql::NoteAct> note_acts(const ql::ContinuousField &field, J *items) {
+    auto n = count(items, ql::max_bank_notes);
+    std::vector<ql::NoteAct> notes(n);
+    for (std::size_t i = 0; i < n; ++i) {
+        auto item = at(items, i); keys(item, {"id", "voices"});
+        notes[i].id = decimal<std::uint64_t>(get(item, "id"));
+        auto voices = get(item, "voices"); ql::require(count(voices, ql::note_voices) == ql::note_voices, "a note voices eight");
+        for (std::size_t k = 0; k < ql::note_voices; ++k) {
+            auto v = at(voices, k); keys(v, {"mode_ref", "frequency_hz", "amplitude"});
+            notes[i].voices[k] = {mode_index(field, text(get(v, "mode_ref"))), number(get(v, "frequency_hz")), pair(get(v, "amplitude"))};
+        }
+    }
+    return notes;
+}
+// A bank as a checkpoint keeps it (the response's own `bank`), for set-state.
+std::vector<ql::BankNote> bank_notes(const ql::ContinuousField &field, J *items) {
+    auto n = count(items, ql::max_bank_notes);
+    std::vector<ql::BankNote> bank(n);
+    for (std::size_t i = 0; i < n; ++i) {
+        auto item = at(items, i); keys(item, {"slot", "held", "id", "order", "voices", "fading"});
+        bank[i].slot = small(get(item, "slot"), ql::max_bank_notes - 1);
+        auto held = get(item, "held"); ql::require(json_object_is_type(held, json_type_boolean), "a bank slot says whether it holds a note");
+        bank[i].held = json_object_get_boolean(held);
+        bank[i].id = decimal<std::uint64_t>(get(item, "id")); bank[i].order = decimal<std::uint64_t>(get(item, "order"));
+        for (auto [key, lane] : {std::pair{"voices", &bank[i].voices}, std::pair{"fading", &bank[i].fading}}) {
+            auto voices = get(item, key); ql::require(count(voices, ql::note_voices) == ql::note_voices, "a bank slot holds eight voices");
+            for (std::size_t k = 0; k < ql::note_voices; ++k) {
+                auto v = at(voices, k); keys(v, {"mode_ref", "frequency_hz", "amplitude"});
+                (*lane)[k] = {mode_index(field, text(get(v, "mode_ref"))), number(get(v, "frequency_hz")), pair(get(v, "amplitude"))};
+            }
+        }
+    }
+    return bank;
 }
 // O-I #849: the continuation a native audio host takes over (`handover`).
 #include "handover_json.hpp"
@@ -216,6 +279,18 @@ int main() {
                         strikes.push_back({text(get(act, "mode_ref")), pair(get(act, "amplitude"))});
                     }
                     field->strike(strikes, landing); committed = true;
+                } else if (op == "voice-notes") {
+                    // Each note its own voices (QL-MEF #287 packet A): an act's notes voiced in the bank, the notes the owner counted
+                    // as making way for them fading, now or at the sample it names (as a strike at a sample).
+                    const bool timed = json_object_object_get_ex(request.get(), "at_samples_elapsed", nullptr);
+                    if (timed) keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "notes", "made_way", "at_samples_elapsed"});
+                    else keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "notes", "made_way"});
+                    const auto landing = timed ? decimal<std::uint64_t>(get(request.get(), "at_samples_elapsed")) : field->receipt().samples_elapsed;
+                    J *gone = get(request.get(), "made_way");
+                    std::vector<std::uint64_t> made_way(count(gone, ql::max_made_way));
+                    for (std::size_t i = 0; i < made_way.size(); ++i) made_way[i] = decimal<std::uint64_t>(at(gone, i));
+                    field->voice(note_acts(*field, get(request.get(), "notes")), made_way, landing);
+                    committed = true;
                 } else if (op == "set-carrier") {
                     // The M1′ pulse's drive of the body (the Torus's Carrier, O-I #850): the session's
                     // pulse (rate, anchor sample and steps) and one impulse per mode, in mode order.
@@ -241,12 +316,18 @@ int main() {
                     field->set_gains(next); gains.swap(kept); committed = true;
                 } else if (op == "set-state") {
                     // The body as it rang at a checkpoint (O-I 855): one resident state per mode, in mode order.
-                    keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "amplitudes"});
+                    // With its bank (QL-MEF #287), the notes as they rang and the order the last was voiced in, in the same act.
+                    const bool banked = json_object_object_get_ex(request.get(), "bank", nullptr);
+                    if (banked) keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "amplitudes", "bank", "bank_order"});
+                    else keys(request.get(), {"schema", "operation", "expected_generation", "expected_samples_elapsed", "amplitudes"});
                     J *items = get(request.get(), "amplitudes");
                     ql::require(count(items, 4096) == field->source().modes.size(), "state/mode basis mismatch");
                     std::vector<ql::Complex> states; states.reserve(field->source().modes.size());
                     for (std::size_t i = 0; i < field->source().modes.size(); ++i) states.push_back(pair(at(items, i)));
-                    field->set_state(field->receipt().generation, states); committed = true;
+                    if (banked) field->set_state(field->receipt().generation, states, bank_notes(*field, get(request.get(), "bank")),
+                                                 decimal<std::uint64_t>(get(request.get(), "bank_order")));
+                    else field->set_state(field->receipt().generation, states);
+                    committed = true;
                 } else if (op == "replace-body") {
                     // The body chosen for this continuation (O-I #852): a whole M2 frame and field input, as initialize takes them,
                     // for the same event and subject under the clock in force. Its voices ring from their supplied states.

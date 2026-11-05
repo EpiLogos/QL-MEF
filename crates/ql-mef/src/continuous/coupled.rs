@@ -801,6 +801,26 @@ impl CoupledFieldSession {
     pub fn set_state_field(&mut self, amplitudes: &[[f64; 2]]) -> Result<Value, String> {
         self.field.set_state(amplitudes)
     }
+    /// The body and its bank as a checkpoint kept them (`FieldSession::set_state_banked`, QL-MEF #287).
+    pub fn set_state_banked_field(
+        &mut self,
+        amplitudes: &[[f64; 2]],
+        bank: &Value,
+        bank_order: &str,
+    ) -> Result<Value, String> {
+        self.field.set_state_banked(amplitudes, bank, bank_order)
+    }
+    /// Each note its own voices (`FieldSession::voice_notes`, QL-MEF #287 packet A).
+    pub fn voice_notes_field(
+        &mut self,
+        notes: &[Value],
+        made_way: &[u64],
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<Value, String> {
+        self.field
+            .voice_notes(notes, made_way, at_samples_elapsed)?;
+        Ok(self.last_field().clone())
+    }
     /// The continuation as it stands, for a native audio host (`FieldSession::handover`, O-I #849).
     pub fn handover_field(&mut self) -> Result<Value, String> {
         self.field.handover()

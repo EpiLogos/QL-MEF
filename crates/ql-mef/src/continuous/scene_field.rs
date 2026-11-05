@@ -38,8 +38,8 @@ use super::coupled::{
     SKY_ROOT_HZ, SkyFrequencyBinding,
 };
 use super::{
-    ClockInput, FieldInput, FieldSample, FieldUnits, LiftInput, STRIKE_CAP_METRES, StrikeAtInput,
-    StrikeInput,
+    ClockInput, FieldInput, FieldSample, FieldUnits, LiftInput, NOTE_BANK_MAX, NOTE_VOICES,
+    STRIKE_CAP_METRES, StrikeAtInput, StrikeInput,
 };
 use crate::form_instrument::body::{BODY_STANDING, BodyRequest, BodyVoice, EXCITER_LAW, FormBody};
 use crate::m1_engine::M1Engine;
@@ -390,6 +390,39 @@ fn chi(voice: &Voice, phi: f64, theta: f64) -> f64 {
         + b * (m * phi / 2.0).cos() * (n * theta / 2.0).cos()
 }
 
+/// The octet's voice `k` (Logic's or the maqām's) at `frequency`: at its place on its helix, shaped by the boundary of its helix's
+/// end, weighted over the group's highest frequency `max` and phased by the 72-address. A note's own cell is this law over the
+/// cell's own reading (`ShapeBasis::cell`, QL-MEF #287 packet A).
+fn octet_voice(
+    tuning: Tuning,
+    k: usize,
+    frequency: f64,
+    max: f64,
+    boundaries: &[Boundary],
+    address72: u8,
+) -> Voice {
+    let helix = k / 4;
+    let position = (k % 4) as u8 + 1;
+    let boundary = boundaries[helix * 2 + usize::from(position >= 3)];
+    let (sounding_class, class_error_cents) = nearest_class(frequency);
+    Voice {
+        tuning,
+        planet_ref: "",
+        mode_ref: group_mode_ref(tuning, k),
+        // The place's ring arc: (6·helix + position) mod 6 sixths of a turn.
+        longitude_radians: f64::from(position) * PI / 3.0,
+        frequency_hz: frequency,
+        m: boundary.m,
+        n: boundary.n,
+        helix: boundary.helix,
+        ql_position: position,
+        weight: frequency / max,
+        phase_radians: f64::from(u16::from(address72) + k as u16 + 1) * PI / 36.0,
+        sounding_class,
+        class_error_cents,
+    }
+}
+
 fn angles(geometry: &SceneGeometry) -> impl Iterator<Item = (u64, f64, f64)> + '_ {
     let (lon, lat) = (geometry.longitude_samples, geometry.latitude_samples);
     (0..lat).flat_map(move |j| {
@@ -514,26 +547,7 @@ impl ShapeBasis {
                 .iter()
                 .enumerate()
                 .map(|(k, frequency)| {
-                    let helix = (k / 4) as u8;
-                    let position = (k % 4) as u8 + 1;
-                    let boundary = boundaries[usize::from(helix) * 2 + usize::from(position >= 3)];
-                    let (sounding_class, class_error_cents) = nearest_class(*frequency);
-                    Voice {
-                        tuning,
-                        planet_ref: "",
-                        mode_ref: group_mode_ref(tuning, k),
-                        // The place's ring arc: (6·helix + position) mod 6 sixths of a turn.
-                        longitude_radians: f64::from(position) * PI / 3.0,
-                        frequency_hz: *frequency,
-                        m: boundary.m,
-                        n: boundary.n,
-                        helix: boundary.helix,
-                        ql_position: position,
-                        weight: frequency / max,
-                        phase_radians: f64::from(u16::from(address72) + k as u16 + 1) * PI / 36.0,
-                        sounding_class,
-                        class_error_cents,
-                    }
+                    octet_voice(tuning, k, *frequency, max, &boundaries, address72)
                 })
                 .collect())
         };
@@ -598,6 +612,44 @@ impl ShapeBasis {
     /// The voices that sound under `tuning`.
     pub fn sounding(&self, tuning: Tuning) -> impl Iterator<Item = &Voice> {
         self.group(tuning).iter()
+    }
+
+    /// A note's own cell (QL-MEF #287 packet A; DLW manual §21.2 Rules, "Each note strikes its own eight voices"): the eight
+    /// voices of the Vimarśā reading at the arc a key struck, each like the Logic voice of its slot (whose material it rings in and
+    /// whose hearing it is heard by), at its own frequency × `scale` (the Fundamental over the map's 1:1) and over the reading's
+    /// own four boundaries, by the octet's own law (`octet_voice`).
+    pub fn cell(
+        &self,
+        reading: &crate::m2_vimarsha::VimarshaReading,
+        scale: f64,
+    ) -> Result<Vec<Voice>, String> {
+        let boundaries: Vec<Boundary> = reading
+            .nodal_quartet
+            .iter()
+            .map(|node| Boundary {
+                ql_position: node.ql_position,
+                helix: match node.helix {
+                    crate::m2_vimarsha::VimarshaHelix::Bimba => "bimba",
+                    crate::m2_vimarsha::VimarshaHelix::Pratibimba => "pratibimba",
+                },
+                m: node.m,
+                n: node.n,
+            })
+            .collect();
+        let hz: Vec<f64> = reading
+            .audio_octet_hz
+            .iter()
+            .map(|hz| f64::from(*hz) * scale)
+            .collect();
+        if hz.iter().any(|f| !f.is_finite() || *f <= 0.0) {
+            return Err("a note's cell reads a frequency that is not finite and positive".into());
+        }
+        let max = hz.iter().cloned().fold(0.0, f64::max);
+        Ok(hz
+            .iter()
+            .enumerate()
+            .map(|(k, f)| octet_voice(Tuning::Logic, k, *f, max, &boundaries, self.address72))
+            .collect())
     }
 
     /// Whether this scene holds `tuning`'s voices at all.
@@ -1464,6 +1516,18 @@ pub struct TorusCheckpoint {
     /// The form the body was made from when it was kept (`torus-body`, O-I #852); absent, the torus rang.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub body: Option<KeptBody>,
+    /// The notes as they rang in the native owner's bank (QL-MEF #287 packet A); absent, no note had been voiced.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bank: Option<KeptBank>,
+}
+
+/// The native owner's bank of notes as a checkpoint keeps it: its slots exactly as the owner reads them (`bank`) and the order its
+/// last note was voiced in (`bank_order`), set again with the body in one body act.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeptBank {
+    pub slots: Value,
+    pub order: String,
 }
 
 /// A form's body as a checkpoint keeps it: the request it is prepared from, and the preparation it was, so a restore
@@ -1485,8 +1549,13 @@ pub const FORM_BODY_HEARING_LAW: &str = "a form's body is heard where its form s
 const NATIVE_SHAPE_BUDGET: usize = 262_144;
 /// The law of the classes a Torus reading carries (O-I #851).
 pub const CLASS_SOUNDS_LAW: &str = "each of the twelve classes stands at the one place of its helix every touch-point of it shares, and the pulse carries that place's point across the surface (janko POINT_LAW); a class sounds every voice of the tuning in force by that voice's shape term at its point now: what a key of the class struck now gives the voice per unit of the amplitude the body takes, its velocity × Strike (strike_at_tuned). A symbol's voice is the chord of the classes its form covers where it stands (DLW §20.2)";
-/// The standing of a played note's own cell.
-const NOTE_CELL_STANDING: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental. Disclosed per note; the native owner sounds the resident voices of the tuning in force at the struck point, so a per-note voice bank sounding each cell's own eight is not built (QL-MEF #287 packet A)";
+/// The standing of a played note's own cell: sounded by the note under Logic on the torus (QL-MEF #287 packet A).
+const NOTE_CELL_VOICED: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental, sounded by the note in the native owner's bank (QL-MEF #287 packet A; NOTE_VOICES_LAW)";
+/// … and disclosed only, under Sky or Maqām or while a form rings.
+const NOTE_CELL_RESIDENT: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental. Disclosed per note: a cell's voices are the octet's, so a note sounds its own under Logic on the torus; under Sky or Maqām, or while a form rings, a key strikes the resident voices of the tuning in force at its point (NOTE_VOICES_LAW)";
+/// What a played note sounds (`torus-play` under Logic on the torus; QL-MEF #287 packet A; DLW manual §21.2 Rules).
+pub const NOTE_VOICES_RECEIPT: &str = "ql.note-voices/v1";
+pub const NOTE_VOICES_LAW: &str = "each key is a note that strikes its own cell (DLW manual §21.2 Rules: each note strikes its own eight voices, and Polyphony counts notes): the Vimarśā reading at the arc its moving point struck, eight voices over the reading's own four boundaries, each at its own frequency × the Fundamental over the map's 1:1, placed, weighted and phased by the octet's law, and struck by the key's velocity × Strike × its own shape term at the point. Each voice rings in the material of the Logic voice of its slot and is heard as that voice is heard. The notes are counted as Polyphony counts them: a key struck again makes way for itself, and past Polyphony the oldest make way; a note that makes way fades out over 4 ms and frees its slot in the native owner's bank of 32 notes, and with all 32 sounding the note voiced longest ago is taken. A key's release only leaves the count: a released note keeps its own tail. Under Sky or Maqām, or while a form rings, a key strikes the resident voices of the tuning in force at its point (strike-at). The notes are drawn as they are heard: each ringing voice moves the body's samples along the shape of the Logic voice of its slot, by its own state, as the resident voices move them by theirs";
 
 /// The most Torus settings that wait for their samples at once (`torus-set` with `at_samples_elapsed`, O-I 855).
 pub const TORUS_SETS_WAITING_MAX: usize = 64;
@@ -2412,23 +2481,47 @@ impl SceneInstrument {
         .map_err(|_| "the event carries no Vimarśā seed to read a note's cell from")?;
         let map_hz = self.event.map_hz()?;
         let scale = landing.fundamental_hz(map_hz) / map_hz;
-        let cells = points
+        let readings = points
             .iter()
             .map(|point| {
-                let reading = crate::m2_vimarsha::read_seed(crate::m2_vimarsha::VimarshaSeed {
+                crate::m2_vimarsha::read_seed(crate::m2_vimarsha::VimarshaSeed {
                     tick12: point.arc,
                     ..seed
-                })?;
-                Ok(json!({
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        // Each note its own voices under Logic on the torus (QL-MEF #287 packet A); otherwise the resident voices of the tuning.
+        let voiced = self.body.is_none() && landing.settings().tuning == Tuning::Logic;
+        let cells: Vec<Value> = points
+            .iter()
+            .zip(&readings)
+            .map(|(point, reading)| {
+                json!({
                     "tick12": point.arc,
                     "voices_hz": reading.audio_octet_hz.iter().map(|hz| f64::from(*hz) * scale).collect::<Vec<_>>(),
                     "boundaries": reading.nodal_quartet,
-                    "standing": NOTE_CELL_STANDING,
-                }))
+                    "standing": if voiced { NOTE_CELL_VOICED } else { NOTE_CELL_RESIDENT },
+                })
             })
-            .collect::<Result<Vec<_>, String>>()?;
-        let outcome = self.strike_at_when(&strikes, at_samples_elapsed)?;
-        let admission = self.torus.strike_under(keys, at, &landing);
+            .collect();
+        let (outcome, admission) = if voiced {
+            // Counted first on a copy: the bank is told which notes make way, and a refused act changes nothing.
+            let mut torus = self.torus.clone();
+            let admission = torus.strike_under(keys, at, &landing);
+            let outcome = self.voice_cells(
+                &strikes,
+                &readings,
+                scale,
+                strike,
+                &admission,
+                at_samples_elapsed,
+            )?;
+            self.torus = torus;
+            (outcome, admission)
+        } else {
+            let outcome = self.strike_at_when(&strikes, at_samples_elapsed)?;
+            (outcome, self.torus.strike_under(keys, at, &landing))
+        };
         let notes: Vec<Value> = admission
             .admitted
             .iter()
@@ -2453,6 +2546,105 @@ impl SceneInstrument {
             field: outcome.field,
             receipt,
             strike_at: outcome.receipt,
+        })
+    }
+
+    /// Each arc's cell as the session stands now (`torus-native` hands them to a native host, QL-MEF #287 packet A): the Vimarśā
+    /// reading with tick12 at the arc, under the Fundamental in force; `None` unless notes sound their own cells now (Logic on the
+    /// torus).
+    pub fn note_cells(&self) -> Result<Option<Vec<Vec<Voice>>>, String> {
+        if self.body.is_some() || self.tuning() != Tuning::Logic {
+            return Ok(None);
+        }
+        let seed: crate::m2_vimarsha::VimarshaSeed = serde_json::from_value(
+            self.session.current_basis().m2["vimarsha"]["reading"]["seed"].clone(),
+        )
+        .map_err(|_| "the event carries no Vimarśā seed to read a note's cell from")?;
+        let map_hz = self.event.map_hz()?;
+        let scale = self.torus.fundamental_hz(map_hz) / map_hz;
+        (0..crate::spanda_field::RING_SIZE)
+            .map(|arc| {
+                let reading = crate::m2_vimarsha::read_seed(crate::m2_vimarsha::VimarshaSeed {
+                    tick12: arc,
+                    ..seed
+                })?;
+                self.shape.cell(&reading, scale)
+            })
+            .collect::<Result<Vec<_>, String>>()
+            .map(Some)
+    }
+
+    /// Each key's note voiced in the native owner's bank (`NOTE_VOICES_LAW`, QL-MEF #287 packet A): its cell's eight voices, each
+    /// struck by the key's velocity × Strike × its own shape term at the key's point, and the notes the count made way for fading.
+    /// Refused whole, in words, with nothing moved.
+    fn voice_cells(
+        &mut self,
+        points: &[StrikeAtInput],
+        readings: &[crate::m2_vimarsha::VimarshaReading],
+        scale: f64,
+        strike: f64,
+        admission: &m1_prime::NoteAdmission,
+        at_samples_elapsed: Option<u64>,
+    ) -> Result<StrikeAtOutcome, String> {
+        StrikeAtInput::validate_act(points)?;
+        let mut notes = Vec::with_capacity(points.len());
+        let mut disclosed = Vec::with_capacity(points.len());
+        for ((point, reading), note) in points.iter().zip(readings).zip(&admission.admitted) {
+            let cell = self.shape.cell(reading, scale)?;
+            let mut voices = Vec::with_capacity(cell.len());
+            for voice in &cell {
+                let shape = chi(voice, point.phi, point.theta);
+                // As every strike at points: the velocity's share Strike, then the voice's shape term (strike_at_when).
+                let amplitude = [
+                    point.amplitude[0] * strike * shape,
+                    point.amplitude[1] * strike * shape,
+                ];
+                if amplitude
+                    .iter()
+                    .any(|v| !v.is_finite() || v.abs() > STRIKE_CAP_METRES)
+                {
+                    return Err(format!(
+                        "a note's voice is struck past the declared {STRIKE_CAP_METRES:.1} metre material policy"
+                    ));
+                }
+                voices.push((voice, shape, amplitude));
+            }
+            notes.push(json!({
+                "id": note.id.to_string(),
+                "voices": voices.iter().map(|(voice, _, amplitude)| json!({
+                    "mode_ref": voice.mode_ref, "frequency_hz": voice.frequency_hz, "amplitude": amplitude,
+                })).collect::<Vec<_>>(),
+            }));
+            disclosed.push(json!({
+                "id": note.id,
+                "voices": voices.iter().map(|(voice, shape, amplitude)| json!({
+                    "like": voice.mode_ref, "frequency_hz": voice.frequency_hz, "m": voice.m, "n": voice.n,
+                    "coupling": shape, "amplitude": amplitude,
+                })).collect::<Vec<_>>(),
+            }));
+        }
+        let made_way: Vec<u64> = admission.made_way.iter().map(|note| note.id).collect();
+        let lands = match at_samples_elapsed {
+            Some(at) => json!(at.to_string()),
+            None => self.session.last_field()["samples_elapsed"].clone(),
+        };
+        let field = self
+            .session
+            .voice_notes_field(&notes, &made_way, at_samples_elapsed)?;
+        if let Some(at) = at_samples_elapsed {
+            self.struck_through = self.struck_through.max(at);
+        }
+        Ok(StrikeAtOutcome {
+            field,
+            receipt: json!({
+                "schema": NOTE_VOICES_RECEIPT,
+                "points": points,
+                "strike": strike,
+                "notes": disclosed,
+                "made_way": made_way,
+                "at_samples_elapsed": lands,
+                "law": NOTE_VOICES_LAW,
+            }),
         })
     }
 
@@ -2538,6 +2730,13 @@ impl SceneInstrument {
                 request: body.body.request().clone(),
                 prepared: body.body.reading(),
             }),
+            bank: field["bank"]
+                .as_array()
+                .filter(|slots| !slots.is_empty())
+                .map(|_| KeptBank {
+                    slots: field["bank"].clone(),
+                    order: field["bank_order"].as_str().unwrap_or("0").into(),
+                }),
         };
         serde_json::to_value(checkpoint).map_err(|e| e.to_string())
     }
@@ -2643,6 +2842,44 @@ impl SceneInstrument {
                 tuning.code()
             ));
         }
+        // The notes as they rang (QL-MEF #287): on the torus only, each voice that rings like one of its Logic voices
+        // (a lane never faded into stands still, on whatever mode the field holds).
+        if let Some(bank) = &kept.bank {
+            let logic: Vec<&str> = shape
+                .group(Tuning::Logic)
+                .iter()
+                .map(|voice| voice.mode_ref.as_str())
+                .collect();
+            let slots = bank
+                .slots
+                .as_array()
+                .filter(|slots| slots.len() <= NOTE_BANK_MAX)
+                .ok_or("a checkpoint's bank holds at most 32 notes")?;
+            let like = |voice: &Value| {
+                let still = voice["amplitude"]
+                    .as_array()
+                    .is_some_and(|z| z.len() == 2 && z.iter().all(|c| c.as_f64() == Some(0.0)));
+                still
+                    || voice["mode_ref"]
+                        .as_str()
+                        .is_some_and(|r| logic.contains(&r))
+            };
+            if kept_body.is_some()
+                || !bank
+                    .order
+                    .parse::<u64>()
+                    .is_ok_and(|n| n.to_string() == bank.order)
+                || !slots.iter().all(|slot| {
+                    ["voices", "fading"].iter().all(|lane| {
+                        slot[*lane].as_array().is_some_and(|voices| {
+                            voices.len() == NOTE_VOICES && voices.iter().all(like)
+                        })
+                    })
+                })
+            {
+                return Err("the checkpoint's notes are not notes of this scene's torus: each voice that rings is like one of its Logic voices".into());
+            }
+        }
         // Every judgement is made: now the acts, the session first so the event completes under
         // the kept tuning. A failure from here is the owner's, never a refusal of the checkpoint.
         let before = std::mem::replace(&mut self.torus, torus);
@@ -2667,7 +2904,17 @@ impl SceneInstrument {
             if let Some(body) = kept_body.filter(|_| to_torus || !same_body) {
                 self.choose_body(Some(body))?;
             }
-            let field = self.session.set_state_field(&kept.amplitudes)?;
+            // The body with its notes as they rang, or with none (QL-MEF #287): one body act.
+            let field = match &kept.bank {
+                Some(bank) => self.session.set_state_banked_field(
+                    &kept.amplitudes,
+                    &bank.slots,
+                    &bank.order,
+                )?,
+                None => self
+                    .session
+                    .set_state_banked_field(&kept.amplitudes, &json!([]), "0")?,
+            };
             self.sync_carrier()?;
             Ok(field)
         })();
