@@ -1,6 +1,6 @@
 ---
 name: vak-coordinate-frame
-description: Reference grammar for the six C′ Vāk layers an Anima or Aletheia act is written in — CPF participation, CT content type, CP position, CF context frame, CFP thread form and CS sequence — with the current QL codes, the constitutional voice of each frame, the Day/Night′ question pairs and the thought meanings they return into. Use whenever a coordinate, frame, thread form or passage must be named or checked; it is a lookup, not a procedure.
+description: Reference grammar for the six C′ Vāk layers an Anima or Aletheia act is written in — CPF participation, CT content type, CP position, CF context frame, CFP thread form and CS sequence — with the current QL codes, the constitutional voice of each frame, the prospective/retrospective question pairs and the thought meanings they return into. Use whenever a coordinate, frame, thread form or passage must be named or checked; it is a lookup, not a procedure.
 ---
 
 # Vāk coordinate frame
@@ -21,7 +21,7 @@ description: Reference grammar for the six C′ Vāk layers an Anima or Aletheia
 | CP — position | Where on the 4.x lattice does the act sit? | 4.0 ground · 4.1 definition · 4.2 operation · 4.3 pattern · 4.4 context · 4.5 integration |
 | CF — context frame | Which frame (and so which constitutional voice) holds it? | see the frame table |
 | CFP — thread form | How is execution shaped? | CFP0 base · CFP1 parallel · CFP2 chain · CFP3 fusion · CFP4 sustained · CFP5 nested · Z compose→perform→record→rehear→recompose |
-| CS — sequence | Which paired passage, in which direction? | CS0 full-traverse · CS1 quick-grounding-context · CS2 ground-through-operation · CS3 through-pattern · CS4 context-focused · CS5 direct-synthesis; direction `forward-synthesis` (Day) or `returning-inquiry` (Night′) |
+| CS — sequence | Which paired passage, in which direction? | CS0 full-traverse · CS1 quick-grounding-context · CS2 ground-through-operation · CS3 through-pattern · CS4 context-focused · CS5 direct-synthesis; direction `forward-synthesis` (prospective) or `returning-inquiry` (retrospective) |
 
 A CP is also the nesting operator: a position either holds one leaf act or opens a whole nested frame. Frames never act by themselves; only leaves are dispatched.
 
@@ -64,11 +64,11 @@ There is no eighth frame. Aletheia is not a constitutional voice. Aletheia membe
 | CS4 | 4.0↔4.5 · 4.4↔4.1 · 4.5↔4.0 | 3 |
 | CS5 | 4.0↔4.5 · 4.5↔4.0 | 2 |
 
-Day and Night′ are CS directions — logical forward synthesis and returning inquiry. They are not civil time. The civil day belongs to Central (`ctrl --json action run central.time.policy '{}'`).
+Prospective and retrospective are CS directions — logical forward synthesis and returning inquiry. They are not civil time. The civil day belongs to Central (`ctrl --json action run central.time.policy '{}'`).
 
-## Day questions, Night′ questions, thought meanings
+## Prospective questions, retrospective questions, thought meanings
 
-| CP | Day question | Night′ question | Thought meaning (Central NOW `T/`) |
+| CP | Prospective question | Retrospective question | Thought meaning (Central NOW `T/`) |
 |---|---|---|---|
 | 4.0 | What do we have? | What don't we know? | T0 Question |
 | 4.1 | What must be true? | What evidence exists? | T1 Trace |
@@ -77,7 +77,7 @@ Day and Night′ are CS directions — logical forward synthesis and returning i
 | 4.4 | Where and when in the larger frame? | What sources inform? | T4 Discovery |
 | 4.5 | What was produced? | What crystallises? | T5 Insight |
 
-The prime readings are T0-prime Assumption, T1-prime Lacuna, T2-prime Affordance, T3-prime Anomaly, T4-prime Concealment, T5-prime Integration. Night′ runs 4.5 → 4.0; the Möbius return is P5′ insight generating P0′ questions for the next forward pass.
+The prime readings are T0-prime Assumption, T1-prime Lacuna, T2-prime Affordance, T3-prime Anomaly, T4-prime Concealment, T5-prime Integration. The retrospective pass runs 4.5 → 4.0; the Möbius return is P5′ insight generating P0′ questions for the next forward pass.
 
 ## Standard coordinate block
 
@@ -100,7 +100,7 @@ A block that differs only on CF is one axis with five decorations. Count the lay
 | `skill/personal/subagent-driven-development` | CFP2 chain |
 | `skill/personal/dispatching-parallel-agents` | CFP1 parallel and CFP3 fusion |
 | `skill/personal/executing-plans` | CFP4 sustained |
-| `skill/personal/verification-before-completion` | CF7 and partial Night′ checks (P5′/P2′/P1′) |
+| `skill/personal/verification-before-completion` | CF7 and partial retrospective checks (P5′/P2′/P1′) |
 | `skill/personal/finishing-a-development-branch` | CF7 Sophia, Möbius return |
 
 ## Provenance and limits

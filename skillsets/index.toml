@@ -1,0 +1,51 @@
+# Quaternal Logic's portable registry SkillSets, beside `skills/` (AIKit's `ql`
+# directory source). AIKit loads this index as the sibling of that source;
+# members are capsule ids, one per line, in `<directory>/members`. Membership is
+# repertoire only: it grants no trust, loading, sequencing or precedence.
+schema = 1
+
+# Ta-Onta's practice (O-I #754, manual §25.4; docs/integrations/epi-logos/
+# TA-ONTA-FULL-FIELD-LOCK.md): the Methodology, and one set for each power with
+# its Method and the skills it calls.
+[[skillset]]
+semantic_ref = "ql:ta-onta"
+directory = "ta-onta"
+description = "Ta-Onta: the agent world's own practice — the ta-onta Methodology, and one set for each of the six powers (Enter, Form, Find, Time, Compose, Return) with its Method and the skills it calls."
+child_refs = [
+  "ql:ta-onta-enter",
+  "ql:ta-onta-form",
+  "ql:ta-onta-find",
+  "ql:ta-onta-time",
+  "ql:ta-onta-compose",
+  "ql:ta-onta-return",
+]
+
+[[skillset]]
+semantic_ref = "ql:ta-onta-enter"
+directory = "ta-onta-enter"
+description = "Enter (Khora, S0′): enter the exact world an act stands in and pick up where it left off."
+
+[[skillset]]
+semantic_ref = "ql:ta-onta-form"
+directory = "ta-onta-form"
+description = "Form (Hen, S1′): keep each thing an act works on in its form before anything is written."
+
+[[skillset]]
+semantic_ref = "ql:ta-onta-find"
+directory = "ta-onta-find"
+description = "Find (Pleroma, S2′): find what an act can actually use, each item attributable to its owner."
+
+[[skillset]]
+semantic_ref = "ql:ta-onta-time"
+directory = "ta-onta-time"
+description = "Time (Chronos, S3′): hold the act's times together without owning any of them."
+
+[[skillset]]
+semantic_ref = "ql:ta-onta-compose"
+directory = "ta-onta-compose"
+description = "Compose (Anima, S4′): compose the act through full C′ Vāk and perform it through the owners' own operations."
+
+[[skillset]]
+semantic_ref = "ql:ta-onta-return"
+directory = "ta-onta-return"
+description = "Return (Aletheia, S5′): say what happened against what was meant, and prepare its return for Recognition."

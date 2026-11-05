@@ -64,8 +64,8 @@ The occasion's direction selects the passage family:
 
 | Direction | Occasion | Passages |
 |---|---|---|
-| outward (Day; `direction: "forward"` in a workflow unit's C′) | work going out: arrival, task start, work, invocation, handoff | `arrival`, `work-passage`, `skill-invocation`, `handoff` |
-| returning (Night′; `direction: "returning"`) | work coming back: review, integration, Return | `review`, `completion`, an explanation of what was learned |
+| outward (prospective; `direction: "forward"` in a workflow unit's C′) | work going out: arrival, task start, work, invocation, handoff | `arrival`, `work-passage`, `skill-invocation`, `handoff` |
+| returning (retrospective; `direction: "returning"`) | work coming back: review, integration, Return | `review`, `completion`, an explanation of what was learned |
 
 Choose material by the direction the act is actually in; a returning occasion does not replay the outward passages as if new.
 
