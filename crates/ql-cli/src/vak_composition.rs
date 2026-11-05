@@ -3,6 +3,11 @@ use crate::CliError;
 use ql_core::*;
 use ql_mef::cprime_oikonomia as oik;
 use ql_mef::vak_composition::*;
+use ql_mef::vak_profile::{
+    ContentPosition, ContentType, ContextSequence, InquiryDirection, Participation, ThreadForm,
+};
+use ql_mef::vak_thought_consumption as thought;
+use ql_mef::vak_workflow_types::AuthoredFrame;
 use ql_mef::*;
 use serde_json::{Value, json};
 use std::collections::BTreeMap;
@@ -126,16 +131,42 @@ fn ground(v: &str) -> R<GroundKind> {
         _ => Err(error("unknown ground relation")),
     }
 }
+/// The words a step names a CFP thread form and a CS profile by. The step
+/// parsers and a unit's breakdown (`ql vak unit-steps`) read the same table.
+const CFP_FORM_WORDS: [(&str, oik::CfpThreadForm); 6] = [
+    ("base", oik::CfpThreadForm::Base),
+    ("parallel", oik::CfpThreadForm::IndependentParallel),
+    ("chain", oik::CfpThreadForm::Chain),
+    ("fusion", oik::CfpThreadForm::Fusion),
+    ("sustained", oik::CfpThreadForm::Sustained),
+    ("nested", oik::CfpThreadForm::Nested),
+];
+const CS_PROFILE_WORDS: [(&str, oik::CsProfile); 6] = [
+    ("full-traverse", oik::CsProfile::FullTraverse),
+    (
+        "quick-grounding-context",
+        oik::CsProfile::QuickGroundingContext,
+    ),
+    (
+        "ground-through-operation",
+        oik::CsProfile::GroundThroughOperation,
+    ),
+    ("through-pattern", oik::CsProfile::ThroughPattern),
+    ("context-focused", oik::CsProfile::ContextFocused),
+    ("direct-synthesis", oik::CsProfile::DirectSynthesis),
+];
+fn word<T: PartialEq + Copy>(table: &[(&'static str, T)], value: T) -> &'static str {
+    table
+        .iter()
+        .find(|(_, v)| *v == value)
+        .map_or("", |(w, _)| w)
+}
 fn cfp_form(v: &str) -> R<oik::CfpThreadForm> {
-    Ok(match v {
-        "base" => oik::CfpThreadForm::Base,
-        "parallel" => oik::CfpThreadForm::IndependentParallel,
-        "chain" => oik::CfpThreadForm::Chain,
-        "fusion" => oik::CfpThreadForm::Fusion,
-        "sustained" => oik::CfpThreadForm::Sustained,
-        "nested" => oik::CfpThreadForm::Nested,
-        _ => return Err(error("unknown CFP thread form")),
-    })
+    CFP_FORM_WORDS
+        .iter()
+        .find(|(w, _)| *w == v)
+        .map(|(_, f)| *f)
+        .ok_or_else(|| error("unknown CFP thread form"))
 }
 fn z_stage(v: &str) -> R<oik::CfpZStage> {
     Ok(match v {
@@ -148,15 +179,11 @@ fn z_stage(v: &str) -> R<oik::CfpZStage> {
     })
 }
 fn cs_profile(v: &str) -> R<oik::CsProfile> {
-    Ok(match v {
-        "full-traverse" => oik::CsProfile::FullTraverse,
-        "quick-grounding-context" => oik::CsProfile::QuickGroundingContext,
-        "ground-through-operation" => oik::CsProfile::GroundThroughOperation,
-        "through-pattern" => oik::CsProfile::ThroughPattern,
-        "context-focused" => oik::CsProfile::ContextFocused,
-        "direct-synthesis" => oik::CsProfile::DirectSynthesis,
-        _ => return Err(error("unknown CS profile")),
-    })
+    CS_PROFILE_WORDS
+        .iter()
+        .find(|(w, _)| *w == v)
+        .map(|(_, p)| *p)
+        .ok_or_else(|| error("unknown CS profile"))
 }
 fn cs_direction(v: &str) -> R<oik::CsDirection> {
     Ok(match v {
@@ -677,6 +704,229 @@ pub fn command(args: &[String], _json: bool) -> R<String> {
     }
     let request = serde_json::from_slice(&data).map_err(error)?;
     serde_json::to_string_pretty(&execute_request(&request)?).map_err(error)
+}
+/// One request read from its file, or from stdin when it is `-`, bounded to
+/// 16 MiB as a composition is.
+fn bounded_input(path: &str, what: &str) -> R<Vec<u8>> {
+    let reader: Box<dyn Read> = if path == "-" {
+        Box::new(std::io::stdin())
+    } else {
+        Box::new(std::fs::File::open(path).map_err(|e| error(format!("{path}: {e}")))?)
+    };
+    let mut data = Vec::new();
+    reader
+        .take(16 * 1024 * 1024 + 1)
+        .read_to_end(&mut data)
+        .map_err(error)?;
+    if data.len() > 16 * 1024 * 1024 {
+        return Err(error(format!("the {what} exceeds 16 MiB")));
+    }
+    Ok(data)
+}
+
+/// `ql vak thought-consumption <request.json|-> [--json]`: QL's reading of one
+/// consumed T/T′ working thought. Factory's `factory.run-thought-consumption/v1`
+/// receipt and the meaning chosen for each consumed thought come in as one
+/// `ql.vak-thought-consumption-projection/v1` request; the
+/// `ql.vak-thought-consumption/v1` reading comes back, with any Recognition
+/// candidate as a proposal for AIKit. It stores nothing and grants nothing.
+pub fn thought_consumption_command(args: &[String], _json: bool) -> R<String> {
+    let [path] = args else {
+        return Err(error(
+            "usage: ql vak thought-consumption <request.json|-> [--json]",
+        ));
+    };
+    let data = bounded_input(path, "thought-consumption request")?;
+    let request: thought::ThoughtConsumptionProjectionRequest = serde_json::from_slice(&data)
+        .map_err(|e| {
+            error(format!(
+                "the request is not a `{}`: {e}",
+                thought::THOUGHT_CONSUMPTION_PROJECTION_REQUEST
+            ))
+        })?;
+    let reading = thought::project_thought_consumption(request).map_err(error)?;
+    serde_json::to_string_pretty(&reading).map_err(error)
+}
+
+/// A unit's heads broken down into QL's composition (`ql vak unit-steps`); the
+/// request and the reading carry the same contract, as a composition does.
+pub const UNIT_STEPS_CONTRACT: &str = "ql.vak-unit-steps/v1";
+/// A unit's seven heads in Factory's spelling, each with the head of the team
+/// space's Vāk-block instrument it is read as.
+const UNIT_HEADS: [(&str, &str); 7] = [
+    ("CPF", "vak-cpf"),
+    ("CT", "vak-ct"),
+    ("CP", "vak-cp"),
+    ("CF", "vak-cf"),
+    ("CFP", "vak-cfp"),
+    ("CS", "vak-cs"),
+    ("direction", "vak-direction"),
+];
+const UNIT_STEPS_STANDING: &str = "QL's breakdown of one unit's heads: each head's meaning as the Vāk-block instrument holds it, and the composition steps the heads fix. The steps run in a `ql.vak-composition/v1` composition once it has bound the unit's whole and entered its context, and names the context, oikonomia and basis each step takes: a unit names its whole, it does not carry it. It stores nothing, composes nothing and grants nothing.";
+
+fn head_label<T: serde::de::DeserializeOwned>(
+    heads: &serde_json::Map<String, Value>,
+    head: &str,
+) -> R<Option<(String, T)>> {
+    match heads.get(head) {
+        None | Some(Value::Null) => Ok(None),
+        Some(Value::String(label)) => serde_json::from_value(Value::String(label.clone()))
+            .map(|value| Some((label.clone(), value)))
+            .map_err(|e| error(format!("{head} `{label}`: {e}"))),
+        Some(_) => Err(error(format!(
+            "{head} is one label, or absent while it is open"
+        ))),
+    }
+}
+fn wire_label<T: serde::Serialize>(value: &T) -> R<String> {
+    serde_json::to_value(value)
+        .map_err(error)?
+        .as_str()
+        .map(str::to_owned)
+        .ok_or_else(|| error("a C′ label is written as text"))
+}
+/// The kernel's two C′ owners hold the thread forms and the sequences in the
+/// same order (ql-mef team_space tests pin it): CFPn is the nth CFP form and
+/// CSn the nth CS profile.
+fn same_place<A: PartialEq, B: Copy>(value: &A, from: &[A], into: &[B]) -> R<B> {
+    from.iter()
+        .position(|x| x == value)
+        .and_then(|i| into.get(i).copied())
+        .ok_or_else(|| error("QL's two C′ owners disagree on an order"))
+}
+
+/// Break one unit's heads (`{contract, unit, heads}`, Factory's `CPF … direction`
+/// with an open head absent or null) into QL's composition. Each head is
+/// refused in QL's words when its label is not QL's; read against the team
+/// space's Vāk-block instrument for its meaning; and, where the heads fix one,
+/// given as the step of `ql.vak-composition/v1` that carries it: CFP is
+/// `cfp-form`, CS with its direction is `cs-select` with the hops it walks.
+pub fn unit_steps(request: &Value) -> R<Value> {
+    if text(request, "contract")? != UNIT_STEPS_CONTRACT {
+        return Err(error(format!(
+            "a unit's breakdown takes `{UNIT_STEPS_CONTRACT}`"
+        )));
+    }
+    let unit = text(request, "unit")?;
+    let heads = request
+        .get("heads")
+        .and_then(Value::as_object)
+        .ok_or_else(|| error("missing/non-object heads"))?;
+    if let Some(stray) = heads
+        .keys()
+        .find(|k| !UNIT_HEADS.iter().any(|(head, _)| head == k))
+    {
+        return Err(error(format!(
+            "`{stray}` is no head of a unit; its heads are CPF, CT, CP, CF, CFP, CS and direction"
+        )));
+    }
+    let participation: Option<(String, Participation)> = head_label(heads, "CPF")?;
+    let content: Option<(String, ContentType)> = head_label(heads, "CT")?;
+    let position: Option<(String, ContentPosition)> = head_label(heads, "CP")?;
+    let frame: Option<(String, AuthoredFrame)> = head_label(heads, "CF")?;
+    let thread: Option<(String, ThreadForm)> = head_label(heads, "CFP")?;
+    let sequence: Option<(String, ContextSequence)> = head_label(heads, "CS")?;
+    let direction: Option<(String, InquiryDirection)> = head_label(heads, "direction")?;
+    let passage_direction = direction.as_ref().map(|(_, d)| match d {
+        InquiryDirection::Forward => oik::CsDirection::ForwardSynthesis,
+        InquiryDirection::Returning => oik::CsDirection::ReturningInquiry,
+    });
+    // Each head as given, and the Vāk-block label it is.
+    let chosen: [Option<(String, String)>; 7] = [
+        participation
+            .as_ref()
+            .map(|(l, v)| Ok::<_, CliError>((l.clone(), wire_label(v)?)))
+            .transpose()?,
+        content
+            .as_ref()
+            .map(|(l, v)| Ok::<_, CliError>((l.clone(), wire_label(v)?)))
+            .transpose()?,
+        position
+            .as_ref()
+            .map(|(l, v)| Ok::<_, CliError>((l.clone(), wire_label(v)?)))
+            .transpose()?,
+        frame
+            .as_ref()
+            .map(|(l, v)| (l.clone(), v.0.code().to_owned())),
+        thread
+            .as_ref()
+            .map(|(l, v)| Ok::<_, CliError>((l.clone(), wire_label(v)?)))
+            .transpose()?,
+        sequence
+            .as_ref()
+            .map(|(l, v)| Ok::<_, CliError>((l.clone(), wire_label(v)?)))
+            .transpose()?,
+        direction
+            .as_ref()
+            .zip(passage_direction)
+            .map(|((l, _), d)| (l.clone(), d.marker().to_owned())),
+    ];
+    let space = ql_mef::team_space::team_space();
+    let block = space
+        .instrument("vak-block")
+        .ok_or_else(|| error("QL's team space holds no Vāk-block instrument"))?;
+    let mut views = Vec::new();
+    let mut open = Vec::new();
+    for ((head, instrument_head), given) in UNIT_HEADS.iter().zip(chosen) {
+        let held = block
+            .heads
+            .iter()
+            .find(|h| h["id"] == *instrument_head)
+            .ok_or_else(|| error(format!("the Vāk block holds no `{instrument_head}`")))?;
+        let labels = held["labels"]
+            .as_array()
+            .map(Vec::as_slice)
+            .unwrap_or_default();
+        views.push(match given {
+            Some((label, id)) => {
+                let meant = labels.iter().find(|l| l["id"] == id.as_str()).ok_or_else(|| {
+                    error(format!("{head} `{label}` is no label of the Vāk block's `{instrument_head}`"))
+                })?;
+                json!({"head":head,"field":held["field"],"state":"chosen","label":label,"instrumentHead":instrument_head,
+                    "instrumentLabel":id,"meaning":meant["description"],"owner":meant["owner_ref"]})
+            }
+            None => {
+                open.push(*head);
+                json!({"head":head,"field":held["field"],"state":"open","label":null,"instrumentHead":instrument_head,
+                    "labels":labels.iter().map(|l| l["id"].clone()).collect::<Vec<_>>()})
+            }
+        });
+    }
+    let mut compose = Vec::new();
+    if let Some((_, form)) = &thread {
+        let form = same_place(form, &ThreadForm::ALL, &oik::CfpThreadForm::ALL)?;
+        compose.push(json!({"head":"CFP","step":{"op":"cfp-form","form":word(&CFP_FORM_WORDS, form)},"marker":form.marker()}));
+    }
+    let mut walk = Value::Null;
+    if let (Some((_, sequence)), Some((_, inquiry)), Some(cs_direction)) =
+        (&sequence, &direction, passage_direction)
+    {
+        let profile = same_place(sequence, &ContextSequence::ALL, &oik::CsProfile::ALL)?;
+        let passage = profile.passage(cs_direction);
+        compose.push(json!({"head":"CS","step":{"op":"cs-select","profile":word(&CS_PROFILE_WORDS, profile),"direction":cs_direction.marker()},
+            "marker":passage.marker(),
+            "hops":passage.hops.iter().map(|h| json!({"index":h.index,"from":h.from.value(),"to":h.to.value(),"marker":h.marker(profile, cs_direction)})).collect::<Vec<_>>()}));
+        walk = sequence
+            .walk(*inquiry)
+            .iter()
+            .map(wire_label)
+            .collect::<R<Vec<_>>>()?
+            .into();
+    }
+    Ok(
+        json!({"contract":UNIT_STEPS_CONTRACT,"sourceRevision":VAK_SOURCE_REVISION,"unit":unit,"heads":views,"open":open,
+        "compose":compose,"walk":walk,"needs":["context","oikonomia","basis"],"standing":UNIT_STEPS_STANDING}),
+    )
+}
+/// `ql vak unit-steps <unit.json|-> [--json]`.
+pub fn unit_steps_command(args: &[String], _json: bool) -> R<String> {
+    let [path] = args else {
+        return Err(error("usage: ql vak unit-steps <unit.json|-> [--json]"));
+    };
+    let data = bounded_input(path, "unit")?;
+    let request: Value =
+        serde_json::from_slice(&data).map_err(|e| error(format!("the unit is not JSON: {e}")))?;
+    serde_json::to_string_pretty(&unit_steps(&request)?).map_err(error)
 }
 fn basis_view(b: &Basis) -> Value {
     json!({"caller":b.provenance.caller_ref,"source":b.provenance.source_ref,"revision":b.revision,"standing":b.provenance.standing_ref,"evidence":b.evidence})
