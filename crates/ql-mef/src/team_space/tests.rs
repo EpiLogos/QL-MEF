@@ -301,6 +301,34 @@ fn depth_covers_the_six_m_domains() {
     );
 }
 
+/// O-I's score passes a Factory unit's heads to the Vāk block verbatim
+/// (live-shell scoreBinding.ts HEADS), and a unit spells its direction as
+/// QL's workflow types do (`InquiryDirection`, generated for Factory by
+/// `ql vak workflow-types`). Each direction a unit can carry checks as a
+/// block cell; spelled `forward` or `returning`, the block refused it.
+#[test]
+fn a_units_heads_passed_verbatim_check_as_vak_block_cells() {
+    let space = space();
+    for direction in InquiryDirection::ALL {
+        let cells = json!({"schema": INSTRUMENT_CELLS, "cells": [{"key": "eros-verify", "chosen": {
+            "vak-cpf": ["dialogical"], "vak-ct": ["CT2"], "vak-cp": ["4.2"], "vak-cf": ["CF3"],
+            "vak-cfp": ["CFP2"], "vak-cs": ["CS2"], "vak-direction": [wire(&direction)]}}]});
+        let answer = space.check_cells("vak-block", &cells).unwrap();
+        assert_eq!(answer["cells"][0]["state"], "admitted", "{answer}");
+    }
+    // A record written before the law's spelling still reads as its direction.
+    for (old, direction) in [
+        ("forward", InquiryDirection::Forward),
+        ("returning", InquiryDirection::Returning),
+    ] {
+        assert_eq!(
+            serde_json::from_value::<InquiryDirection>(json!(old)).unwrap(),
+            direction
+        );
+        assert_eq!(InquiryDirection::from_label(old), Some(direction));
+    }
+}
+
 #[test]
 fn the_vak_block_labels_equal_their_enum_sources() {
     let space = space();
@@ -382,7 +410,11 @@ fn the_vak_block_labels_equal_their_enum_sources() {
             );
         }
     }
-    assert_eq!(wire(&InquiryDirection::Forward), "forward");
+    // A unit's direction (QL's workflow types) is spelled as the block's.
+    assert_eq!(
+        InquiryDirection::ALL.iter().map(wire).collect::<Vec<_>>(),
+        get("vak-direction")
+    );
     assert_eq!(CsDirection::ForwardSynthesis.marker(), "forward-synthesis");
     // The path is the block's seven layers.
     let layers: Vec<_> = space.path.iter().map(|p| (p.layer, p.labels)).collect();

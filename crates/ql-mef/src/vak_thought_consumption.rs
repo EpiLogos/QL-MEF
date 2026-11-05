@@ -784,7 +784,7 @@ mod tests {
                 frame: "CF5".into(),
                 thread: "CFP0".into(),
                 sequence: "CS2".into(),
-                direction: "forward".into(),
+                direction: "forward-synthesis".into(),
                 musical_role: "single-voice".into(),
                 attempts: vec![attempt],
                 chain_inputs: Vec::new(),

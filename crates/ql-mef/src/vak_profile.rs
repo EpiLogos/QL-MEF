@@ -105,11 +105,38 @@ impl ContentPosition {
     ];
 }
 
+/// A sequence's direction, spelled as QL's law spells it: the Vāk block's
+/// `vak-direction` labels and the `vak-coordinate-frame` skill's
+/// "`forward-synthesis` (prospective) or `returning-inquiry`
+/// (retrospective)". A record written before the law's spelling reached this
+/// enum (`forward`, `returning`) still reads; QL writes only the law's.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "kebab-case")]
 pub enum InquiryDirection {
+    #[serde(rename = "forward-synthesis", alias = "forward")]
     Forward,
+    #[serde(rename = "returning-inquiry", alias = "returning")]
     Returning,
+}
+impl InquiryDirection {
+    pub const ALL: [Self; 2] = [Self::Forward, Self::Returning];
+
+    /// The law's label.
+    pub const fn label(self) -> &'static str {
+        match self {
+            Self::Forward => "forward-synthesis",
+            Self::Returning => "returning-inquiry",
+        }
+    }
+
+    /// The direction a label names: the law's, or the spelling a record
+    /// written before it carries.
+    pub fn from_label(label: &str) -> Option<Self> {
+        match label {
+            "forward-synthesis" | "forward" => Some(Self::Forward),
+            "returning-inquiry" | "returning" => Some(Self::Returning),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

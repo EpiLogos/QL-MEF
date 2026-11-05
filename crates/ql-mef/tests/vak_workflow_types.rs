@@ -29,7 +29,7 @@ fn authored() -> Value {
         "CF": "CF5",
         "CFP": "CFP2",
         "CS": "CS4",
-        "direction": "forward",
+        "direction": "forward-synthesis",
         "actor": "agent/anima",
         "interpretation": {"ref": "ql/interpretation/c-prime", "revision": "09f7d29ad6262f85bc2858f7c468f22d0bd398f3"},
         "whole": "project:O-I",

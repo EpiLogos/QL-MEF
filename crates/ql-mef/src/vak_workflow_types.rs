@@ -357,7 +357,7 @@ pub fn typescript_module() -> String {
     );
     line(
         &mut out,
-        "",
+        "The CS direction as QL's law spells it: forward-synthesis (prospective) or returning-inquiry (retrospective).",
         format!("export type InquiryDirection = {};", union(directions())),
     );
     line(

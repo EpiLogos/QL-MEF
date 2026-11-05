@@ -658,8 +658,8 @@ fn unit(heads: Value) -> Value {
 #[test]
 fn a_units_heads_break_into_the_steps_quaternal_logic_composes() {
     // The oikonomia specimen's own CFP form and CS walk, as a Factory unit
-    // words them (Factory's spelling: CFP0, CS0, forward).
-    let heads = json!({"CPF":"dialogical","CT":"CT2","CP":"4.0","CF":"CF3","CFP":"CFP0","CS":"CS0","direction":"forward"});
+    // words them (CFP0, CS0, forward-synthesis).
+    let heads = json!({"CPF":"dialogical","CT":"CT2","CP":"4.0","CF":"CF3","CFP":"CFP0","CS":"CS0","direction":"forward-synthesis"});
     let output = ql_stdin(&["vak", "unit-steps", "-", "--json"], &unit(heads.clone()));
     assert!(
         output.status.success(),
@@ -695,7 +695,7 @@ fn a_units_heads_break_into_the_steps_quaternal_logic_composes() {
             ("CF", "chosen", "CF3"),
             ("CFP", "chosen", "CFP0"),
             ("CS", "chosen", "CS0"),
-            // The unit says `forward`; the Vāk block's label is the direction's own.
+            // The unit's direction is the Vāk block's label (QL's law spells both).
             ("direction", "chosen", "forward-synthesis"),
         ]
     );
@@ -756,13 +756,15 @@ fn an_open_head_stands_open_and_a_label_not_qls_is_refused_in_qls_words() {
         compose[0]["marker"],
         "ql.cprime-oikonomia/v1:cfp2:chained-c-thread"
     );
+    // A unit written before the law's spelling (`returning`) reads as its
+    // direction, under the block's label.
+    assert_eq!(v["heads"][6]["label"], "returning");
     assert_eq!(v["heads"][6]["instrumentLabel"], "returning-inquiry");
     for (heads, refusal) in [
         (json!({"CT":"CT9"}), "CT `CT9`: unknown variant `CT9`"),
-        // The Vāk block's own word is not the unit's: a unit says forward.
         (
-            json!({"direction":"forward-synthesis"}),
-            "direction `forward-synthesis`: unknown variant",
+            json!({"direction":"ascending"}),
+            "direction `ascending`: unknown variant",
         ),
         (json!({"CX":"CT1"}), "`CX` is no head of a unit"),
         (
