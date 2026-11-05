@@ -13,8 +13,13 @@
 //! - it is struck where it is touched and heard at its free tip, the point
 //!   farthest from the hold, unless the request names where it is heard;
 //! - its modes are read from its own creased lattice: neighbouring points are
-//!   joined, and the coupling across a crease is the cosine of the angle
-//!   between the two faces, so a fold changes how the halves ring together;
+//!   joined, and a crease is a hinge line that passes translation and bending
+//!   moment both (DLW build ruling 2026-11-05): across it the coupling is
+//!   d + σ·m·(1 − |d|), d the cosine of the angle between the two faces, σ the
+//!   crease's sense (+1 a mountain, −1 a valley) and m the moment it passes
+//!   ([`CREASE_MOMENT`]), so a fold changes how the halves ring together and a
+//!   right-angle fold still rings as one body (`ql.form-body-creased-lattice/v2`;
+//!   a body prepared under v1, whose faces met by translation alone, is stale);
 //! - what it is made of is the material's Q factor (the Torus's Damping): each
 //!   mode rings out at π·f/Q, a high Q ringing longer, a high partial sooner.
 //!
@@ -50,7 +55,7 @@ pub const BODY_REQUEST: &str = "ql.form-body-request/v1";
 pub const BODY_PREPARATION: &str = "ql.physical-body-preparation/v1";
 pub const BODY_CONTRACT: &str = "ql.physical-body/v1";
 /// The body model: the creased lattice and its modes.
-pub const BODY_MODEL: &str = "ql.form-body-creased-lattice/v1";
+pub const BODY_MODEL: &str = "ql.form-body-creased-lattice/v2";
 pub const BODY_PROVIDER: &str = "ql.form-body-provider/v1";
 /// The most samples one body is prepared from: its modes are solved whole.
 pub const MAX_BODY_SAMPLES: usize = 256;
@@ -65,7 +70,19 @@ pub const Q_FACTOR_RANGE: (f64, f64) = (0.1, 40.0);
 pub const FORM_CONSTITUENT: &str = "#3-3";
 /// K8 names a point by an exact JSON integer: at most 2^53 − 1.
 pub const IDENTITY_MASK: u64 = (1 << 53) - 1;
-pub const BODY_STANDING: &str = "proposed: the creased lattice is the body model this owner declares; no source table fixes a form's stiffness";
+pub const BODY_STANDING: &str = "proposed: the creased lattice is the body model this owner declares; no source table fixes a form's stiffness. The moment a crease passes (m = 1/2) is the DLW build ruling of 2026-11-05, the lead's, not a source table's";
+
+/// The share of bending moment a crease passes from face to face (DLW build ruling 2026-11-05: the lead's, not a source
+/// table's; at the body model's proposed standing).
+pub const CREASE_MOMENT: f64 = 0.5;
+
+/// The coupling across a lattice edge that crosses a crease: `d` the two faces' normals' dot (the translation the hinge passes),
+/// and `sigma` the crease's sense, +1 a mountain and −1 a valley, its moment adding `sigma · CREASE_MOMENT` of what translation
+/// leaves (1 − |d|). Within a face d = 1 and it is 1; folded flat back it is −1; at a right angle, `sigma · CREASE_MOMENT`; never
+/// beyond one, so the stiffness stays diagonally dominant.
+pub fn crease_coupling(d: f64, sigma: f64) -> f64 {
+    d + sigma * CREASE_MOMENT * (1.0 - d.abs())
+}
 
 pub const EXCITER_LAW: &str = "a struck point gives each voice's body mode amplitude × the voice's weight × the mode's shape at the sample nearest the point, summed over the act";
 const DAMPING_LAW: &str = "each mode rings out at π·f/Q";
@@ -354,12 +371,16 @@ impl FormBody {
         let resolution = usize::from(sheet.preparation.resolution);
         let mut slots = vec![None; sheet.samples.len()];
         let mut points = Vec::new();
+        // Which side of each hinge a point rests on: beyond the X hinge (site 0) and beyond the Y hinge (site 1), as `crease` folds it.
+        let mut sides = Vec::new();
         for (slot, sample) in sheet.samples.iter().enumerate() {
             if sample.coverage <= 0.0 {
                 continue;
             }
             let (u, v) = sheet.rest_uv(sample);
-            let (place, normal) = crease(sheet.rest_units(sample), request.crease_deg10);
+            let rest = sheet.rest_units(sample);
+            sides.push([rest[1] > 0.0, rest[0] > 0.0]);
+            let (place, normal) = crease(rest, request.crease_deg10);
             let scale = sheet.preparation.units.metres_per_unit;
             slots[slot] = Some(points.len());
             points.push(BodyPoint {
@@ -409,6 +430,7 @@ impl FormBody {
             rank[i] = r;
         }
         let mut points: Vec<BodyPoint> = order.iter().map(|&i| points[i].clone()).collect();
+        let sides: Vec<[bool; 2]> = order.iter().map(|&i| sides[i]).collect();
         let edges: Vec<(usize, usize)> = edges.iter().map(|&(i, j)| (rank[i], rank[j])).collect();
         // Held where the hinges cross: in each separate piece, its points
         // nearest the sheet's centre.
@@ -448,7 +470,12 @@ impl FormBody {
         for &(i, j) in &edges {
             let ni = points[i].normal;
             let nj = points[j].normal;
-            let coupling = ni[0] * nj[0] + ni[1] * nj[1] + ni[2] * nj[2];
+            let d = ni[0] * nj[0] + ni[1] * nj[1] + ni[2] * nj[2];
+            // An edge that crosses a hinge crosses that site's crease: it passes the crease's moment as well as its translation.
+            let coupling = match (0..2).find(|&site| sides[i][site] != sides[j][site]) {
+                Some(site) => crease_coupling(d, f64::from(request.crease_deg10[site].signum())),
+                None => d,
+            };
             if let Some(a) = dof[i] {
                 stiffness[a * n + a] += 1.0;
             }

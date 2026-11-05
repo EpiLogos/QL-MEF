@@ -15,8 +15,8 @@ use std::time::Duration;
 use ql_mef::continuous::scene_field::{SceneConfig, SceneInstrument};
 use ql_mef::continuous::{FieldSession, StrikeAtInput};
 use ql_mef::form_instrument::body::{
-    BODY_CONTRACT, BODY_PREPARATION, BODY_REQUEST, BodyMaterial, BodyRequest, BodyVoice, FormBody,
-    FormKind, FormSymbol, MAX_BODY_SAMPLES,
+    BODY_CONTRACT, BODY_MODEL, BODY_PREPARATION, BODY_REQUEST, BodyMaterial, BodyRequest,
+    BodyVoice, CREASE_MOMENT, FormBody, FormKind, FormSymbol, MAX_BODY_SAMPLES, crease_coupling,
 };
 use ql_mef::form_samples::{
     FORM_SAMPLES_CONTRACT, MaskDeclaration, MaterialTreatment, SampleLayer, SamplePreparation,
@@ -159,6 +159,98 @@ fn the_body_is_held_where_the_hinges_cross_and_heard_at_its_free_tip() {
     let far = |q: &[f64; 2]| ((q[0] - 0.5).powi(2) + (q[1] - 0.5).powi(2)).sqrt();
     let best = body.points().iter().map(|p| far(&p.uv)).fold(0.0, f64::max);
     assert!((far(&body.points()[pickup].uv) - best).abs() < 1e-12);
+}
+
+/// What the pickup hears of a strike: each body mode's impulse times its shape
+/// at the pickup, over every voice and mode, as one amplitude.
+fn heard(body: &FormBody, at: StrikeAtInput) -> f64 {
+    let n = body.modes().len();
+    body.strike_at(&[at], &voices())
+        .unwrap()
+        .iter()
+        .enumerate()
+        .map(|(i, strike)| (strike.amplitude[0] * body.modes()[i % n].shape[body.pickup()]).powi(2))
+        .sum::<f64>()
+        .sqrt()
+}
+
+/// DLW build ruling 2026-11-05 (O-I #852): a crease is a hinge line that passes
+/// bending moment as well as translation, so a right-angle fold rings as one
+/// body. A strike on the far side of the crease from the pickup is heard,
+/// within an order of magnitude of a flat sheet struck at the same place.
+#[test]
+fn a_right_angle_crease_joins_its_faces_by_moment_so_a_strike_beyond_it_is_heard() {
+    let at = StrikeAtInput {
+        theta: 1.0,
+        phi: 2.0,
+        amplitude: [0.1, 0.0],
+    };
+    let flat = heard(&FormBody::prepare(request([0, 0, 0])).unwrap(), at);
+    let folded = heard(&FormBody::prepare(request([900, -450, 0])).unwrap(), at);
+    assert!(
+        folded > 0.1 * flat,
+        "a right-angle fold is heard across its crease: {folded} against the flat sheet's {flat}"
+    );
+}
+
+/// The coupling across a crease edge is c = d + σ·m·(1 − |d|), d the faces'
+/// normals' dot, σ the crease's sense (+1 mountain, −1 valley) and m the
+/// moment it passes. It is the face's own 1 within a face, the fold's −1 when
+/// folded flat back, σ·m at a right angle, and never beyond one, so the
+/// lattice's stiffness stays diagonally dominant.
+#[test]
+fn the_coupling_across_a_crease_passes_its_moment_and_never_exceeds_one() {
+    assert_eq!(CREASE_MOMENT, 0.5);
+    for sigma in [1.0, -1.0] {
+        assert_eq!(crease_coupling(1.0, sigma), 1.0);
+        assert_eq!(crease_coupling(-1.0, sigma), -1.0);
+        assert_eq!(crease_coupling(0.0, sigma), sigma * CREASE_MOMENT);
+        for k in 0..=200 {
+            let d = -1.0 + f64::from(k) / 100.0;
+            let c = crease_coupling(d, sigma);
+            assert!(c.abs() <= 1.0, "d {d}, σ {sigma}: c {c}");
+        }
+    }
+    // Every fold the sites command prepares a body whose stiffness is positive: no mode below zero.
+    for x in (-1800..=1800).step_by(900) {
+        for y in (-1800..=1800).step_by(900) {
+            let body = FormBody::prepare(request([x, y, 0])).unwrap();
+            for mode in body.reading()["modes"].as_array().unwrap() {
+                assert!(
+                    mode["eigenvalue"].as_f64().unwrap() > 0.0,
+                    "[{x}, {y}]: {mode}"
+                );
+            }
+        }
+    }
+    assert_eq!(BODY_MODEL, "ql.form-body-creased-lattice/v2");
+}
+
+/// Sweeping one crease from flat to folded back moves the first partials
+/// continuously: no jump where the faces stand at a right angle.
+#[test]
+fn sweeping_one_crease_moves_the_first_partials_continuously_through_a_right_angle() {
+    let first = |deg10: i32| -> Vec<f64> {
+        FormBody::prepare(request([deg10, 0, 0])).unwrap().reading()["modes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .take(4)
+            .map(|mode| mode["eigenvalue"].as_f64().unwrap())
+            .collect()
+    };
+    let sweep: Vec<Vec<f64>> = (0..=1800).step_by(100).map(first).collect();
+    let mut moved = 0.0_f64;
+    for pair in sweep.windows(2) {
+        for (a, b) in pair[0].iter().zip(&pair[1]) {
+            moved = moved.max((a - b).abs() / a);
+        }
+    }
+    assert!(moved > 1e-3, "the crease moves the partials: {moved}");
+    // Across a right angle, a tenth of a degree either side moves them by a hair.
+    for (a, b) in first(899).iter().zip(first(901)) {
+        assert!((a - b).abs() / a < 1e-2, "a jump at 90°: {a} to {b}");
+    }
 }
 
 #[test]

@@ -2579,6 +2579,56 @@ fn the_same_strike_rings_a_fold_otherwise_than_the_torus_by_its_impulse_and_its_
     );
 }
 
+/// DLW build ruling 2026-11-05 (O-I #852): a crease passes bending moment, so a right-angle fold rings as one body. Struck on
+/// the far side of its crease from the pickup (theta 1.0, phi 2.0; the default far pickup), the fold is heard within an order of
+/// magnitude of a flat sheet struck at the same place, where the body model that joined its faces by translation alone heard
+/// nothing (2e-18 RMS). A checkpoint whose body was prepared under that earlier model is refused as stale, never rung.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_strike_beyond_a_right_angle_crease_is_heard_as_a_flat_sheet_is_and_an_earlier_models_body_is_stale()
+ {
+    let strike =
+        json!({"operation":"strike-at","points":[{"theta":1.0,"phi":2.0,"amplitude":[0.1,0.0]}]});
+    let rung = |crease: [i32; 3]| -> (Driver, f64) {
+        let mut d = Driver::open();
+        let mut request = fold(&d.current["field"]);
+        request["crease_deg10"] = json!(crease);
+        let chosen = d.send(json!({"operation":"torus-body","body":request}));
+        assert_eq!(chosen["status"], "ok", "{chosen}");
+        let struck = d.send(strike.clone());
+        assert_eq!(struck["status"], "ok", "{struck}");
+        let heard = rms(&render(&mut d, 0.1));
+        (d, heard)
+    };
+    let (_, flat) = rung([0, 0, 0]);
+    let (mut folded, heard) = rung([900, -450, 0]);
+    eprintln!("struck beyond the crease: fold {heard:e} RMS, flat sheet {flat:e}");
+    assert!(flat > 1e-3, "the flat sheet rings: {flat}");
+    assert!(
+        heard > 0.1 * flat,
+        "the fold is heard across its crease: {heard} against {flat}"
+    );
+
+    let kept = folded.send(json!({"operation":"torus-checkpoint"}));
+    assert_eq!(kept["status"], "ok", "{kept}");
+    let checkpoint = kept["torus_checkpoint"].clone();
+    assert_eq!(
+        checkpoint["body"]["prepared"]["request"]["body_revision"],
+        "ql.form-body-creased-lattice/v2"
+    );
+    let mut earlier = checkpoint.clone();
+    earlier["body"]["prepared"]["request"]["body_revision"] =
+        json!("ql.form-body-creased-lattice/v1");
+    let refused = folded.send(json!({"operation":"torus-restore","checkpoint":earlier}));
+    assert_eq!(refused["status"], "refused", "{refused}");
+    assert!(
+        refused["error"].as_str().unwrap().contains("prepared"),
+        "{refused}"
+    );
+    let restored = folded.send(json!({"operation":"torus-restore","checkpoint":checkpoint}));
+    assert_eq!(restored["status"], "ok", "{restored}");
+}
+
 /// The most bytes a host carries one checkpoint in (O-I's frame, stageCommands.ts STAGE_TORUS_CHECKPOINT_BYTES_MAX): 1 MiB.
 const HOST_CHECKPOINT_BYTES: usize = 1024 * 1024;
 
