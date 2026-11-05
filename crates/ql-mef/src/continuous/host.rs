@@ -195,7 +195,11 @@ pub enum HostOperation {
     /// declared gain. A receiving setting: the body, its clock and its generation stand, and
     /// the place is kept nowhere (`TORUS_RECEIVER_LAW`).
     TorusReceiver {
+        #[serde(default)]
         receiver: Option<super::scene_field::ReceiverInput>,
+        /// A context to return to (QL-MEF #289 packet N): `world`, or `personal` / `shared` where it last stood.
+        #[serde(default)]
+        context: Option<super::scene_field::ReceivingContext>,
     },
     /// scene only: what rings (O-I #852, `TORUS_BODY_LAW`; DLW manual §21.2 Body). A form
     /// made a body (`ql.form-body-request/v1`, prepared by the owner) rings the scene's
@@ -709,8 +713,8 @@ impl FieldHost {
                     extra.insert("torus_render".into(), render);
                     None
                 }),
-            HostOperation::TorusReceiver { receiver } => {
-                instrument.set_receiver(receiver).map(|reading| {
+            HostOperation::TorusReceiver { receiver, context } => {
+                instrument.set_receiver(receiver, context).map(|reading| {
                     extra.insert("torus_receiver".into(), reading);
                     None
                 })
