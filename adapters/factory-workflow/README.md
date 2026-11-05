@@ -26,7 +26,7 @@ import type { CPrime } from "@epilogos/ql-vak";
 unit({
   // ...ordinary Factory unit fields...
   composition: {
-    CPF: "dialogical", CT: "CT1", CP: "4.1", CF: "CF2", CFP: "CFP2", CS: "CS2", direction: "forward",
+    CPF: "dialogical", CT: "CT1", CP: "4.1", CF: "CF2", CFP: "CFP2", CS: "CS2", direction: "forward-synthesis",
     actor: "agent/anima-logos",
     interpretation: { ref: "ql/interpretation/c-prime", revision: "09f7d29ad6262f85bc2858f7c468f22d0bd398f3" },
     whole: "central:source:project:quaternal-logic:ProjectCentral/now",

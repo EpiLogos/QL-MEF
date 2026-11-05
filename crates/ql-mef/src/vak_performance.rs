@@ -432,7 +432,7 @@ fn validate_snapshot(
         snapshot.frame == profile.frame.id.code()
             && snapshot.thread == thread_code(profile.profile.thread)
             && snapshot.sequence == sequence_code(profile.profile.sequence)
-            && snapshot.direction == direction_code(profile.profile.direction)
+            && InquiryDirection::from_label(&snapshot.direction) == Some(profile.profile.direction)
             && snapshot.musical_role == profile.profile.thread.musical_role(),
         "Factory C′ performance identity differs from the compiled QL semantics",
     )?;
@@ -667,13 +667,6 @@ const fn sequence_code(sequence: ContextSequence) -> &'static str {
     }
 }
 
-const fn direction_code(direction: InquiryDirection) -> &'static str {
-    match direction {
-        InquiryDirection::Forward => "forward",
-        InquiryDirection::Returning => "returning",
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use ql_core::{CallerProvenance, QlFace};
@@ -793,7 +786,7 @@ mod tests {
             frame: "CF5".into(),
             thread: thread_code(thread).into(),
             sequence: "CS2".into(),
-            direction: "forward".into(),
+            direction: "forward-synthesis".into(),
             musical_role: thread.musical_role().into(),
             attempts: if thread == ThreadForm::Chain {
                 vec![first, second]

@@ -93,7 +93,7 @@ fn factory_performance(subject: &str, frame: &str, thread: &str, musical_role: &
         "frame":frame,
         "thread":thread,
         "sequence":"CS2",
-        "direction":"forward",
+        "direction":"forward-synthesis",
         "musicalRole":musical_role,
         "attempts":[{
             "unitRef":"workflow-unit:inspect-source",
@@ -147,7 +147,7 @@ fn performance_event(subject: &str, frame: &str, thread: &str, musical_role: &st
             "constitutionalVoice":voice,
             "thread":thread,
             "sequence":"CS2",
-            "direction":"forward",
+            "direction":"forward-synthesis",
             "musicalRole":musical_role,
             "musicalMode":mode,
             "musicalModeIndex":mode_index,
