@@ -747,6 +747,11 @@ impl Session {
         &self.notes
     }
 
+    /// The id the next note admitted takes.
+    pub fn next_note(&self) -> u64 {
+        self.next_note
+    }
+
     /// The Fundamental in Hz, given the map's 1:1 (the Sun's voice).
     pub fn fundamental_hz(&self, map_hz: f64) -> f64 {
         match self.settings.fundamental {

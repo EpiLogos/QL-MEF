@@ -20,7 +20,7 @@ endif
 
 LIB := $(C_ROOT)/build/libql-mef-c.a
 .PHONY: all test install
-all: $(BUILD_DIR)/ql-field-worker $(BUILD_DIR)/continuous-test $(BUILD_DIR)/torus-native-test
+all: $(BUILD_DIR)/ql-field-worker $(BUILD_DIR)/continuous-test $(BUILD_DIR)/torus-native-test $(BUILD_DIR)/note-bank-test
 $(BUILD_DIR):
 	mkdir -p $@
 $(LIB):
@@ -31,9 +31,12 @@ $(BUILD_DIR)/continuous-test: tests/continuous_field.cpp include/ql/continuous_f
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
 $(BUILD_DIR)/torus-native-test: tests/torus_native.cpp include/ql/continuous_field.hpp include/ql/torus_keys.hpp $(LIB) | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
+$(BUILD_DIR)/note-bank-test: tests/note_bank.cpp include/ql/continuous_field.hpp include/ql/torus_keys.hpp $(LIB) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< $(LIB) -lm -o $@
 test: all
 	$(BUILD_DIR)/continuous-test
 	$(BUILD_DIR)/torus-native-test
+	$(BUILD_DIR)/note-bank-test
 install: all
 	$(MAKE) -C $(C_ROOT) install PREFIX=$(PREFIX) DESTDIR=$(DESTDIR)
 	install -d $(DESTDIR)$(PREFIX)/include/ql $(DESTDIR)$(PREFIX)/bin

@@ -32,7 +32,7 @@ fn fixture() -> (M2Request, FieldInput, ReceiptGuard, Value) {
         json!({"generation":"1", "samples_elapsed":"0",
         "clock":guard.initial_clock, "amplitudes_metres":[[0.005,0.0]], "audio":[],
         "targets":[{"identity":0,"constituent":"#3-0","position":[0.005,0.0,0.0]}],
-        "presentation_units_per_metre":1.0, "m2_identity":frame["identity"]})
+        "presentation_units_per_metre":1.0, "m2_identity":frame["identity"], "bank":[], "bank_order":"0"})
         .as_object()
         .unwrap()
         .clone(),
@@ -231,6 +231,73 @@ fn played_strike_ack_moves_resident_state_and_nothing_else() {
             "accepted {bad_request}"
         );
     }
+}
+
+/// QL-MEF #287: voicing notes takes one generation and moves the bank, and the
+/// targets with it (the notes are drawn as they are heard, O-I 851), never the
+/// resident voices or the clock. A voiced note is held and one that made way is
+/// not; a note voiced for a later sample moves nothing yet.
+#[test]
+fn voicing_notes_moves_the_bank_and_its_targets_never_the_resident_voices() {
+    let (_, _, guard, mut receipt) = fixture();
+    receipt["samples_elapsed"] = json!("512");
+    let lane = |re: f64| {
+        Value::Array(
+            (0..8u32)
+                .map(|k| json!({"mode_ref":"controlled:mode/0","frequency_hz":200.0 + 30.0 * f64::from(k),"amplitude":[re,0.0]}))
+                .collect(),
+        )
+    };
+    let act = |id: &str, made_way: Value, at: Option<&str>| {
+        let mut act = json!({"operation":"voice-notes","notes":[{"id":id,"voices":lane(0.001)}],"made_way":made_way});
+        if let Some(at) = at {
+            act["at_samples_elapsed"] = json!(at);
+        }
+        act
+    };
+    let mut voiced = receipt.clone();
+    voiced["generation"] = json!("2");
+    voiced["bank"] = json!([{"slot":0,"held":true,"id":"4","order":"1","voices":lane(0.001),"fading":lane(0.0)}]);
+    voiced["bank_order"] = json!("1");
+    voiced["targets"][0]["position"][0] = json!(0.013);
+    let first = act("4", json!([]), None);
+    guard.validate(&first, Some(&receipt), &voiced).unwrap();
+    let mut struck = voiced.clone();
+    struck["amplitudes_metres"][0][0] = json!(0.025);
+    assert!(
+        guard.validate(&first, Some(&receipt), &struck).is_err(),
+        "the resident voices stand"
+    );
+    let mut unheld = voiced.clone();
+    unheld["bank"][0]["held"] = json!(false);
+    assert!(
+        guard.validate(&first, Some(&receipt), &unheld).is_err(),
+        "a voiced note is held"
+    );
+    // Voiced for a later sample, neither the bank nor the targets move yet.
+    let later = act("4", json!([]), Some("1512"));
+    let mut waiting = receipt.clone();
+    waiting["generation"] = json!("2");
+    guard.validate(&later, Some(&receipt), &waiting).unwrap();
+    assert!(guard.validate(&later, Some(&receipt), &voiced).is_err());
+    let mut drawn = waiting.clone();
+    drawn["targets"][0]["position"][0] = json!(0.013);
+    assert!(guard.validate(&later, Some(&receipt), &drawn).is_err());
+    // Note 4 makes way for note 5: 4 fades and is no longer held.
+    let second = act("5", json!(["4"]), None);
+    let mut next = voiced.clone();
+    next["generation"] = json!("3");
+    next["bank"] = json!([
+        {"slot":0,"held":false,"id":"4","order":"1","voices":lane(0.0),"fading":lane(0.001)},
+        {"slot":1,"held":true,"id":"5","order":"2","voices":lane(0.001),"fading":lane(0.0)}]);
+    next["bank_order"] = json!("2");
+    guard.validate(&second, Some(&voiced), &next).unwrap();
+    let mut kept = next.clone();
+    kept["bank"][0]["held"] = json!(true);
+    assert!(
+        guard.validate(&second, Some(&voiced), &kept).is_err(),
+        "a note that made way is not held"
+    );
 }
 
 /// O-I #809: a strike at a later sample is admitted now (one generation) and
@@ -449,7 +516,7 @@ fn choosing_a_body_takes_one_generation_and_rings_its_voices_from_their_supplied
         json!({"generation":"2", "samples_elapsed":"512", "clock":receipt["clock"],
             "amplitudes_metres":[[0.0, 0.0], [0.001, -0.0005]], "audio":[],
             "targets":[{"identity":0,"constituent":"#3-0","position":[0.0,0.0,0.0005]}],
-            "presentation_units_per_metre":1.0, "m2_identity":frame["identity"]})
+            "presentation_units_per_metre":1.0, "m2_identity":frame["identity"], "bank":[], "bank_order":"0"})
         .as_object()
         .unwrap()
         .clone(),

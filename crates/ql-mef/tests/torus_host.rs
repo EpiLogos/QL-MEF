@@ -379,6 +379,189 @@ fn a_key_strikes_its_moving_point_and_always_the_same_helix_place() {
     assert!(released["torus"]["notes"].as_array().unwrap().is_empty());
 }
 
+/// The power of `x` (48 kHz) at `hz`: Goertzel over a Hann window, so a voice a few bins off leaks little.
+fn power_at(x: &[f64], hz: f64) -> f64 {
+    let w = 2.0 * std::f64::consts::PI * hz / 48_000.0;
+    let c = 2.0 * w.cos();
+    let (mut s1, mut s2) = (0.0, 0.0);
+    let last = (x.len() - 1) as f64;
+    for (i, v) in x.iter().enumerate() {
+        let hann = 0.5 - 0.5 * (2.0 * std::f64::consts::PI * i as f64 / last).cos();
+        let s = hann * v + c * s1 - s2;
+        s2 = s1;
+        s1 = s;
+    }
+    s1 * s1 + s2 * s2 - c * s1 * s2
+}
+
+/// One scene set by `edit` and played `acts` in turn at its first sample (each act a set of keys at velocity
+/// 0.5), then rendered `seconds`: the setting's reply, each act's reply and the sound.
+fn performed(edit: &Value, acts: &[Value], seconds: f64) -> (Value, Vec<Value>, Vec<f64>) {
+    let mut d = Driver::open();
+    let set = d.send(json!({"operation":"torus-set","edit":edit}));
+    assert_eq!(set["status"], "ok", "{set}");
+    let played = acts
+        .iter()
+        .map(|keys| {
+            let reply = d.send(json!({"operation":"torus-play","keys":keys,"amplitude":[0.5,0.0]}));
+            assert_eq!(reply["status"], "ok", "{reply}");
+            reply
+        })
+        .collect();
+    let pcm = render(&mut d, seconds);
+    (set, played, pcm)
+}
+
+/// A note's own voices a render holds apart: its cell's, below 8 kHz.
+fn cell(note: &Value) -> Vec<f64> {
+    note["cell"]["voices_hz"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_f64().unwrap())
+        .filter(|hz| *hz < 8_000.0)
+        .collect()
+}
+
+/// How many of a note's `voices` the render `with` it sounds by the note: louder there by 4× than the same
+/// scene played without it (`without`), beyond a thousandth of what the note gives alone (`alone`, when
+/// given) — so a voice cut off at its first samples is not counted as sounding.
+fn added(with: &[f64], without: &[f64], alone: Option<&[f64]>, voices: &[f64]) -> usize {
+    voices
+        .iter()
+        .filter(|hz| {
+            let floor = alone.map_or(0.0, |alone| 1e-3 * power_at(alone, **hz));
+            power_at(with, **hz) > 4.0 * power_at(without, **hz) + floor
+        })
+        .count()
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_chord_sounds_each_notes_own_eight_voices() {
+    // QL-MEF #287 packet A; DLW manual §21.2 Rules: "Each note strikes its own eight voices. Polyphony counts
+    // notes." A chord of three keys on three helix places sounds each note's cell: each note's own voices are
+    // heard in the chord, and not in the same chord played without that note.
+    let edit = json!({"tuning":"logic","strike":1.0});
+    let keys = [
+        json!({"row":0,"column":0}),
+        json!({"row":1,"column":2}),
+        json!({"row":2,"column":4}),
+    ];
+    let (logic, played, pcm) = performed(&edit, &[json!(keys)], 1.5);
+    let played = &played[0];
+    let notes = played["torus_play"]["notes"].as_array().unwrap().clone();
+    assert_eq!(notes.len(), 3);
+    // The notes are drawn as they are heard (O-I 851, one cause): the bank holds the three, and the body's samples
+    // move by their voices while the resident voices are not struck.
+    let held = played["field"]["bank"].as_array().unwrap();
+    assert_eq!(
+        held.iter().filter(|slot| slot["held"] == true).count(),
+        3,
+        "{held:?}"
+    );
+    assert_eq!(
+        played["field"]["amplitudes_metres"],
+        logic["field"]["amplitudes_metres"]
+    );
+    assert!(!played["field"]["targets"].as_array().unwrap().is_empty());
+    assert_ne!(
+        played["field"]["targets"], logic["field"]["targets"],
+        "the notes move the body's samples"
+    );
+    for (i, note) in notes.iter().enumerate() {
+        let others: Vec<Value> = keys
+            .iter()
+            .enumerate()
+            .filter(|(j, _)| *j != i)
+            .map(|(_, k)| k.clone())
+            .collect();
+        let (_, _, without) = performed(&edit, &[json!(others)], 1.5);
+        let voices = cell(note);
+        let heard = added(&pcm, &without, None, &voices);
+        assert!(
+            heard * 2 >= voices.len() && heard > 0,
+            "note {i} sounds its own voices: {heard} of {voices:?} heard"
+        );
+    }
+    // Each note was voiced with its eight, each by its own shape term at the key's point.
+    let voiced = &played["strike_at"];
+    assert_eq!(voiced["schema"], "ql.note-voices/v1", "{voiced}");
+    for (note, cell) in voiced["notes"].as_array().unwrap().iter().zip(&notes) {
+        assert_eq!(note["id"], cell["id"]);
+        let voices = note["voices"].as_array().unwrap();
+        assert_eq!(voices.len(), 8);
+        for (voice, hz) in voices
+            .iter()
+            .zip(cell["cell"]["voices_hz"].as_array().unwrap())
+        {
+            assert_eq!(voice["frequency_hz"], *hz);
+            assert!(
+                voice["like"].as_str().unwrap().starts_with("scene:logic/"),
+                "{voice}"
+            );
+        }
+    }
+    assert_eq!(
+        notes[0]["cell"]["standing"]
+            .as_str()
+            .map(|s| s.contains("sounded by the note")),
+        Some(true)
+    );
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn past_polyphony_the_oldest_note_makes_way_and_its_voices_fade() {
+    // DLW manual §21.2 Rules: "Polyphony counts notes." Under Polyphony 2, the third key's note makes the first
+    // make way: the first's own voices fade out (the render holds no more of them than one where it was never
+    // played), and the second's and third's ring on.
+    let edit = json!({"tuning":"logic","polyphony":2,"strike":1.0});
+    let keys = [
+        json!({"row":0,"column":0}),
+        json!({"row":1,"column":2}),
+        json!({"row":2,"column":4}),
+    ];
+    let acts: Vec<Value> = keys.iter().map(|k| json!([k])).collect();
+    let (_, played, pcm) = performed(&edit, &acts, 1.5);
+    let notes: Vec<Value> = played
+        .iter()
+        .map(|reply| reply["torus_play"]["notes"][0].clone())
+        .collect();
+    assert_eq!(
+        played[2]["torus_play"]["made_way"][0]["id"], notes[0]["id"],
+        "the oldest made way"
+    );
+    assert_eq!(played[2]["strike_at"]["made_way"][0], notes[0]["id"]);
+    let bank = played[2]["field"]["bank"].as_array().unwrap();
+    let held: Vec<&Value> = bank
+        .iter()
+        .filter(|slot| slot["held"] == true)
+        .map(|slot| &slot["id"])
+        .collect();
+    assert_eq!(held.len(), 2, "{bank:?}");
+    assert!(
+        !held.contains(&&notes[0]["id"]),
+        "the note that made way is no longer held"
+    );
+    let (_, _, later) = performed(&edit, &acts[1..], 1.5);
+    let (_, _, first) = performed(&edit, &acts[..1], 1.5);
+    let gone = cell(&notes[0]);
+    assert_eq!(
+        added(&pcm, &later, Some(&first), &gone),
+        0,
+        "the note that made way is no longer heard: {gone:?}"
+    );
+    for (i, note) in notes.iter().enumerate().skip(1) {
+        let voices = cell(note);
+        let heard = added(&pcm, &first, None, &voices);
+        assert!(
+            heard * 2 >= voices.len() && heard > 0,
+            "note {i} rings on: {heard} of {voices:?} heard"
+        );
+    }
+}
+
 /// Advances the field `frames` samples, muted, in blocks the host takes.
 fn run_on(d: &mut Driver, mut frames: u64) {
     while frames > 0 {

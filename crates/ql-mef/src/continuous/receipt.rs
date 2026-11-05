@@ -37,6 +37,46 @@ fn signed(value: &Value) -> Result<i64> {
     require(number.to_string() == text, "noncanonical signed phase")?;
     Ok(number)
 }
+/// The native bank as the worker reads it (QL-MEF #287): at most 32 slots in slot order, each held or free, its note's id and
+/// order (no later than the bank's), and eight voices and eight fading voices, each a mode, a frequency and a finite state.
+fn bank(slots: &Value, order: &Value) -> Result<()> {
+    let order = unsigned(order)?;
+    let slots = slots.as_array().ok_or("the worker reads no bank")?;
+    require(slots.len() <= 32, "the bank holds more than 32 slots")?;
+    let mut last = None;
+    for slot in slots {
+        keys(slot, &["slot", "held", "id", "order", "voices", "fading"])?;
+        let at = slot["slot"]
+            .as_u64()
+            .filter(|s| *s < 32)
+            .ok_or("a bank slot outside the 32")?;
+        require(
+            last.is_none_or(|last| last < at),
+            "the bank's slots out of order",
+        )?;
+        last = Some(at);
+        require(
+            slot["held"].is_boolean(),
+            "a bank slot does not say whether it holds a note",
+        )?;
+        unsigned(&slot["id"])?;
+        require(
+            (1..=order).contains(&unsigned(&slot["order"])?),
+            "a bank slot voiced after the bank's last note",
+        )?;
+        for lane in ["voices", "fading"] {
+            for voice in array(&slot[lane], 8)? {
+                keys(voice, &["mode_ref", "frequency_hz", "amplitude"])?;
+                require(voice["mode_ref"].is_string(), "a bank voice names no mode")?;
+                finite(&voice["frequency_hz"], f64::MAX)?;
+                for part in array(&voice["amplitude"], 2)? {
+                    finite(part, 1e6)?;
+                }
+            }
+        }
+    }
+    Ok(())
+}
 fn finite(value: &Value, bound: f64) -> Result<()> {
     require(
         value
@@ -215,8 +255,11 @@ impl ReceiptGuard {
                 "presentation_units_per_metre",
                 "m2_identity",
                 "shape_ref",
+                "bank",
+                "bank_order",
             ],
         )?;
+        bank(&value["bank"], &value["bank_order"])?;
         let reshaping = request["operation"] == "replace-shapes";
         for (key, expected) in self.fixed.as_object().ok_or("invalid retained identity")? {
             let expected = if reshaping && key == "shape_ref" {
@@ -326,6 +369,7 @@ impl ReceiptGuard {
             || operation == "replace-body"
             || operation == "set-axis"
             || operation == "strike"
+            || operation == "voice-notes"
             || operation == "set-state";
         require(
             generation
@@ -424,6 +468,59 @@ impl ReceiptGuard {
                     }
                 }
             }
+            "voice-notes" => {
+                // Each note its own voices (QL-MEF #287): the bank moves, and the targets with it (the notes are drawn as they
+                // are heard); the resident voices and the clock do not. Voiced now, each note stands in the bank; voiced for a
+                // later sample, nothing moves yet.
+                let notes = request["notes"]
+                    .as_array()
+                    .filter(|notes| !notes.is_empty() && notes.len() <= 32)
+                    .ok_or("an act voices 1 to 32 notes")?;
+                require(
+                    value["clock"] == previous["clock"]
+                        && value["amplitudes_metres"] == previous["amplitudes_metres"],
+                    "voicing notes moved the resident body or the clock",
+                )?;
+                let at = match request.get("at_samples_elapsed") {
+                    Some(at) => unsigned(at)?,
+                    None => unsigned(&previous["samples_elapsed"])?,
+                };
+                let cursor = unsigned(&previous["samples_elapsed"])?;
+                require(
+                    at >= cursor,
+                    "a note's sample is behind the cursor: that sound is already rendered",
+                )?;
+                if at > cursor {
+                    require(
+                        value["bank"] == previous["bank"]
+                            && value["targets"] == previous["targets"],
+                        "a note moved the bank before its sample",
+                    )?;
+                } else {
+                    let bank = value["bank"].as_array().ok_or("the worker reads no bank")?;
+                    let gone = request["made_way"]
+                        .as_array()
+                        .ok_or("an act names the notes making way")?;
+                    for note in notes.iter().filter(|note| !gone.contains(&note["id"])) {
+                        require(
+                            bank.iter()
+                                .any(|slot| slot["held"] == true && slot["id"] == note["id"]),
+                            "a voiced note is not held in the bank",
+                        )?;
+                    }
+                    for id in gone
+                        .iter()
+                        .filter(|id| !notes.iter().any(|note| note["id"] == **id))
+                    {
+                        require(
+                            !bank
+                                .iter()
+                                .any(|slot| slot["held"] == true && slot["id"] == *id),
+                            "a note that made way is still held in the bank",
+                        )?;
+                    }
+                }
+            }
             "set-axis" => {
                 let axis = request["axis"]
                     .as_u64()
@@ -457,6 +554,18 @@ impl ReceiptGuard {
                     value["clock"] == previous["clock"],
                     "setting the body changed the clock",
                 )?;
+                // With its bank (QL-MEF #287), the bank set exactly as asked; without, the bank stands.
+                match request.get("bank") {
+                    Some(asked) => require(
+                        value["bank"] == *asked && value["bank_order"] == request["bank_order"],
+                        "the bank set is not the bank asked for",
+                    )?,
+                    None => require(
+                        value["bank"] == previous["bank"]
+                            && value["bank_order"] == previous["bank_order"],
+                        "setting the body moved its bank",
+                    )?,
+                }
                 for (set, asked) in array(&value["amplitudes_metres"], self.modes)?
                     .iter()
                     .zip(asked)

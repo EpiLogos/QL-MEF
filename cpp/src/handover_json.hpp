@@ -103,12 +103,57 @@ J *handover_output(const ql::Continuation &c) {
             json_object_array_add(struck, one);
         }
         put(entry, "impulses", struck);
+        // An act voicing notes (QL-MEF #287): its notes, each voice by the mode it is like, and the notes making way for them.
+        if (!act.notes.empty()) {
+            J *notes = json_object_new_array();
+            for (const auto &note : act.notes) {
+                J *one = json_object_new_object();
+                integer(one, "id", note.id);
+                J *voices = json_object_new_array();
+                for (const auto &v : note.voices) {
+                    J *voice = json_object_new_object();
+                    put(voice, "mode", json_object_new_uint64(v.like));
+                    put(voice, "frequency_hz", json_object_new_double(v.frequency_hz));
+                    put(voice, "amplitude", handover_pair(v.impulse));
+                    json_object_array_add(voices, voice);
+                }
+                put(one, "voices", voices);
+                json_object_array_add(notes, one);
+            }
+            put(entry, "notes", notes);
+            J *gone = json_object_new_array();
+            for (auto id : act.made_way) json_object_array_add(gone, json_object_new_string(std::to_string(id).c_str()));
+            put(entry, "made_way", gone);
+        }
         json_object_array_add(pending, entry);
     }
     put(o, "pending", pending);
     J *heard = json_object_new_array();
     for (double g : c.heard_from) json_object_array_add(heard, json_object_new_double(g));
     put(o, "heard_from", heard);
+    // The bank as it stands (QL-MEF #287): each slot ever voiced, its voices and the voices still fading, by the mode each is like.
+    J *bank = json_object_new_array();
+    for (const auto &note : c.bank) {
+        J *one = json_object_new_object();
+        put(one, "slot", json_object_new_uint64(note.slot));
+        put(one, "held", json_object_new_boolean(note.held));
+        integer(one, "id", note.id);
+        integer(one, "order", note.order);
+        for (auto [key, lane] : {std::pair{"voices", &note.voices}, std::pair{"fading", &note.fading}}) {
+            J *voices = json_object_new_array();
+            for (const auto &v : *lane) {
+                J *voice = json_object_new_object();
+                put(voice, "mode", json_object_new_uint64(v.like));
+                put(voice, "frequency_hz", json_object_new_double(v.frequency_hz));
+                put(voice, "state", handover_pair(v.state));
+                json_object_array_add(voices, voice);
+            }
+            put(one, key, voices);
+        }
+        json_object_array_add(bank, one);
+    }
+    put(o, "bank", bank);
+    integer(o, "bank_order", c.bank_order);
     return o;
 }
 #endif
