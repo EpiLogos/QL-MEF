@@ -155,9 +155,12 @@ function setup(options = {}) {
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
       // Controlled protocol case (host.rs torus_operation, O-I 856): the receiver is a receiving setting; the field is unchanged.
       if (request.command.operation === 'torus-receiver') {
+        const { receiver, context } = request.command;
+        const heard = context ?? (receiver === null ? 'world' : receiver.shared === undefined ? 'personal' : 'shared');
         reply.torus = { schema: 'ql.m1-prime-session/v1', comma_cents: 0, band: 'rhythm', notes: [] };
-        reply.torus_receiver = { schema: 'ql.torus-receiver/v1', context: request.command.receiver === null ? 'world' : 'personal',
-          gains: [{ mode_ref: '#3-0', gain: request.command.receiver === null ? 1 : 0.5 }], law: 'controlled' };
+        reply.torus_receiver = { schema: 'ql.torus-receiver/v1', context: heard,
+          gains: [{ mode_ref: '#3-0', gain: heard === 'world' ? 1 : 0.5 }], law: 'controlled' };
+        if (receiver?.shared !== undefined) Object.assign(reply.torus_receiver, { shared: receiver.shared, at_metres: receiver.at_metres });
       }
       // Controlled protocol case (host.rs torus_operation, O-I #849): the Torus handed over to a native host; a read.
       if (request.command.operation === 'torus-native')
@@ -1073,6 +1076,42 @@ test('where the Torus is heard from is a receiving setting: the body stands, the
   session.dispose();
 });
 
+
+test('a shared receiving context and a return to a context are the owner\'s own receiving acts, never journaled', async () => {
+  // QL-MEF #289 packet N (O-I 856): a place shared under a reference is an explicitly shared context, disclosed with the
+  // reference; switching context is an explicit act, and returning to one names the context alone, the owner resuming it
+  // where it last stood. Neither the reference nor any place goes into the journal.
+  const { session, calls } = setup();
+  const shared = await session.torusReceiver([1.5, 0, -2], { shared: 'shared-field:circle-7' });
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-receiver', receiver: { at_metres: [1.5, 0, -2], shared: 'shared-field:circle-7' } });
+  assert.equal(shared.context, 'shared');
+  assert.equal(shared.shared, 'shared-field:circle-7');
+  assert.deepEqual(shared.at_metres, [1.5, 0, -2]);
+  const own = await session.torusReceiver([4, 0, 0]);
+  assert.deepEqual(calls.at(-1).command, { operation: 'torus-receiver', receiver: { at_metres: [4, 0, 0] } }, 'one\'s own place names no reference');
+  assert.equal(own.context, 'personal');
+  for (const context of ['shared', 'personal', 'world']) {
+    const back = await session.torusReceiverReturn(context);
+    assert.deepEqual(calls.at(-1).command, { operation: 'torus-receiver', context }, 'a return sends no place');
+    assert.equal(back.context, context);
+  }
+  assert.equal(session.reading.acknowledged.generation, '1', 'the body does not move');
+  const journal = JSON.stringify(session.journal());
+  assert.ok(!journal.includes('circle-7') && !journal.includes('torus-receiver'), journal);
+  // Refused before any exchange: a shared context that stands nowhere or is named by no reference, and a context that is not one.
+  const sent = calls.length;
+  for (const [place, reference] of [[null, 'shared-field:circle-7'], [[1, 2, 3], 7], [[1, 2, 3], null]])
+    await assert.rejects(session.torusReceiver(place, { shared: reference }), /a shared receiving context stands at a place/);
+  for (const bad of [undefined, null, 'elsewhere', 'World', { context: 'world' }])
+    await assert.rejects(session.torusReceiverReturn(bad), /returns to the world's, the personal or the shared context/);
+  assert.equal(calls.length, sent);
+  // The owner's refusal of a context never entered comes back in its words; a held owner takes no return.
+  const refused = setup(); refused.port.refuseOperation = 'torus-receiver';
+  await assert.rejects(refused.session.torusReceiverReturn('personal'), /controlled refusal/);
+  const held = setup(); held.session.hold('test');
+  await assert.rejects(held.session.torusReceiverReturn('world'), /idle admitted owner/);
+  session.dispose();
+});
 test('the Torus is handed over to a native host as a read: the body stands, nothing is journaled, and the answer is the owner\'s', async () => {
   // O-I #849: a native audio host continues the field exactly as it stands (ql.torus-native/v1). Through O:I's kernel the answer is
   // the digest it relays in the document's place (the kernel keeps the document for the host), so either is the owner's answer.

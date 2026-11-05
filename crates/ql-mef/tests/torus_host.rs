@@ -105,6 +105,10 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-render","continues":"render:1","frames":4800,"acts":[]}),
         json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25]}}),
         json!({"operation":"torus-receiver","receiver":null}),
+        json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25],"shared":"shared-field:circle-7"}}),
+        json!({"operation":"torus-receiver","context":"personal"}),
+        json!({"operation":"torus-receiver","context":"shared"}),
+        json!({"operation":"torus-receiver","context":"world"}),
         json!({"operation":"torus-singlet","codon":5,"amplitude":[0.2,0.0]}),
         json!({"operation":"torus-singlet","codon":8,"amplitude":[0.2,0.0],"at_samples_elapsed":"4800"}),
         json!({"operation":"torus-body","body":null}),
@@ -136,6 +140,8 @@ fn the_torus_operations_are_admitted_by_name_and_strict_about_their_fields() {
         json!({"operation":"torus-receiver","receiver":{"at":[4.5,0.0,0.25]}}),
         json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25],"distance":2.0}}),
         json!({"operation":"torus-receiver","place":[4.5,0.0,0.25]}),
+        json!({"operation":"torus-receiver","context":"elsewhere"}),
+        json!({"operation":"torus-receiver","receiver":{"at_metres":[4.5,0.0,0.25],"shared":7}}),
         json!({"operation":"torus-singlet","amplitude":[0.2,0.0]}),
         json!({"operation":"torus-singlet","codon":5}),
         json!({"operation":"torus-singlet","codon":300,"amplitude":[0.2,0.0]}),
@@ -2351,5 +2357,134 @@ fn a_checkpoint_kept_on_the_largest_form_the_owner_admits_stays_within_a_hosts_b
         "the largest form's checkpoint ({}) is {} bytes, past a host's {HOST_CHECKPOINT_BYTES}",
         largest.1,
         largest.0
+    );
+}
+
+/// O-I #856, QL-MEF #289 packet N: the third receiving context. A place shared under a named reference (an explicitly shared
+/// context) is heard as the listener's own place would be, and, being shared, its place and reference are disclosed in the
+/// receiver's reading; the listener's own place never is. A reference that names nothing is refused in words.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn an_explicitly_shared_context_is_heard_from_its_place_and_disclosed_with_its_reference() {
+    let (mut mine, mut ours) = (Driver::open(), Driver::open());
+    for d in [&mut mine, &mut ours] {
+        assert_eq!(d.send(chord())["status"], "ok");
+    }
+    let place = standing(0.25, 0.0);
+    let own = mine.send(json!({"operation":"torus-receiver","receiver":place}));
+    let mut shared_place = place.clone();
+    shared_place["shared"] = json!("shared-field:circle-7");
+    let shared = ours.send(json!({"operation":"torus-receiver","receiver":shared_place}));
+    assert_eq!(shared["status"], "ok", "{shared}");
+    let reading = &shared["torus_receiver"];
+    assert_eq!(reading["context"], "shared", "{reading}");
+    assert_eq!(reading["shared"], "shared-field:circle-7");
+    assert_eq!(
+        reading["at_metres"], place["at_metres"],
+        "a shared place is disclosed"
+    );
+    assert_eq!(
+        heard(&shared),
+        heard(&own),
+        "heard from the shared place as from one's own"
+    );
+    let personal = &own["torus_receiver"];
+    assert_eq!(personal["context"], "personal");
+    assert!(
+        personal.get("at_metres").is_none() && personal.get("shared").is_none(),
+        "the listener's own place is never disclosed: {personal}"
+    );
+    for reference in [
+        "",
+        "two words",
+        &"x".repeat(129),
+        &"é".repeat(129),
+        "tab\there",
+    ] {
+        let mut bad = place.clone();
+        bad["shared"] = json!(reference);
+        let refused = ours.send(json!({"operation":"torus-receiver","receiver":bad}));
+        assert_eq!(refused["status"], "refused", "{reference:?}: {refused}");
+        assert!(
+            refused["error"]
+                .as_str()
+                .unwrap()
+                .contains("shared receiving context"),
+            "{refused}"
+        );
+    }
+    assert_eq!(
+        heard(&ours.send(json!({"operation":"torus-receiver","context":"shared"}))),
+        heard(&shared),
+        "a refused reference changed nothing"
+    );
+    // The bound is counted in characters, whatever their bytes: 128 of them name a shared context.
+    let mut wide = place.clone();
+    wide["shared"] = json!("é".repeat(128));
+    let wide = ours.send(json!({"operation":"torus-receiver","receiver":wide}));
+    assert_eq!(wide["torus_receiver"]["context"], "shared", "{wide}");
+    assert_eq!(wide["torus_receiver"]["shared"], "é".repeat(128));
+}
+
+/// O-I #856, QL-MEF #289 packet N: switching context is an explicit act, and returning to a context resumes it where it last
+/// stood — the listener's own place is remembered for the session and never disclosed, a shared one with its reference. A
+/// context never entered cannot be returned to, and naming a place and a context at once is refused, each in words.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn returning_to_a_context_resumes_it_where_it_last_stood() {
+    let mut d = Driver::open();
+    assert_eq!(d.send(chord())["status"], "ok");
+    let never = d.send(json!({"operation":"torus-receiver","context":"personal"}));
+    assert_eq!(never["status"], "refused", "{never}");
+    assert!(
+        never["error"]
+            .as_str()
+            .unwrap()
+            .contains("not been entered"),
+        "{never}"
+    );
+    let world = heard(&d.send(json!({"operation":"torus-receiver","receiver":null})));
+    let near = d.send(json!({"operation":"torus-receiver","receiver":standing(0.25, 0.0)}));
+    let mut shared_place = standing(0.25, std::f64::consts::FRAC_PI_2);
+    shared_place["shared"] = json!("shared-field:circle-7");
+    let aside = d.send(json!({"operation":"torus-receiver","receiver":shared_place}));
+    assert_ne!(heard(&near), heard(&aside), "two places, two hearings");
+    let back = d.send(json!({"operation":"torus-receiver","context":"world"}));
+    assert_eq!(back["torus_receiver"]["context"], "world");
+    assert_eq!(heard(&back), world, "the world's context, as it was");
+    let mine = d.send(json!({"operation":"torus-receiver","context":"personal"}));
+    assert_eq!(mine["torus_receiver"]["context"], "personal", "{mine}");
+    assert_eq!(
+        heard(&mine),
+        heard(&near),
+        "the listener's own place, where it last stood"
+    );
+    assert!(
+        mine["torus_receiver"].get("at_metres").is_none(),
+        "and still not disclosed"
+    );
+    assert!(
+        !mine
+            .to_string()
+            .contains(&format!("{}", standing(0.25, 0.0)["at_metres"][0])),
+        "the place appears nowhere in the reply: {mine}"
+    );
+    let ours = d.send(json!({"operation":"torus-receiver","context":"shared"}));
+    assert_eq!(ours["torus_receiver"]["shared"], "shared-field:circle-7");
+    assert_eq!(
+        heard(&ours),
+        heard(&aside),
+        "the shared place, with its reference"
+    );
+    let both = d.send(
+        json!({"operation":"torus-receiver","receiver":standing(0.25, 0.0),"context":"world"}),
+    );
+    assert_eq!(both["status"], "refused", "{both}");
+    assert!(
+        both["error"]
+            .as_str()
+            .unwrap()
+            .contains("a place or a context"),
+        "{both}"
     );
 }

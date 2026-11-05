@@ -1494,7 +1494,7 @@ pub const TORUS_SET_LANDING_LAW: &str = "a setting sent for a later sample waits
 
 /// Where the Torus is heard from (`torus-receiver`, O-I 856; QL-MEF #289 packet N; DLW manual §21.2 View and Rules).
 pub const TORUS_RECEIVER: &str = "ql.torus-receiver/v1";
-pub const TORUS_RECEIVER_LAW: &str = "Receiver Off is the world's context: every voice is heard by the declared gain, wherever the camera stands, and a camera move asks nothing of the owner. Receiver On is the listener's own context: the body is heard where they stand. Each voice is heard by the declared gain × how strongly the surface near the listener moves in it against how strongly the whole surface does: the root mean square of its shape term χ (the term a strike meets and the picture draws along the normal) over the samples of the torus, each weighted by how near it stands to the listener (a Gaussian in its distance beyond the nearest, as wide as the listener stands from the surface and never narrower than the sampling's spacing), over its root mean square over every sample; and, beyond one tube radius of the surface, × the tube radius over the distance. The body is turned back by its clock attachment first. Far off, every voice is heard as declared, quieter by the distance; near, a voice the surface under you rings in is loudest, and one whose nodal line you stand on is heard least. Switching context is the explicit `torus-receiver` act. The place is read at each block's start, and the block reaches the gains it gives linearly from those it was heard by; the body, its clock, its event and its generation never move by it. The place is the listener's and is kept nowhere: not in the Torus's reading, a checkpoint, a render, a take or a receipt, and a take renders in the world's context";
+pub const TORUS_RECEIVER_LAW: &str = "Receiver Off is the world's context: every voice is heard by the declared gain, wherever the camera stands, and a camera move asks nothing of the owner. Receiver On is the listener's own context: the body is heard where they stand. Each voice is heard by the declared gain × how strongly the surface near the listener moves in it against how strongly the whole surface does: the root mean square of its shape term χ (the term a strike meets and the picture draws along the normal) over the samples of the torus, each weighted by how near it stands to the listener (a Gaussian in its distance beyond the nearest, as wide as the listener stands from the surface and never narrower than the sampling's spacing), over its root mean square over every sample; and, beyond one tube radius of the surface, × the tube radius over the distance. The body is turned back by its clock attachment first. Far off, every voice is heard as declared, quieter by the distance; near, a voice the surface under you rings in is loudest, and one whose nodal line you stand on is heard least. Switching context is the explicit `torus-receiver` act. A third context is explicitly shared (QL-MEF #289 packet N): a place shared under a named reference, heard from as the listener's own place is, and, being shared, disclosed with its reference in the receiver's reading. Returning to a context is the same act naming it (`context`): the world's, or the listener's own or the shared place where each last stood, remembered for the session; a context never entered cannot be returned to. The place is read at each block's start, and the block reaches the gains it gives linearly from those it was heard by; the body, its clock, its event and its generation never move by it. The place is the listener's and is kept nowhere: not in the Torus's reading, a checkpoint, a render, a take or a receipt, and a take renders in the world's context";
 /// What a block says of the gains it reached (`torus_heard`, O-I #849): a host that continues the owner reaches them over the samples
 /// the owner did.
 pub const TORUS_HEARD_LAW: &str = "a block names each part of it that reached gains a receiver moved, in order: the part's first sample, its length, and the gain each voice reaches by its end, by mode_ref in the owner's mode order. The part reaches them linearly from the gains it was heard by over exactly its samples, as `torus-receiver` and the place read at each part's start ask, so a host that continues the owner reaches them over the same samples however it renders them. A part that reached nothing new is not named. It names gains, never the place";
@@ -1502,13 +1502,27 @@ pub const TORUS_HEARD_LAW: &str = "a block names each part of it that reached ga
 pub const TORUS_RECEIVER_METRES_MAX: f64 = 1e6;
 
 /// The listener's place (`torus-receiver`): metres in the frame the owner's targets are drawn in, the scene's world, under
-/// which the body turns by its clock attachment.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+/// which the body turns by its clock attachment; with `shared`, the reference the place is explicitly shared under.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ReceiverInput {
     #[serde(deserialize_with = "super::number::triple")]
     pub at_metres: [f64; 3],
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub shared: Option<String>,
 }
+
+/// A receiving context named to return to (`torus-receiver` `context`, `TORUS_RECEIVER_LAW`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ReceivingContext {
+    World,
+    Personal,
+    Shared,
+}
+
+/// The longest reference a shared receiving context may be named by.
+const SHARED_REFERENCE_MAX: usize = 128;
 
 /// A Torus setting admitted for a later sample of the owner's clock (`torus-set` with `at_samples_elapsed`).
 #[derive(Debug, Clone)]
@@ -1560,6 +1574,11 @@ pub struct SceneInstrument {
     struck_through: u64,
     /// Where the listener stands (`TORUS_RECEIVER_LAW`); `None` is the world's context. Never kept or disclosed.
     receiver: Option<[f64; 3]>,
+    /// The reference the place stands shared under, in an explicitly shared context.
+    shared: Option<String>,
+    /// Where each context last stood, for a return to it: the listener's own place (never disclosed) and the shared one.
+    personal_at: Option<[f64; 3]>,
+    shared_at: Option<(String, [f64; 3])>,
     /// The output gains the native owner hears the voices by, in its mode order.
     heard: Vec<f64>,
     /// The owner holds `heard` unreached: the next part it renders reaches it (`TORUS_HEARD_LAW`).
@@ -1751,6 +1770,9 @@ impl SceneInstrument {
             waiting: Vec::new(),
             struck_through: 0,
             receiver: None,
+            shared: None,
+            personal_at: None,
+            shared_at: None,
             heard: Vec::new(),
             moving: false,
             hearing: None,
@@ -2218,11 +2240,42 @@ impl SceneInstrument {
         Ok(())
     }
 
-    /// Where the Torus is heard from (`torus-receiver`, `TORUS_RECEIVER_LAW`): a place is the listener's own context, `None` the
-    /// world's. Heard from the cursor on; refused in words, changing nothing, for a place past the owner's bounds. The answer
-    /// says the context and the gains each voice is heard by, never the place.
-    pub fn set_receiver(&mut self, receiver: Option<ReceiverInput>) -> Result<Value, String> {
-        let place = receiver.map(|r| r.at_metres);
+    /// Where the Torus is heard from (`torus-receiver`, `TORUS_RECEIVER_LAW`): a place is the listener's own context, a place
+    /// with a `shared` reference an explicitly shared one, `None` the world's; a `context` alone returns to where that context
+    /// last stood (QL-MEF #289 packet N). Heard from the cursor on; refused in words, changing nothing, for a place past the
+    /// owner's bounds, a malformed reference or a context never entered. The answer says the context and the gains each voice
+    /// is heard by, never the listener's own place; a shared place is disclosed with its reference.
+    pub fn set_receiver(
+        &mut self,
+        receiver: Option<ReceiverInput>,
+        context: Option<ReceivingContext>,
+    ) -> Result<Value, String> {
+        let (place, shared) = match (receiver, context) {
+            (Some(_), Some(_)) => {
+                return Err("a receiver names a place or a context to return to, not both".into());
+            }
+            (Some(r), None) => (Some(r.at_metres), r.shared),
+            (None, None | Some(ReceivingContext::World)) => (None, None),
+            (None, Some(ReceivingContext::Personal)) => match self.personal_at {
+                Some(at) => (Some(at), None),
+                None => return Err("the listener's own receiving context has not been entered: stand somewhere first".into()),
+            },
+            (None, Some(ReceivingContext::Shared)) => match &self.shared_at {
+                Some((reference, at)) => (Some(*at), Some(reference.clone())),
+                None => return Err("no shared receiving context has been entered: share a place first".into()),
+            },
+        };
+        if let Some(reference) = &shared
+            && (reference.is_empty()
+                || reference.chars().count() > SHARED_REFERENCE_MAX
+                || reference
+                    .chars()
+                    .any(|c| c.is_whitespace() || c.is_control()))
+        {
+            return Err(format!(
+                "a shared receiving context is named by a reference of 1 to {SHARED_REFERENCE_MAX} characters with no space"
+            ));
+        }
         if let Some(place) = place
             && place
                 .iter()
@@ -2240,17 +2293,34 @@ impl SceneInstrument {
             self.moving = true;
         }
         self.receiver = place;
+        match (place, &shared) {
+            (Some(at), Some(reference)) => self.shared_at = Some((reference.clone(), at)),
+            (Some(at), None) => self.personal_at = Some(at),
+            (None, _) => {}
+        }
+        self.shared = shared;
         Ok(self.receiver_reading())
     }
 
     /// The context the Torus is heard in and the gain each voice is heard by (`ql.torus-receiver/v1`).
     pub fn receiver_reading(&self) -> Value {
-        json!({
+        let context = match (self.receiver, &self.shared) {
+            (None, _) => "world",
+            (Some(_), None) => "personal",
+            (Some(_), Some(_)) => "shared",
+        };
+        let mut reading = json!({
             "schema": TORUS_RECEIVER,
-            "context": if self.receiver.is_some() { "personal" } else { "world" },
+            "context": context,
             "gains": self.heard_gains(),
             "law": if self.body.is_some() { FORM_BODY_HEARING_LAW } else { TORUS_RECEIVER_LAW },
-        })
+        });
+        // an explicitly shared place is disclosed with its reference; the listener's own never is
+        if let (Some(at), Some(reference)) = (self.receiver, &self.shared) {
+            reading["shared"] = json!(reference);
+            reading["at_metres"] = json!(at);
+        }
+        reading
     }
 
     /// The gain each voice is heard by, by mode_ref in the owner's mode order.
