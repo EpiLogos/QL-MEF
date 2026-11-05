@@ -632,3 +632,220 @@ fn chain_form_z_cycle_still_refuses_stage_skips_and_premature_reopens() {
         "{err}"
     );
 }
+
+// ---- Round 21: a unit's heads broken into the composition's steps, and the
+// reading of a consumed T/T′ thought, each through the real binary.
+fn ql_stdin(args: &[&str], input: &Value) -> std::process::Output {
+    use std::io::Write;
+    let mut child = std::process::Command::new(env!("CARGO_BIN_EXE_ql"))
+        .args(args)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .unwrap();
+    child
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(&serde_json::to_vec(input).unwrap())
+        .unwrap();
+    child.wait_with_output().unwrap()
+}
+fn unit(heads: Value) -> Value {
+    json!({"contract":"ql.vak-unit-steps/v1","unit":"eros-verify","heads":heads})
+}
+#[test]
+fn a_units_heads_break_into_the_steps_quaternal_logic_composes() {
+    // The oikonomia specimen's own CFP form and CS walk, as a Factory unit
+    // words them (Factory's spelling: CFP0, CS0, forward).
+    let heads = json!({"CPF":"dialogical","CT":"CT2","CP":"4.0","CF":"CF3","CFP":"CFP0","CS":"CS0","direction":"forward"});
+    let output = ql_stdin(&["vak", "unit-steps", "-", "--json"], &unit(heads.clone()));
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let v: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        v,
+        ql_cli::vak_composition::unit_steps(&unit(heads)).unwrap()
+    );
+    assert_eq!(v["contract"], "ql.vak-unit-steps/v1");
+    assert_eq!(v["unit"], "eros-verify");
+    assert_eq!(v["open"], json!([]));
+    let drawn: Vec<(&str, &str, &str)> = v["heads"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| {
+            (
+                h["head"].as_str().unwrap(),
+                h["state"].as_str().unwrap(),
+                h["instrumentLabel"].as_str().unwrap(),
+            )
+        })
+        .collect();
+    assert_eq!(
+        drawn,
+        [
+            ("CPF", "chosen", "dialogical"),
+            ("CT", "chosen", "CT2"),
+            ("CP", "chosen", "4.0"),
+            ("CF", "chosen", "CF3"),
+            ("CFP", "chosen", "CFP0"),
+            ("CS", "chosen", "CS0"),
+            // The unit says `forward`; the Vāk block's label is the direction's own.
+            ("direction", "chosen", "forward-synthesis"),
+        ]
+    );
+    assert!(v["heads"][3]["meaning"].as_str().unwrap().contains("Eros"));
+    assert_eq!(v["heads"][4]["meaning"], "single-voice");
+    assert_eq!(v["walk"], json!(["4.0", "4.1", "4.2", "4.3", "4.4", "4.5"]));
+    let compose = v["compose"].as_array().unwrap();
+    assert_eq!(compose[0]["step"], json!({"op":"cfp-form","form":"base"}));
+    assert_eq!(
+        compose[1]["step"],
+        json!({"op":"cs-select","profile":"full-traverse","direction":"forward-synthesis"})
+    );
+    assert_eq!(
+        compose[1]["marker"],
+        "ql.cprime-oikonomia/v1:cs0:forward-synthesis:extent:6"
+    );
+    let hops: Vec<(u64, u64)> = compose[1]["hops"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| (h["from"].as_u64().unwrap(), h["to"].as_u64().unwrap()))
+        .collect();
+    assert_eq!(hops, vec![(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 0)]);
+    // The steps compose: in the specimen's composition, with its context,
+    // oikonomia and basis, they answer exactly as its own two steps do.
+    let mut specimen: Value =
+        serde_json::from_slice(&std::fs::read(oikonomia_specimen()).unwrap()).unwrap();
+    let original = ql_cli::vak_composition::execute_request(&specimen).unwrap();
+    for (index, broken) in [(2, &compose[0]), (3, &compose[1])] {
+        let own = specimen["steps"][index].clone();
+        let mut step = broken["step"].clone();
+        for need in v["needs"].as_array().unwrap() {
+            let need = need.as_str().unwrap();
+            step[need] = own[need].clone();
+        }
+        assert_eq!(step, own, "step {index}");
+        specimen["steps"][index] = step;
+    }
+    assert_eq!(
+        ql_cli::vak_composition::execute_request(&specimen).unwrap(),
+        original
+    );
+}
+#[test]
+fn an_open_head_stands_open_and_a_label_not_qls_is_refused_in_qls_words() {
+    let v = ql_cli::vak_composition::unit_steps(&unit(
+        json!({"CPF":"authorised-undertaking","CP":"4.3","CF":"CF5","CFP":"CFP2","CS":null,"direction":"returning"}),
+    ))
+    .unwrap();
+    assert_eq!(v["open"], json!(["CT", "CS"]));
+    assert_eq!(v["heads"][1]["state"], "open");
+    assert_eq!(v["heads"][1]["labels"].as_array().unwrap().len(), 7);
+    assert_eq!(v["walk"], Value::Null, "no walk without its sequence");
+    let compose = v["compose"].as_array().unwrap();
+    assert_eq!(compose.len(), 1);
+    assert_eq!(compose[0]["step"], json!({"op":"cfp-form","form":"chain"}));
+    assert_eq!(
+        compose[0]["marker"],
+        "ql.cprime-oikonomia/v1:cfp2:chained-c-thread"
+    );
+    assert_eq!(v["heads"][6]["instrumentLabel"], "returning-inquiry");
+    for (heads, refusal) in [
+        (json!({"CT":"CT9"}), "CT `CT9`: unknown variant `CT9`"),
+        // The Vāk block's own word is not the unit's: a unit says forward.
+        (
+            json!({"direction":"forward-synthesis"}),
+            "direction `forward-synthesis`: unknown variant",
+        ),
+        (json!({"CX":"CT1"}), "`CX` is no head of a unit"),
+        (
+            json!({"CP":4}),
+            "CP is one label, or absent while it is open",
+        ),
+    ] {
+        let err = ql_cli::vak_composition::unit_steps(&unit(heads)).unwrap_err();
+        assert!(err.to_string().contains(refusal), "{err}");
+    }
+    let output = ql_stdin(
+        &["vak", "unit-steps", "-", "--json"],
+        &json!({"contract":"ql.vak-composition/v1","unit":"u","heads":{}}),
+    );
+    assert!(!output.status.success());
+    assert!(String::from_utf8_lossy(&output.stderr).contains("takes `ql.vak-unit-steps/v1`"));
+}
+#[test]
+fn a_consumed_thought_reads_as_its_t_prime_meaning_with_recognition_proposed() {
+    let source =
+        |reference: &str| json!({"owner":"native-owner","reference":reference,"revision":"r1"});
+    let sources = [
+        "central:now/2026-11-05",
+        "central:now/report",
+        "thought:T2′",
+        "evidence:run-1",
+        "human:response/1",
+        "evaluation:1",
+        "skill-candidate:revisit",
+        "recognition:1",
+        "central:retention/now",
+    ];
+    let request = json!({
+        "schema": "ql.vak-thought-consumption-projection/v1",
+        "receipt": {
+            "contract": "factory.run-thought-consumption/v1",
+            "commandId": "command:consume-1",
+            "consumption": {
+                "consumptionId": "consumption:1",
+                "runRef": "run:1",
+                "consumerRef": "agent:epii",
+                "workingField": source("central:now/2026-11-05"),
+                "inputs": [{"thoughtId":"thought-local","anchor":source("central:now/report"),"interpretation":source("thought:T2′")}],
+                "actualEvidence": [source("evidence:run-1")],
+                "humanResponse": [source("human:response/1")],
+                "assessment": source("evaluation:1"),
+                "uses": [{"kind":"recognised-praxis","source":source("skill-candidate:revisit"),"receiving":source("recognition:1")}],
+                "retentionPolicy": source("central:retention/now"),
+                "resultingLifecycle": "integrated"
+            },
+            "observations": sources.iter().map(|r| json!({"state":"current","source":source(r),"receipt":source(&format!("receipt:{r}"))})).collect::<Vec<_>>()
+        },
+        "interpretations": [{"thoughtId":"thought-local","meaning":"T2′"}]
+    });
+    let output = ql_stdin(&["vak", "thought-consumption", "-", "--json"], &request);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let v: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(v["contract"], "ql.vak-thought-consumption/v1");
+    assert_eq!(v["runRef"], "run:1");
+    assert_eq!(v["interpretations"][0]["inventoryRef"], "thought:T2′");
+    assert_eq!(v["interpretations"][0]["meaning"], "T2′");
+    assert_eq!(
+        v["recognitionCandidates"][0]["targetRef"],
+        "skill-candidate:revisit"
+    );
+    assert!(
+        v["recognitionCandidates"][0]["standing"]
+            .as_str()
+            .unwrap()
+            .starts_with("QL Recognition proposal only")
+    );
+    // A meaning that is not the thought Factory consumed is refused in QL's words.
+    let mut wrong = request.clone();
+    wrong["interpretations"][0]["meaning"] = json!("T2");
+    let refused = ql_stdin(&["vak", "thought-consumption", "-", "--json"], &wrong);
+    assert!(!refused.status.success());
+    assert!(
+        String::from_utf8_lossy(&refused.stderr).contains(
+            "Factory interpretation ref does not match the recovered QL thought identity"
+        )
+    );
+}

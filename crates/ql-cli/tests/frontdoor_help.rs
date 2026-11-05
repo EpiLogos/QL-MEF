@@ -41,6 +41,8 @@ fn bare_and_help_print_the_grouped_reference_without_side_effects() {
             "ql context-frame read",
             "ql context-frame team-space",
             "ql vak compose",
+            "ql vak unit-steps",
+            "ql vak thought-consumption",
             "ql vak locate",
             "ql vak context",
             "ql vak workflow-types",
