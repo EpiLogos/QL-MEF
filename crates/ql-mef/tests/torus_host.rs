@@ -348,6 +348,43 @@ fn the_comma_grows_only_as_the_field_runs_and_sync_follows_the_tempo() {
     assert_eq!(slower["torus"]["steps_per_second"], json!(1.0));
 }
 
+/// One return of the pulse at 40 steps a second (0.4 s), and the comma the owner reports after it.
+fn one_return(d: &mut Driver) -> f64 {
+    let set = d.send(
+        json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":40.0}}}),
+    );
+    assert_eq!(set["status"], "ok", "{set}");
+    for _ in 0..(19_200 / 512 + 1) {
+        let advanced = d.send(json!({"operation":"advance","frames":512,"muted":true}));
+        assert_eq!(advanced["status"], "ok");
+    }
+    d.send(json!({"operation":"torus-state"}))["torus"]["comma_cents"]
+        .as_f64()
+        .unwrap()
+}
+
+/// O-I #850 (DLW manual §21.2 Comma: "from nothing when the Torus opens"): the comma one Torus gathered goes with it when it
+/// closes; the Torus opened again gathers from nothing, one comma for each return of its own pulse.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn the_comma_starts_from_nothing_when_the_torus_reopens() {
+    let mut first = Driver::open();
+    let gathered = one_return(&mut first);
+    assert!((gathered - 23.460_010_384_649_4).abs() < 1e-6, "{gathered}");
+    drop(first);
+    let mut again = Driver::open();
+    assert_eq!(
+        again.send(json!({"operation":"torus-state"}))["torus"]["comma_cents"],
+        json!(0.0),
+        "the reopened Torus starts from nothing"
+    );
+    let regathered = one_return(&mut again);
+    assert!(
+        (regathered - gathered).abs() < 1e-9,
+        "one return gathers one comma again: {regathered}"
+    );
+}
+
 #[test]
 #[ignore = "needs QL_FIELD_WORKER"]
 fn a_key_strikes_its_moving_point_and_always_the_same_helix_place() {
@@ -976,6 +1013,51 @@ fn a_torus_kept_at_a_sample_rings_on_from_its_restore_as_it_rang() {
     );
     let again = render(&mut d, 0.3);
     assert_eq!(again, then, "it rings on as it rang");
+}
+
+/// O-I #852 (DLW manual §21.2: a sound saved, closed and reopened plays the same): a Torus kept while it rings, its owner
+/// closed, and the checkpoint set again on an owner opened after: from there it rings on as it rang on the first, bit for bit,
+/// with its notes, its settings and its comma, though the new owner's cursor stands elsewhere.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn a_sound_kept_and_opened_on_an_owner_opened_after_its_own_closed_plays_the_same() {
+    let mut first = Driver::open();
+    let played = first.send(
+        json!({"operation":"torus-play","keys":[{"row":0,"column":2},{"row":3,"column":4}],"amplitude":[0.2,0.0]}),
+    );
+    assert_eq!(played["status"], "ok", "{played}");
+    let set = first.send(json!({"operation":"torus-set","edit":{"carrier":0.4,"polyphony":6}}));
+    assert_eq!(set["status"], "ok", "{set}");
+    render(&mut first, 0.3);
+    let kept = first.send(json!({"operation":"torus-checkpoint"}));
+    assert_eq!(kept["status"], "ok", "{kept}");
+    let checkpoint = kept["torus_checkpoint"].clone();
+    let then = render(&mut first, 0.3);
+    assert!(rms(&then) > 0.0, "the kept Torus rings");
+    drop(first);
+
+    let mut opened = Driver::open();
+    render(&mut opened, 0.1);
+    assert_ne!(
+        opened.current["field"]["samples_elapsed"], kept["field"]["samples_elapsed"],
+        "the new owner's cursor stands elsewhere"
+    );
+    let restored = opened.send(json!({"operation":"torus-restore","checkpoint":checkpoint}));
+    assert_eq!(restored["status"], "ok", "{restored}");
+    assert_eq!(
+        metres(&restored["field"]["amplitudes_metres"]),
+        metres(&checkpoint["amplitudes"])
+    );
+    assert_eq!(
+        restored["torus"]["settings"],
+        checkpoint["session"]["settings"]
+    );
+    assert_eq!(restored["torus"]["notes"], kept["torus"]["notes"]);
+    assert_eq!(
+        restored["torus"]["comma_cents"],
+        kept["torus"]["comma_cents"]
+    );
+    assert_eq!(render(&mut opened, 0.3), then, "it plays as it played");
 }
 
 /// The live owner's PCM from its cursor for `frames`, in blocks of `block`.
@@ -2426,6 +2508,75 @@ fn keys_and_touches_strike_a_fold_where_they_land() {
     assert_eq!(singlet["status"], "ok", "{singlet}");
     assert_eq!(singlet["strike_at"]["body"], preparation, "{singlet}");
     assert_eq!(singlet["torus_singlet"]["codon"], 5);
+}
+
+/// The RMS of each tenth of a second of `pcm`.
+fn envelope(pcm: &[f64]) -> Vec<f64> {
+    pcm.chunks(4800).map(rms).collect()
+}
+
+/// O-I #852 (DLW manual §21.2 Body: "The body is what rings"): the one strike, at the same point and velocity, rings a fold
+/// otherwise than the torus. The strike lands where the fold is heard (its pickup), so both ring out loud. Its impulse goes to
+/// the fold's own modes, never to a torus voice, and its ring-down follows the Q the fold was prepared with, not the torus's
+/// damping: compared by the receipt's impulses and by the decay of each tenth of a second over half a second.
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn the_same_strike_rings_a_fold_otherwise_than_the_torus_by_its_impulse_and_its_ring_down() {
+    let mut folded = Driver::open();
+    let request = fold(&folded.current["field"]);
+    let chosen = folded.send(json!({"operation":"torus-body","body":request}));
+    assert_eq!(chosen["status"], "ok", "{chosen}");
+    let [u, v]: [f64; 2] = serde_json::from_value(
+        chosen["torus"]["body"]["prepared"]["request"]["pickup"]["uv"].clone(),
+    )
+    .unwrap();
+    let strike = json!({"operation":"strike-at","points":[{"theta":v * std::f64::consts::TAU,"phi":u * std::f64::consts::TAU,"amplitude":[0.1,0.0]}]});
+
+    let mut torus = Driver::open();
+    let torus_modes = ringing(&mut torus);
+    let on_torus = torus.send(strike.clone());
+    assert_eq!(on_torus["status"], "ok", "{on_torus}");
+    let torus_impulses: Vec<String> = on_torus["strike_at"]["voices"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v["mode_ref"].as_str().unwrap().to_owned())
+        .collect();
+    assert!(!torus_impulses.is_empty(), "{on_torus}");
+    assert!(torus_impulses.iter().all(|m| torus_modes.contains(m)));
+    let torus_ring = envelope(&render(&mut torus, 0.5));
+
+    let on_fold = folded.send(strike);
+    assert_eq!(on_fold["status"], "ok", "{on_fold}");
+    let fold_impulses: Vec<String> = on_fold["strike_at"]["modes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|m| m["mode_ref"].as_str().unwrap().to_owned())
+        .collect();
+    assert!(!fold_impulses.is_empty(), "{on_fold}");
+    assert!(
+        fold_impulses
+            .iter()
+            .all(|m| m.contains("/body/") && !torus_modes.contains(m)),
+        "the fold's own modes, never a torus voice: {fold_impulses:?}"
+    );
+    let fold_ring = envelope(&render(&mut folded, 0.5));
+
+    // Both ring out loud from the strike; they ring down otherwise.
+    assert!(
+        torus_ring[0] > 1e-3 && fold_ring[0] > 1e-3,
+        "{torus_ring:?} {fold_ring:?}"
+    );
+    let decay = |ring: &[f64]| ring[4] / ring[0];
+    let (torus_decay, fold_decay) = (decay(&torus_ring), decay(&fold_ring));
+    eprintln!(
+        "ring-down over 0.4 s: torus {torus_decay:.4} ({torus_ring:?}); fold {fold_decay:.4} ({fold_ring:?})"
+    );
+    assert!(
+        (torus_decay - fold_decay).abs() > 0.1 * torus_decay.max(fold_decay),
+        "the fold rings down otherwise than the torus: torus {torus_decay}, fold {fold_decay}"
+    );
 }
 
 /// The most bytes a host carries one checkpoint in (O-I's frame, stageCommands.ts STAGE_TORUS_CHECKPOINT_BYTES_MAX): 1 MiB.
