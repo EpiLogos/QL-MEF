@@ -173,6 +173,10 @@ function setup(options = {}) {
       }
       if (request.command.operation === 'torus-play')
         reply.torus_play = { schema: 'ql.torus-play/v1', notes: request.command.keys.map((key, id) => ({ id, key })), made_way: [] };
+      // Controlled protocol case (host.rs, scene_field.rs STRIKE_AT_RECEIPT): a strike at points, a played act and a singlet each
+      // carry the strike's receipt, its points and each voice's coupling.
+      if (['strike-at', 'torus-play', 'torus-singlet'].includes(request.command.operation) && !port.noStrikeReceipt)
+        reply.strike_at = { schema: 'ql.strike-at/v1', points: request.command.points ?? [], voices: [[0.25, 0]], by: request.command.operation };
       // Controlled protocol case (host.rs torus_operation, O-I #771): a singlet is one strike at its codon's places.
       if (request.command.operation === 'torus-singlet')
         reply.torus_singlet = { schema: 'ql.torus-singlet/v1', codon: request.command.codon,
@@ -437,6 +441,21 @@ test('a strike at points is one performance act: the cursor moves, the samples a
   await session.pump();
   assert.equal(calls.at(-1).command.operation, 'advance');
   assert.equal(session.reading.acknowledged.samples_elapsed, String(BigInt(elapsed) + 512n));
+  session.dispose();
+});
+
+test('a strike at points keeps its receipt, as a played act and a singlet keep theirs; a refused strike keeps the last (O-I #771)', async () => {
+  const { session, port } = setup(); await session.pump();
+  assert.equal(session.lastStrikeAt, null, 'none before any strike');
+  await session.strikeAt([POINT]);
+  assert.deepEqual(session.lastStrikeAt, { schema: 'ql.strike-at/v1', points: [POINT], voices: [[0.25, 0]], by: 'strike-at' });
+  const kept = session.lastStrikeAt; kept.voices[0][0] = 9;
+  assert.equal(session.lastStrikeAt.voices[0][0], 0.25, 'a copy: the caller cannot reshape the receipt');
+  await session.torusPlay([{ row: 0, column: 0 }]);
+  assert.equal(session.lastStrikeAt.by, 'torus-play', 'a played Torus act is a strike at points too');
+  port.refuseOperation = 'strike-at';
+  await assert.rejects(session.strikeAt([POINT]), /controlled refusal/);
+  assert.equal(session.lastStrikeAt.by, 'torus-play', 'a refused strike keeps the last receipt');
   session.dispose();
 });
 
