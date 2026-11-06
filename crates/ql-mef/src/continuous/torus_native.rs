@@ -19,7 +19,7 @@ pub const CONTINUOUS_HANDOVER: &str = "ql.continuous-handover/v1";
 pub const TORUS_KEYS: &str = "ql.torus-keys/v1";
 
 /// What a key's release does to the body a native host plays.
-pub const TORUS_RELEASE_LAW: &str = "a key's release moves no native state: the body rings on with its own damping and a released note keeps its own tail, and the owner counts the notes (torus-release; the key law's `release` on a host). Past Polyphony the oldest notes make way in the count: where notes sound their own cells (`cells`, Logic on the torus) a note that makes way fades out in the bank (NOTE_VOICES_LAW); otherwise the body rings on";
+pub const TORUS_RELEASE_LAW: &str = "a key's release moves no native state: the body rings on with its own damping and a released note keeps its own tail, and the owner counts the notes (torus-release; the key law's `release` on a host). Past Polyphony the oldest notes make way in the count, as they do at once when Polyphony is lowered below the notes sounding: where notes sound their own cells (`cells`, Logic on the torus) a note that makes way fades out in the bank (NOTE_VOICES_LAW, POLYPHONY_MAKES_WAY_LAW); otherwise the body rings on";
 /// How the body a native host plays is silenced (`ql::ContinuousField::silence`).
 pub const TORUS_SILENCE_LAW: &str = "silence stills what was struck at the cursor: every resident state and every note's voice in the bank at rest and the acts waiting for later samples dropped, one body act; the voices with the drive their material supplies, the receiver's gains, the shapes, the clock, the cursor and the Carrier's drive stand, so a driven body is driven again from rest";
 /// How long a handed-over law stands.

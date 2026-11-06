@@ -713,7 +713,8 @@ impl FieldSession {
     /// Each note its own voices (QL-MEF #287 packet A): an act's notes voiced in the native bank, the notes the owner counted as
     /// making way for them (`made_way`, their ids) fading out, now or at `at_samples_elapsed` (as a strike at a sample). Each note
     /// is its id (decimal) and eight voices, each the mode it is like (`mode_ref`), its own `frequency_hz` and its `amplitude`
-    /// (modal metres). Malformed acts are refused here without transport; the worker re-validates them.
+    /// (modal metres). An act may voice none and only make way, at the cursor: Polyphony lowered below the notes sounding (DLW
+    /// build ruling 2026-11-05). Malformed acts are refused here without transport; the worker re-validates them.
     pub fn voice_notes(
         &mut self,
         notes: &[Value],
@@ -731,8 +732,14 @@ impl FieldSession {
                 ));
             }
         }
-        if notes.is_empty() || notes.len() > NOTE_BANK_MAX || made_way.len() > 2 * NOTE_BANK_MAX {
-            return Err("an act voices 1 to 32 notes, and at most 64 make way for them".into());
+        if notes.len() > NOTE_BANK_MAX
+            || made_way.len() > 2 * NOTE_BANK_MAX
+            || (notes.is_empty() && made_way.is_empty())
+        {
+            return Err("an act voices 1 to 32 notes, or none and makes way for at least one; at most 64 make way".into());
+        }
+        if notes.is_empty() && at_samples_elapsed.is_some() {
+            return Err("an act that only makes way is made at the cursor: Polyphony lowered makes the oldest make way where it is set".into());
         }
         for note in notes {
             let voices = note["voices"].as_array().filter(|v| v.len() == NOTE_VOICES);

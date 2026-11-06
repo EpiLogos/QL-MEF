@@ -1555,7 +1555,9 @@ const NOTE_CELL_VOICED: &str = "the note's own cell: the event's Vimarśā readi
 const NOTE_CELL_RESIDENT: &str = "the note's own cell: the event's Vimarśā reading (m2_vimarsha::read_seed) with tick12 at the arc the key's moving point struck — its eight voices over its four boundaries, each a ratio over the Fundamental. Disclosed per note: a cell's voices are the octet's, so a note sounds its own under Logic on the torus; under Sky or Maqām, or while a form rings, a key strikes the resident voices of the tuning in force at its point (NOTE_VOICES_LAW)";
 /// What a played note sounds (`torus-play` under Logic on the torus; QL-MEF #287 packet A; DLW manual §21.2 Rules).
 pub const NOTE_VOICES_RECEIPT: &str = "ql.note-voices/v1";
-pub const NOTE_VOICES_LAW: &str = "each key is a note that strikes its own cell (DLW manual §21.2 Rules: each note strikes its own eight voices, and Polyphony counts notes): the Vimarśā reading at the arc its moving point struck, eight voices over the reading's own four boundaries, each at its own frequency × the Fundamental over the map's 1:1, placed, weighted and phased by the octet's law, and struck by the key's velocity × Strike × its own shape term at the point. Each voice rings in the material of the Logic voice of its slot and is heard as that voice is heard. The notes are counted as Polyphony counts them: a key struck again makes way for itself, and past Polyphony the oldest make way; a note that makes way fades out over 4 ms and frees its slot in the native owner's bank of 32 notes, and with all 32 sounding the note voiced longest ago is taken. A key's release only leaves the count: a released note keeps its own tail. Under Sky or Maqām, or while a form rings, a key strikes the resident voices of the tuning in force at its point (strike-at). The notes are drawn as they are heard: each ringing voice moves the body's samples along the shape of the Logic voice of its slot, by its own state, as the resident voices move them by theirs";
+/// What lowering Polyphony below the notes sounding does (DLW build ruling 2026-11-05, O-I #850).
+pub const POLYPHONY_MAKES_WAY_LAW: &str = "Polyphony lowered below the notes sounding makes the oldest notes make way at once, at the sample the setting is made (now, or the sample it was sent for), oldest first, as past Polyphony they make way for a new one. Each the native bank holds fades out over the same 4 ms a note that makes way for a newer one takes, never cut: what it rang moves whole into its fading voices, and its slot is free. The bank moves by one act that voices no note (`ql.note-voices/v1` with no notes, named in the setting's answer as `note_voices`, or in the record of a setting made inside a block), which a native host that follows the owner makes as the owner made it; the resident voices, the clock and the pulse do not move. Polyphony that still holds every note sounding, or notes the bank does not hold (struck under Sky or Maqām, or on a form), moves nothing native";
+pub const NOTE_VOICES_LAW: &str = "each key is a note that strikes its own cell (DLW manual §21.2 Rules: each note strikes its own eight voices, and Polyphony counts notes): the Vimarśā reading at the arc its moving point struck, eight voices over the reading's own four boundaries, each at its own frequency × the Fundamental over the map's 1:1, placed, weighted and phased by the octet's law, and struck by the key's velocity × Strike × its own shape term at the point. Each voice rings in the material of the Logic voice of its slot and is heard as that voice is heard. The notes are counted as Polyphony counts them: a key struck again makes way for itself, and past Polyphony the oldest make way, as they do at once when Polyphony is lowered below the notes sounding (POLYPHONY_MAKES_WAY_LAW); a note that makes way fades out over 4 ms and frees its slot in the native owner's bank of 32 notes, and with all 32 sounding the note voiced longest ago is taken. A key's release only leaves the count: a released note keeps its own tail. Under Sky or Maqām, or while a form rings, a key strikes the resident voices of the tuning in force at its point (strike-at). The notes are drawn as they are heard: each ringing voice moves the body's samples along the shape of the Logic voice of its slot, by its own state, as the resident voices move them by theirs";
 
 /// The most Torus settings that wait for their samples at once (`torus-set` with `at_samples_elapsed`, O-I 855).
 pub const TORUS_SETS_WAITING_MAX: usize = 64;
@@ -1606,6 +1608,22 @@ pub struct TorusPlayOutcome {
     pub field: Value,
     pub receipt: Value,
     pub strike_at: Value,
+}
+
+/// What a setting of the Torus made now did (`torus_set_made`): the field when the owner's modes or its bank moved, and the act
+/// of the bank the notes Polyphony lowered made make way took (`POLYPHONY_MAKES_WAY_LAW`).
+#[derive(Debug, Clone)]
+pub struct TorusSetMade {
+    pub field: Option<Value>,
+    pub note_voices: Option<Value>,
+}
+
+/// An edit of the Torus made (`torus_edit`): the settings that moved, the field when the owner's modes or bank moved, and the
+/// bank's act for the notes that made way.
+struct TorusEdited {
+    moved: Vec<&'static str>,
+    field: Option<Value>,
+    note_voices: Option<Value>,
 }
 
 /// What a struck singlet did: the field, the codon's places and points, and the strike.
@@ -2000,29 +2018,60 @@ impl SceneInstrument {
     /// moves the body only at the pulse's later steps. A refused edit changes
     /// nothing. Returns the field when the owner's modes moved.
     pub fn torus_set(&mut self, edit: &m1_prime::SettingsEdit) -> Result<Option<Value>, String> {
-        self.torus_edit(edit).map(|(_, field)| field)
+        self.torus_edit(edit).map(|edited| edited.field)
     }
 
-    /// `torus_set`, answering also the names of the settings that moved.
-    fn torus_edit(
-        &mut self,
-        edit: &m1_prime::SettingsEdit,
-    ) -> Result<(Vec<&'static str>, Option<Value>), String> {
+    /// `torus_set`, answering also the names of the settings that moved and the act of the bank the notes that made way took.
+    fn torus_edit(&mut self, edit: &m1_prime::SettingsEdit) -> Result<TorusEdited, String> {
         if edit.is_empty() {
             return Err("a Torus edit names at least one setting".into());
         }
         let mut next = self.torus.clone();
-        let moved = next.edit(edit, self.samples_now())?;
+        let (moved, made_way) = next.edit_counted(edit, self.samples_now())?;
         self.holds(next.settings().tuning)?;
-        let field = if moved.contains(&"fundamental") {
+        let mut field = if moved.contains(&"fundamental") {
             Some(self.set_fundamental(fundamental_hz(next.settings()))?)
         } else {
             None
         };
+        let note_voices = self.make_way(&made_way)?;
+        if note_voices.is_some() {
+            field = Some(self.session.last_field().clone());
+        }
         self.torus = next;
         // Every edit re-anchors the pulse where it stands; the native drive follows.
         self.sync_carrier()?;
-        Ok((moved, field))
+        Ok(TorusEdited {
+            moved,
+            field,
+            note_voices,
+        })
+    }
+
+    /// The notes Polyphony lowered made make way, faded in the native bank now (`POLYPHONY_MAKES_WAY_LAW`): one act voicing no
+    /// note, its receipt answered; nothing moves, and none is answered, while the bank holds none of them.
+    fn make_way(&mut self, made_way: &[m1_prime::Note]) -> Result<Option<Value>, String> {
+        let field = self.session.last_field();
+        let held = |id: u64| {
+            field["bank"].as_array().is_some_and(|bank| {
+                bank.iter()
+                    .any(|slot| slot["held"] == true && slot["id"] == json!(id.to_string()))
+            })
+        };
+        if !made_way.iter().any(|note| held(note.id)) {
+            return Ok(None);
+        }
+        let at = field["samples_elapsed"].clone();
+        let ids: Vec<u64> = made_way.iter().map(|note| note.id).collect();
+        self.session.voice_notes_field(&[], &ids, None)?;
+        Ok(Some(json!({
+            "schema": NOTE_VOICES_RECEIPT,
+            "points": [],
+            "notes": [],
+            "made_way": ids,
+            "at_samples_elapsed": at,
+            "law": POLYPHONY_MAKES_WAY_LAW,
+        })))
     }
 
     /// Refuses, in words, a tuning whose voices this scene does not hold.
@@ -2048,9 +2097,22 @@ impl SceneInstrument {
         edit: &m1_prime::SettingsEdit,
         at: Option<u64>,
     ) -> Result<Option<Value>, String> {
+        self.torus_set_made(edit, at).map(|made| made.field)
+    }
+
+    /// `torus_set_when`, answering also the act of the bank a setting made now took (`POLYPHONY_MAKES_WAY_LAW`): the notes
+    /// Polyphony lowered made make way, faded there; none for a setting that waits for its sample, whose record names it there.
+    pub fn torus_set_made(
+        &mut self,
+        edit: &m1_prime::SettingsEdit,
+        at: Option<u64>,
+    ) -> Result<TorusSetMade, String> {
         let now = self.samples_now();
         let Some(at) = at.filter(|at| *at != now) else {
-            return self.torus_set(edit);
+            return self.torus_edit(edit).map(|edited| TorusSetMade {
+                field: edited.field,
+                note_voices: edited.note_voices,
+            });
         };
         if at < now {
             return Err(format!(
@@ -2096,7 +2158,10 @@ impl SceneInstrument {
                 edit: edit.clone(),
             },
         );
-        Ok(None)
+        Ok(TorusSetMade {
+            field: None,
+            note_voices: None,
+        })
     }
 
     /// The Torus's session as it will stand at sample `at`: the session now, with every setting
@@ -2405,8 +2470,12 @@ impl SceneInstrument {
     fn land(&mut self, waiting: WaitingSet) -> Value {
         let at = waiting.at.to_string();
         match self.torus_edit(&waiting.edit) {
-            Ok((moved, _)) => {
-                json!({"at_samples_elapsed": at, "edit": waiting.edit, "applied": true, "moved": moved})
+            Ok(edited) => {
+                let mut record = json!({"at_samples_elapsed": at, "edit": waiting.edit, "applied": true, "moved": edited.moved});
+                if let Some(note_voices) = edited.note_voices {
+                    record["note_voices"] = note_voices;
+                }
+                record
             }
             Err(why) => json!({"at_samples_elapsed": at, "edit": waiting.edit, "applied": false,
                 "moved": [], "refused": why}),

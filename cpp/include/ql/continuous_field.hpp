@@ -61,7 +61,8 @@ struct ContinuationReceipt {
 //
 // The owner counts the notes (m1_prime::Session::admit); the bank sounds them. An act names its notes and the notes that made way
 // for them (a key struck again, or the oldest past Polyphony): those fade out over `steal_seconds`, so nothing clicks, and their
-// slots are free. A note takes the first free slot (never voiced, made way, or rung out); when all `max_bank_notes` still sound,
+// slots are free. Polyphony lowered below the notes sounding makes the oldest make way at once (DLW build ruling 2026-11-05): an act
+// that voices no note and names only those, made at the cursor, and each fades as any note that makes way. A note takes the first free slot (never voiced, made way, or rung out); when all `max_bank_notes` still sound,
 // the note voiced longest ago is taken, fading as one that made way. A key's release moves no native state: a released note keeps
 // its own tail. Voicing, making way, rendering and silence are noexcept and allocation-free, on a host's audio thread.
 inline constexpr std::size_t note_voices = 8;
@@ -221,11 +222,12 @@ class ContinuousField {
             if (ids[j] == id) return true;
         return false;
     }
-    // The whole act judged before anything moves: 1 to 32 notes, each a note of this body named once and not already held (unless
-    // it is among those making way), and at most `max_made_way` made way. A note of the act that is itself among them (its key
-    // struck twice, or past Polyphony at once) made way as it came and is not voiced.
+    // The whole act judged before anything moves: up to 32 notes, each a note of this body named once and not already held (unless
+    // it is among those making way), and at most `max_made_way` made way; an act that voices no note makes at least one make way
+    // (Polyphony lowered). A note of the act that is itself among them (its key struck twice, or past Polyphony at once) made way as
+    // it came and is not voiced.
     bool judges(const NoteAct *notes, std::size_t n, const std::uint64_t *made_way, std::size_t m) const noexcept {
-        if (!notes || n == 0 || n > max_bank_notes || m > max_made_way || (m && !made_way)) return false;
+        if ((n && !notes) || n + m == 0 || n > max_bank_notes || m > max_made_way || (m && !made_way)) return false;
         for (std::size_t i = 0; i < n; ++i) {
             if (!admits(notes[i])) return false;
             for (std::size_t j = 0; j < i; ++j)
@@ -424,7 +426,7 @@ public:
     // Voices an act's notes at the cursor (QL-MEF #287), for a host's audio thread: noexcept and allocation-free. The notes named
     // in `made_way` fade and free their slots, then each note takes a slot; the whole act is judged first, and false refuses it
     // with nothing moved. A made-way id the bank does not hold (taken at a full bank, or rung before the body was chosen) moves
-    // nothing. One act, one generation.
+    // nothing. An act may voice none and only make way (Polyphony lowered). One act, one generation.
     bool voice_now(const NoteAct *notes, std::size_t n, const std::uint64_t *made_way, std::size_t m) noexcept {
         if (!judges(notes, n, made_way, m)) return false;
         for (std::size_t j = 0; j < m; ++j) make_way(made_way[j]);
@@ -438,8 +440,11 @@ public:
     void voice(const std::vector<NoteAct> &notes, const std::vector<std::uint64_t> &made_way, std::uint64_t at_samples_elapsed) {
         require(at_samples_elapsed >= elapsed_, "a note's sample is behind the continuation cursor: that sound is already rendered");
         require(at_samples_elapsed == elapsed_ || pending_.size() - landed_ < max_pending_strikes, "too many strikes wait for their samples");
-        require(!notes.empty() && notes.size() <= max_bank_notes, "an act voices 1 to 32 notes");
+        require(notes.size() <= max_bank_notes && (!notes.empty() || !made_way.empty()),
+                "an act voices 1 to 32 notes, or voices none and makes way for the notes Polyphony no longer holds");
         require(made_way.size() <= max_made_way, "an act names at most 64 notes making way");
+        require(!notes.empty() || at_samples_elapsed == elapsed_,
+                "an act that only makes way is made at the cursor: Polyphony lowered makes the oldest make way where it is set");
         for (std::size_t i = 0; i < notes.size(); ++i) {
             require(admits(notes[i]), "a note names no prepared mode, a frequency outside the audio band or an invalid impulse");
             for (std::size_t j = 0; j < i; ++j) require(notes[j].id != notes[i].id, "one act voices a note twice");

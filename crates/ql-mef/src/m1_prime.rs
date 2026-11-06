@@ -643,6 +643,16 @@ impl Session {
     /// phase across a change of rate, tempo or band; a refused edit changes
     /// nothing. Returns the names of the settings that moved.
     pub fn edit(&mut self, edit: &SettingsEdit, samples: u64) -> Result<Vec<&'static str>, String> {
+        self.edit_counted(edit, samples).map(|(moved, _)| moved)
+    }
+
+    /// [`Self::edit`], answering also the notes that made way: Polyphony lowered below the notes sounding makes the oldest make
+    /// way at once, oldest first (DLW build ruling 2026-11-05).
+    pub fn edit_counted(
+        &mut self,
+        edit: &SettingsEdit,
+        samples: u64,
+    ) -> Result<(Vec<&'static str>, Vec<Note>), String> {
         let next = edit.apply(&self.settings)?;
         self.rebase(samples);
         let before = self.settings;
@@ -663,10 +673,11 @@ impl Session {
             }
         }
         // Fewer notes allowed: the oldest make way now.
+        let mut made_way = Vec::new();
         while self.notes.len() > usize::from(self.settings.polyphony) {
-            self.notes.pop_front();
+            made_way.extend(self.notes.pop_front());
         }
-        Ok(moved)
+        Ok((moved, made_way))
     }
 
     /// A tritone crossing of the mode (seed lines 506–508): the Klein bottle
