@@ -94,32 +94,40 @@ fn chi(voice: &Value, phi: f64, theta: f64) -> f64 {
         + b * (m * phi / 2.0).cos() * (n * theta / 2.0).cos()
 }
 
-/// What the law strikes for `keys` at `samples` (janko.rs POINT_LAW over the law's arcs and pulse).
-fn impulses(law: &Value, keys: &[(u64, u64)], amplitude: [f64; 2], samples: u64) -> Vec<[f64; 2]> {
+/// Where a key stands at `samples` (janko.rs POINT_LAW over the law's arcs and pulse): the arc its
+/// point stands on, and its (φ, θ).
+fn point(law: &Value, (row, column): (u64, u64), samples: u64) -> (usize, f64, f64) {
     let pulse = &law["pulse"];
     let anchor: u64 = pulse["anchor_samples"].as_str().unwrap().parse().unwrap();
     let rate = float(&law["sample_rate"]);
     let steps = float(&pulse["anchor_steps"])
         + samples.saturating_sub(anchor) as f64 / rate * float(&pulse["steps_per_second"]);
+    let arc = law["arcs"][(row * 6 + column % 6) as usize]
+        .as_u64()
+        .unwrap() as f64;
+    let mut arcs = (arc + steps).rem_euclid(12.0);
+    if arcs >= 12.0 {
+        arcs = 0.0;
+    }
+    let mut sheet = arcs.rem_euclid(6.0);
+    if sheet >= 6.0 {
+        sheet = 0.0;
+    }
+    (
+        arcs.floor() as usize % 12,
+        sheet * (std::f64::consts::PI / (6.0 / 2.0)),
+        arcs * (std::f64::consts::PI / 6.0),
+    )
+}
+
+/// What the law strikes for `keys` at `samples` where keys strike the resident voices of the tuning
+/// (Maqām and Sky on the torus).
+fn impulses(law: &Value, keys: &[(u64, u64)], amplitude: [f64; 2], samples: u64) -> Vec<[f64; 2]> {
     let strike = float(&law["strike"]);
     let voices = law["voices"].as_array().unwrap();
     let mut out = vec![[0.0, 0.0]; voices.len()];
-    for (row, column) in keys {
-        let arc = law["arcs"][(row * 6 + column % 6) as usize]
-            .as_u64()
-            .unwrap() as f64;
-        let mut arcs = (arc + steps).rem_euclid(12.0);
-        if arcs >= 12.0 {
-            arcs = 0.0;
-        }
-        let mut sheet = arcs.rem_euclid(6.0);
-        if sheet >= 6.0 {
-            sheet = 0.0;
-        }
-        let (theta, phi) = (
-            arcs * (std::f64::consts::PI / 6.0),
-            sheet * (std::f64::consts::PI / (6.0 / 2.0)),
-        );
+    for key in keys {
+        let (_, phi, theta) = point(law, *key, samples);
         for (impulse, voice) in out.iter_mut().zip(voices) {
             let shape = chi(voice, phi, theta);
             impulse[0] += amplitude[0] * strike * shape;
@@ -127,6 +135,49 @@ fn impulses(law: &Value, keys: &[(u64, u64)], amplitude: [f64; 2], samples: u64)
         }
     }
     out
+}
+
+/// What the law strikes for `keys` at `samples` where each key is a note that sounds its own cell
+/// (Logic on the torus, scene_field.rs NOTE_VOICES_LAW): the cell of the arc the key's point stands
+/// on, each voice struck by its own shape term there.
+fn note_impulses(
+    law: &Value,
+    keys: &[(u64, u64)],
+    amplitude: [f64; 2],
+    samples: u64,
+) -> Vec<Vec<[f64; 2]>> {
+    let strike = float(&law["strike"]);
+    keys.iter()
+        .map(|key| {
+            let (arc, phi, theta) = point(law, *key, samples);
+            law["cells"][arc]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|voice| {
+                    let shape = chi(voice, phi, theta);
+                    [amplitude[0] * strike * shape, amplitude[1] * strike * shape]
+                })
+                .collect()
+        })
+        .collect()
+}
+
+fn play(d: &mut Driver, keys: &[(u64, u64)], amplitude: [f64; 2]) -> Value {
+    let keys: Vec<Value> = keys
+        .iter()
+        .map(|(row, column)| json!({"row":row,"column":column}))
+        .collect();
+    d.ok(json!({"operation":"torus-play","keys":keys,"amplitude":amplitude}))
+}
+
+fn amplitudes(voices: &Value) -> Vec<[f64; 2]> {
+    voices
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| [float(&v["amplitude"][0]), float(&v["amplitude"][1])])
+        .collect()
 }
 
 fn cursor(reply: &Value) -> u64 {
@@ -276,7 +327,8 @@ fn the_torus_is_handed_over_as_it_stands_and_nothing_moves() {
 #[ignore = "needs QL_FIELD_WORKER"]
 fn the_handed_law_strikes_what_the_owners_torus_play_strikes() {
     let mut d = Driver::open();
-    d.ok(json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":3.5},"strike":0.6}}));
+    // Under Sky a key strikes the resident voices of the tuning (Logic gives each note its own cell: below).
+    d.ok(json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":3.5},"strike":0.6,"tuning":"sky"}}));
     d.ok(json!({"operation":"advance","frames":2401,"muted":false}));
     let reply = d.ok(json!({"operation":"torus-native"}));
     let native = &reply["torus_native"];
@@ -284,7 +336,9 @@ fn the_handed_law_strikes_what_the_owners_torus_play_strikes() {
     assert_eq!(law["contract"], "ql.torus-keys/v1");
     assert_eq!(law["arcs"].as_array().unwrap().len(), 36);
     assert_eq!(law["strike"], 0.6);
+    assert_eq!(law["tuning"], "sky");
     assert_eq!(law["tuning"], reply["torus"]["settings"]["tuning"]);
+    assert!(law["cells"].is_null(), "{law}");
     // Every voice of the tuning in force, by the native mode it sounds through.
     let modes = native["continuation"]["modes"].as_array().unwrap();
     let voices = law["voices"].as_array().unwrap();
@@ -300,27 +354,57 @@ fn the_handed_law_strikes_what_the_owners_torus_play_strikes() {
     let keys = [(0, 2), (3, 7), (5, 11)];
     let amplitude = [0.35, -0.1];
     let expected = impulses(law, &keys, amplitude, cursor(&reply));
-    let played = d.ok(json!({"operation":"torus-play","keys":keys.iter().map(|(r, c)| json!({"row":r,"column":c})).collect::<Vec<_>>(),
-        "amplitude":amplitude}));
-    let struck: Vec<[f64; 2]> = played["strike_at"]["voices"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .map(|v| [float(&v["amplitude"][0]), float(&v["amplitude"][1])])
-        .collect();
-    assert_eq!(struck, expected);
+    let played = play(&mut d, &keys, amplitude);
+    assert_eq!(amplitudes(&played["strike_at"]["voices"]), expected);
     // And at a later sample the pulse has carried the keys on: the law's steps are the owner's.
     d.ok(json!({"operation":"advance","frames":1777,"muted":false}));
     let expected = impulses(law, &keys, amplitude, cursor(&d.current));
-    let played = d.ok(json!({"operation":"torus-play","keys":keys.iter().map(|(r, c)| json!({"row":r,"column":c})).collect::<Vec<_>>(),
-        "amplitude":amplitude}));
-    let struck: Vec<[f64; 2]> = played["strike_at"]["voices"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .map(|v| [float(&v["amplitude"][0]), float(&v["amplitude"][1])])
-        .collect();
-    assert_eq!(struck, expected);
+    let played = play(&mut d, &keys, amplitude);
+    assert_eq!(amplitudes(&played["strike_at"]["voices"]), expected);
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn under_logic_the_handed_law_strikes_each_notes_own_cell_as_the_owner_does() {
+    let mut d = Driver::open();
+    d.ok(json!({"operation":"torus-set","edit":{"rate":{"mode":"free","steps_per_second":3.5},"strike":0.6}}));
+    d.ok(json!({"operation":"advance","frames":2401,"muted":false}));
+    let reply = d.ok(json!({"operation":"torus-native"}));
+    let native = &reply["torus_native"];
+    let law = &native["keys"];
+    assert_eq!(law["tuning"], "logic");
+    assert_eq!(law["tuning"], reply["torus"]["settings"]["tuning"]);
+    assert_eq!(
+        law["voice_law"],
+        ql_mef::continuous::scene_field::NOTE_VOICES_LAW
+    );
+    // A cell for every arc of the ring, each voice by the native mode it is like.
+    let modes = native["continuation"]["modes"].as_array().unwrap();
+    let cells = law["cells"].as_array().unwrap();
+    assert_eq!(cells.len(), 12);
+    for voice in cells.iter().flat_map(|cell| cell.as_array().unwrap()) {
+        let like = voice["like"].as_u64().unwrap() as usize;
+        assert_eq!(modes[like]["mode_ref"], voice["like_ref"]);
+    }
+    // The owner strikes the keys now, and again once the pulse has carried them on: each note's voices
+    // are the law's cell at its point, to the bit, and the notes are counted on from where the law stood.
+    let keys = [(0, 2), (3, 7), (5, 11)];
+    let amplitude = [0.35, -0.1];
+    let first: u64 = law["next_note"].as_str().unwrap().parse().unwrap();
+    for (i, frames) in [0, 1777].into_iter().enumerate() {
+        if frames > 0 {
+            d.ok(json!({"operation":"advance","frames":frames,"muted":false}));
+        }
+        let expected = note_impulses(law, &keys, amplitude, cursor(&d.current));
+        let played = play(&mut d, &keys, amplitude);
+        let notes = played["strike_at"]["notes"].as_array().unwrap();
+        let struck: Vec<Vec<[f64; 2]>> = notes
+            .iter()
+            .map(|note| amplitudes(&note["voices"]))
+            .collect();
+        assert_eq!(struck, expected);
+        assert_eq!(notes[0]["id"], first + (i * keys.len()) as u64);
+    }
 }
 
 #[test]
