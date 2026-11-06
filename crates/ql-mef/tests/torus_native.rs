@@ -33,6 +33,7 @@ fn open() -> FieldHost {
         }),
         material: None,
         reception: None,
+        reception_sky: None,
         torus: None,
     })
     .unwrap();

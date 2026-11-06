@@ -85,6 +85,7 @@ fn binding_request(instance: &str, config: Option<&str>) -> Result<BindingReques
             }),
             material: None,
             reception: None,
+            reception_sky: None,
             torus: None,
         },
     };

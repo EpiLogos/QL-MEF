@@ -752,6 +752,7 @@ fn open_scene(instance: &str) -> FieldHost {
         }),
         material: None,
         reception: None,
+        reception_sky: None,
         torus: None,
     })
     .unwrap();

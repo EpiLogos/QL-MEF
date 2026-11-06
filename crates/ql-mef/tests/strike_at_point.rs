@@ -51,6 +51,7 @@ fn synthetic_voice(i: usize, phase: f64) -> Voice {
 fn synthetic(phase: f64) -> ShapeBasis {
     ShapeBasis {
         shape_ref: "test:synthetic-body".into(),
+        world_ref: "test:synthetic-body".into(),
         address72: 0,
         voices: std::array::from_fn(|i| synthetic_voice(i, phase)),
         octet: Vec::new(),
