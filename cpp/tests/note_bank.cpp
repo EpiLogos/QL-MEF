@@ -153,6 +153,39 @@ int main() {
         assert(full.voice_now(&late, 1, nullptr, 0));
         assert(full.bank()[0].id == 99 && full.bank()[0].held && std::abs(full.bank()[0].fading[0].state) > 0);
     }
+    // Polyphony lowered below the notes sounding (DLW build ruling 2026-11-05, O-I #850): an act that voices no note makes the oldest
+    // make way, each fading over steal_seconds as one that made way for a newer note, never cut; one generation, allocation-free. An
+    // act that names neither a note nor one making way is refused, and one that only makes way is made at the cursor, never later.
+    {
+        ql::ContinuousField f(input());
+        const std::array<ql::NoteAct, 3> three{note(1, 200), note(2, 250), note(3, 300)};
+        assert(f.voice_now(three.data(), 3, nullptr, 0));
+        run(f, 480, 128);
+        const auto rang = f.bank();
+        const auto g = f.receipt().generation;
+        assert(!f.voice_now(nullptr, 0, nullptr, 0) && f.receipt().generation == g);
+        const std::array<std::uint64_t, 2> oldest{1, 2};
+        const std::size_t before = allocations;
+        assert(f.voice_now(nullptr, 0, oldest.data(), oldest.size()));
+        assert(allocations == before && f.receipt().generation == g + 1);
+        auto bank = f.bank();
+        assert(bank.size() == 3 && !bank[0].held && !bank[1].held && bank[2].held && bank[2].id == 3);
+        for (std::size_t s = 0; s < 2; ++s)
+            for (std::size_t k = 0; k < ql::note_voices; ++k)
+                assert(bank[s].fading[k].state == rang[s].voices[k].state && bank[s].voices[k].state == Complex(0, 0));
+        run(f, 96, 32);
+        bank = f.bank();
+        assert(std::abs(bank[0].fading[0].state) > 1e-3 * std::abs(rang[0].voices[0].state));
+        run(f, 96, 32);
+        bank = f.bank();
+        assert(std::abs(bank[0].fading[0].state) < 1e-3 * std::abs(rang[0].voices[0].state));
+        assert(std::abs(bank[2].voices[0].state) > 0);
+        bool refused = false;
+        try { f.voice({}, {3}, f.receipt().samples_elapsed + 10); } catch (const std::exception &) { refused = true; }
+        assert(refused && f.bank()[2].held);
+        f.voice({}, {3}, f.receipt().samples_elapsed);
+        assert(!f.bank()[2].held);
+    }
     // Any block partition renders the bank alike, sample for sample.
     {
         ql::ContinuousField a(input()), b(input());
@@ -291,7 +324,7 @@ int main() {
         assert(block_ms < 2.6667 / 4);
     }
     std::cout << "{\"schema\":\"ql.note-bank-acceptance/v1\",\"chord_sounds_each_notes_own_eight\":true,\"notes_drawn_as_heard\":true,\"refused_acts_move_nothing\":true,"
-                 "\"made_way_fades_full_bank_takes_oldest\":true,\"keys_count_as_the_owner\":true,\"partition_independent\":true,\"handover_continues\":true,"
+                 "\"made_way_fades_full_bank_takes_oldest\":true,\"polyphony_lowered_fades_the_oldest\":true,\"keys_count_as_the_owner\":true,\"partition_independent\":true,\"handover_continues\":true,"
                  "\"checkpoint_rings_on\":true,\"timed_note_lands_at_its_sample\":true,\"silence_stills_the_bank\":true,"
                  "\"keys_voice_their_struck_cell\":true,\"full_bank_allocates_nothing\":true,\"full_bank_block_cpu_ms\":"
               << block_ms << ",\"block_deadline_ms\":2.6667}\n";

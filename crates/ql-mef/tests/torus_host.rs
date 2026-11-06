@@ -599,6 +599,181 @@ fn past_polyphony_the_oldest_note_makes_way_and_its_voices_fade() {
     }
 }
 
+/// The bank slot of the note `id` (as a receipt names it) in a reply's field.
+fn slot<'a>(reply: &'a Value, id: &Value) -> &'a Value {
+    let id = json!(
+        id.as_u64()
+            .map_or_else(|| id.to_string(), |n| n.to_string())
+    );
+    reply["field"]["bank"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|slot| slot["id"] == id)
+        .unwrap_or_else(|| panic!("no bank slot holds note {id}: {}", reply["field"]["bank"]))
+}
+
+/// How much a slot's `lane` (its `voices`, or the `fading` voices of a note that made way) still rings: the norm of their states.
+fn rings_by(slot: &Value, lane: &str) -> f64 {
+    metres(&Value::Array(
+        slot[lane]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|voice| voice["amplitude"].clone())
+            .collect(),
+    ))
+    .iter()
+    .map(|x| x * x)
+    .sum::<f64>()
+    .sqrt()
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn lowering_polyphony_below_the_notes_sounding_makes_the_oldest_make_way_each_fading_over_four_ms()
+{
+    // DLW build ruling 2026-11-05 (O-I #850): lowering Polyphony below the notes now sounding makes the oldest notes make way at
+    // once, at the edit's sample. Each fades out over the same 4 ms a note that makes way for a newer one takes, never cut: what
+    // it rang moves whole into its fading voices, which ring on and are gone a thousandth after 4 ms. The bank moves by one act
+    // that voices no note, and the reply names it as any act of the bank is named, so a host that follows the owner fades them too.
+    let mut d = Driver::open();
+    let set = d.send(
+        json!({"operation":"torus-set","edit":{"tuning":"logic","polyphony":4,"strike":1.0}}),
+    );
+    assert_eq!(set["status"], "ok", "{set}");
+    let mut ids = Vec::new();
+    for key in [
+        json!({"row":0,"column":0}),
+        json!({"row":1,"column":2}),
+        json!({"row":2,"column":4}),
+    ] {
+        let played = d.send(json!({"operation":"torus-play","keys":[key],"amplitude":[0.5,0.0]}));
+        assert_eq!(played["status"], "ok", "{played}");
+        ids.push(played["torus_play"]["notes"][0]["id"].clone());
+    }
+    run_on(&mut d, 480);
+    let rate = d.current["field"]["sample_rate"].as_u64().unwrap();
+    let rang = d.current.clone();
+    // Polyphony that still holds every note sounding makes none make way, and moves nothing native.
+    let generation = d.generation();
+    let holds = d.send(json!({"operation":"torus-set","edit":{"polyphony":3}}));
+    assert_eq!(holds["status"], "ok", "{holds}");
+    assert_eq!(
+        d.generation(),
+        generation,
+        "no note makes way: nothing moves"
+    );
+    assert!(holds.get("note_voices").is_none(), "{holds}");
+    // Polyphony 1 under three notes: the two oldest make way now.
+    let lowered = d.send(json!({"operation":"torus-set","edit":{"polyphony":1}}));
+    assert_eq!(lowered["status"], "ok", "{lowered}");
+    assert_eq!(d.generation(), generation + 1, "one act of the bank");
+    let receipt = &lowered["note_voices"];
+    assert_eq!(receipt["schema"], "ql.note-voices/v1", "{lowered}");
+    assert_eq!(receipt["notes"], json!([]), "no note is voiced");
+    assert_eq!(
+        receipt["made_way"],
+        json!([ids[0], ids[1]]),
+        "the oldest two, oldest first"
+    );
+    assert_eq!(
+        receipt["at_samples_elapsed"], rang["field"]["samples_elapsed"],
+        "at the edit's sample"
+    );
+    let counted: Vec<Value> = lowered["torus"]["notes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|note| note["id"].clone())
+        .collect();
+    assert_eq!(counted, vec![ids[2].clone()], "the newest is still counted");
+    let mut began = Vec::new();
+    for (k, id) in ids.iter().enumerate() {
+        let (was, now) = (slot(&rang, id), slot(&lowered, id));
+        if k < 2 {
+            assert_eq!(now["held"], false, "note {id} made way: its slot is free");
+            assert_eq!(
+                now["fading"], was["voices"],
+                "never cut: what note {id} rang moves whole into its fading voices"
+            );
+            assert_eq!(rings_by(now, "voices"), 0.0);
+            began.push(rings_by(now, "fading"));
+            assert!(began[k] > 0.0, "note {id} was ringing");
+        } else {
+            assert_eq!(now["held"], true, "the newest note rings on");
+            assert_eq!(now["voices"], was["voices"], "and nothing moved it");
+        }
+    }
+    // Halfway through the 4 ms each still sounds; past them each is below a thousandth of where it began.
+    let half = rate * 2 / 1000;
+    run_on(&mut d, half);
+    for (id, began) in ids.iter().zip(&began) {
+        let now = rings_by(slot(&d.current, id), "fading");
+        assert!(
+            now > 1e-3 * began && now < 0.1 * began,
+            "note {id} is fading at 2 ms: {now} of {began}"
+        );
+    }
+    run_on(&mut d, half);
+    for (id, began) in ids.iter().zip(&began) {
+        let now = rings_by(slot(&d.current, id), "fading");
+        assert!(
+            now <= 1e-3 * began * (1.0 + 1e-9),
+            "note {id} has faded out by 4 ms: {now} of {began}"
+        );
+    }
+    assert!(
+        rings_by(slot(&d.current, &ids[2]), "voices") > 0.0,
+        "the newest rings on"
+    );
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn polyphony_lowered_for_a_later_sample_makes_the_oldest_make_way_there_and_the_block_names_it() {
+    // DLW build ruling 2026-11-05 with O-I 855: an edit of Polyphony sent ahead lands at its sample inside the block that
+    // reaches it, and the oldest notes make way there; the record of the setting made names them with the act of the bank.
+    let mut d = Driver::open();
+    let set = d.send(
+        json!({"operation":"torus-set","edit":{"tuning":"logic","polyphony":4,"strike":1.0}}),
+    );
+    assert_eq!(set["status"], "ok", "{set}");
+    let played = d.send(json!({"operation":"torus-play","keys":[{"row":0,"column":0},{"row":3,"column":1}],"amplitude":[0.5,0.0]}));
+    assert_eq!(played["status"], "ok", "{played}");
+    let ids: Vec<Value> = played["torus_play"]["notes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|note| note["id"].clone())
+        .collect();
+    let at = cursor(&d) + 700;
+    let waits = d.send(
+        json!({"operation":"torus-set","edit":{"polyphony":1},"at_samples_elapsed":at.to_string()}),
+    );
+    assert_eq!(waits["status"], "ok", "{waits}");
+    assert!(
+        waits.get("note_voices").is_none(),
+        "nothing moves before its sample"
+    );
+    let advanced = d.send(json!({"operation":"advance","frames":1024,"muted":true}));
+    assert_eq!(advanced["status"], "ok", "{advanced}");
+    let landed = &advanced["torus_set_landed"][0];
+    assert_eq!(landed["applied"], true, "{advanced}");
+    assert_eq!(landed["at_samples_elapsed"], json!(at.to_string()));
+    let receipt = &landed["note_voices"];
+    assert_eq!(receipt["schema"], "ql.note-voices/v1", "{landed}");
+    assert_eq!(receipt["notes"], json!([]));
+    assert_eq!(receipt["made_way"], json!([ids[0]]), "the oldest made way");
+    assert_eq!(
+        receipt["at_samples_elapsed"],
+        json!(at.to_string()),
+        "at its sample"
+    );
+    assert_eq!(slot(&advanced, &ids[0])["held"], false);
+    assert_eq!(slot(&advanced, &ids[1])["held"], true);
+}
+
 /// Advances the field `frames` samples, muted, in blocks the host takes.
 fn run_on(d: &mut Driver, mut frames: u64) {
     while frames > 0 {

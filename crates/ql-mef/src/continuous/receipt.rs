@@ -472,10 +472,12 @@ impl ReceiptGuard {
                 // Each note its own voices (QL-MEF #287): the bank moves, and the targets with it (the notes are drawn as they
                 // are heard); the resident voices and the clock do not. Voiced now, each note stands in the bank; voiced for a
                 // later sample, nothing moves yet.
+                // An act may voice none and only make way: Polyphony lowered (DLW build ruling 2026-11-05).
+                let made_way = request["made_way"].as_array().map_or(0, Vec::len);
                 let notes = request["notes"]
                     .as_array()
-                    .filter(|notes| !notes.is_empty() && notes.len() <= 32)
-                    .ok_or("an act voices 1 to 32 notes")?;
+                    .filter(|notes| notes.len() <= 32 && (!notes.is_empty() || made_way > 0))
+                    .ok_or("an act voices 1 to 32 notes, or none and makes way for at least one")?;
                 require(
                     value["clock"] == previous["clock"]
                         && value["amplitudes_metres"] == previous["amplitudes_metres"],

@@ -126,7 +126,9 @@ pub enum HostOperation {
     TorusState {},
     /// scene only: one edit of the Torus session. Rate, Carrier, Shape,
     /// Tuning, Polyphony and the set's tempo move no native state; the
-    /// Fundamental is one modes continuation of the same resident voices.
+    /// Fundamental is one modes continuation of the same resident voices,
+    /// and Polyphony lowered below the notes sounding fades the oldest in
+    /// the bank, named as `note_voices` (`POLYPHONY_MAKES_WAY_LAW`).
     /// `at_samples_elapsed` as for `strike` (O-I 855): an edit for a later
     /// sample waits, moving nothing, and the `advance` whose block reaches its
     /// sample makes it there, naming it in `torus_set_landed`.
@@ -661,9 +663,14 @@ impl FieldHost {
                 edit,
                 at_samples_elapsed,
             } => landing_of("a setting", at_samples_elapsed.as_deref())
-                .and_then(|at| instrument.torus_set_when(&edit, at))
-                .inspect(|_| {
+                .and_then(|at| instrument.torus_set_made(&edit, at))
+                .map(|made| {
                     extra.insert("influence".into(), instrument.influence());
+                    // Polyphony lowered: the act of the bank the notes that made way took (POLYPHONY_MAKES_WAY_LAW).
+                    if let Some(note_voices) = made.note_voices {
+                        extra.insert("note_voices".into(), note_voices);
+                    }
+                    made.field
                 }),
             HostOperation::TorusPlay {
                 keys,

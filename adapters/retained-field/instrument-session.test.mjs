@@ -71,13 +71,20 @@ function setup(options = {}) {
         const due = port.waiting.filter(set => BigInt(set.at_samples_elapsed) <= BigInt(current.samples_elapsed));
         port.waiting = port.waiting.filter(set => !due.includes(set));
         if (due.length) {
+          // Polyphony lowered below the notes sounding makes the oldest make way there, one act of the bank (POLYPHONY_MAKES_WAY_LAW).
           landed = due.map(set => ({ at_samples_elapsed: set.at_samples_elapsed, edit: set.edit, applied: true,
-            moved: Object.keys(set.edit) }));
+            moved: Object.keys(set.edit), ...(set.edit.polyphony !== undefined && port.makesWay
+              ? { note_voices: { schema: 'ql.note-voices/v1', notes: [], made_way: port.makesWay, at_samples_elapsed: set.at_samples_elapsed } } : {}) }));
           current.generation = String(BigInt(current.generation) + (port.landingStep ??
-            BigInt(landed.filter(set => set.moved.includes('fundamental')).length)));
+            BigInt(landed.filter(set => set.moved.includes('fundamental')).length + landed.filter(set => set.note_voices).length)));
         }
       } else if (waits) {
         // Nothing moves before its sample.
+      } else if (request.command.operation === 'torus-set' && request.command.edit?.polyphony !== undefined && port.makesWay) {
+        // Controlled protocol case (scene_field.rs POLYPHONY_MAKES_WAY_LAW): Polyphony lowered below the notes sounding is one act of
+        // the bank, named in the answer as note_voices (unless the case hides it).
+        current.generation = String(BigInt(current.generation) + 1n);
+        port.madeWayNow = !port.hideMadeWay;
       } else if (['m1-advance', 'replace-event'].includes(request.command.operation)) {
         // Controlled protocol cases; actual scene-owner evidence is separate.
         current.generation = String(BigInt(current.generation) +
@@ -141,6 +148,10 @@ function setup(options = {}) {
       }
       if (request.command.operation === 'torus-set')
         reply.influence = { schema: 'ql.expression-influence/v1', generation: current.generation, tuning: 'logic' };
+      if (port.madeWayNow) {
+        reply.note_voices = { schema: 'ql.note-voices/v1', notes: [], made_way: port.makesWay, at_samples_elapsed: current.samples_elapsed };
+        port.madeWayNow = false;
+      }
       if (request.command.operation === 'torus-checkpoint')
         reply.torus_checkpoint = port.checkpointBody ?? { schema: 'ql.torus-checkpoint/v1', taken_at_samples: current.samples_elapsed,
           sample_rate: 48000, amplitudes: [[0.25, -0.5]], voices: ['#3-0'] };
@@ -848,6 +859,28 @@ test('a Torus setting for a later sample moves nothing until the block that reac
   port.landingStep = 2n;
   drain();
   await assert.rejects(session.pump(), /native cursor disagree/);
+  session.dispose();
+});
+
+test('Polyphony lowered below the notes sounding is one act of the bank, named in its answer now or in the block that lands it (O-I #850)', async () => {
+  // DLW build ruling 2026-11-05: lowering Polyphony below the notes sounding makes the oldest make way at once, each fading out in the
+  // owner's bank over 4 ms. The bank moves by one act that voices no note and renders no sample: one generation, named as note_voices in
+  // the setting's answer, or in the record of a setting a block made at its sample. A generation moved without it disagrees.
+  const { session, port, context } = setup({ maxBlocks: 1 });
+  const drain = () => { context.currentTime = session.reading.audio.target_context_seconds; session.present(); };
+  port.makesWay = [3, 4];
+  await session.torusSet({ polyphony: 1 });
+  assert.deepEqual(session.reading.acknowledged, { generation: '2', samples_elapsed: '0' }, 'the bank moved by one act, no samples');
+  assert.equal(session.reading.queued_blocks, 0, 'it claims no presentation block');
+  assert.deepEqual(session.journal().acts.map(act => act.operation), ['torus-set']);
+  await session.torusSet({ polyphony: 1 }, { at_samples_elapsed: '700' });
+  assert.equal(session.reading.acknowledged.generation, '2', 'nothing moves before its sample');
+  await session.pump();
+  drain();
+  await session.pump();
+  assert.deepEqual(session.reading.acknowledged, { generation: '3', samples_elapsed: '1024' }, 'the block that lands it moves the bank once');
+  port.hideMadeWay = true;
+  await assert.rejects(session.torusSet({ polyphony: 1 }), /native cursor disagree/);
   session.dispose();
 });
 
