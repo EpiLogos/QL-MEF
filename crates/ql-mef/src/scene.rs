@@ -252,6 +252,7 @@ pub fn world(request: WorldRequest) -> Result<Value, String> {
         geometry: request.geometry,
         material: request.material,
         reception: None,
+        reception_sky: None,
         torus: request.torus.clone(),
     })?;
     Ok(

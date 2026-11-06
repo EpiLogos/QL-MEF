@@ -126,6 +126,11 @@ pub struct SceneConfig {
     /// reception of the event. Its receiver inputs arrive separately.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reception: Option<PersonalConstitution>,
+    /// Your own place's sky the scene is heard on, beside the world's sky its event carries (`RECEPTION_SKY_LAW`; QL-MEF #289
+    /// packet N): an `observer-private` `ql.sky-snapshot/v1` of the same instant. It is the owner's while it is open and is kept
+    /// nowhere: not in the event, a checkpoint, a render or a receipt.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reception_sky: Option<Value>,
     /// The Torus's saved sound: the M1′ settings it keeps, over the session's defaults (DLW
     /// manual §21.2 Rules: "A saved sound keeps every parameter … It opens with the same
     /// sound."). Absent, a new Torus opens with the defaults, Tuning Logic among them.
@@ -272,6 +277,10 @@ pub struct Boundary {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct ShapeBasis {
     pub shape_ref: String,
+    /// The form as the world's sky gives it (`RECEPTION_SKY_LAW`): `shape_ref` itself unless the scene is heard on your own
+    /// place's sky. A checkpoint keeps this one, never the form your place's sky gives.
+    #[serde(skip)]
+    pub world_ref: String,
     pub address72: u8,
     /// The Sky's voices, the dated sky's planets in scalar-degree order.
     pub voices: [Voice; VOICES],
@@ -343,7 +352,16 @@ impl SceneConfig {
             return Err("scene strike or gain outside the supported range".into());
         }
         self.torus_settings()?;
+        self.reception_sky()?;
         Ok(())
+    }
+
+    /// Your own place's sky this scene is heard on, read beside its event (`RECEPTION_SKY_LAW`); `None` is the world's sky.
+    pub fn reception_sky(&self) -> Result<Option<ReceptionSky>, String> {
+        self.reception_sky
+            .as_ref()
+            .map(|sky| ReceptionSky::read(sky, &self.basis))
+            .transpose()
     }
 
     /// The Torus settings this scene opens with: the saved sound's, over the session's
@@ -438,6 +456,16 @@ impl ShapeBasis {
     /// Reads the voices from a composed event: pitch and place from its sky bus,
     /// surface mode numbers from its own M2 Vimarśā reading.
     pub fn from_basis(basis: &CoupledBasis) -> Result<Self, String> {
+        Self::heard_on(basis, None)
+    }
+
+    /// The voices as the scene is heard on `reception`, your own place's sky (`RECEPTION_SKY_LAW`): each of the Sky's voices
+    /// stands at its planet's longitude as seen from there; every pitch, mode number and weight is the composed event's, and
+    /// `world_ref` names the form the world's sky gives. `None` is the world's sky.
+    pub fn heard_on(
+        basis: &CoupledBasis,
+        reception: Option<&ReceptionSky>,
+    ) -> Result<Self, String> {
         let reading = &basis.m2["vimarsha"]["reading"];
         let quartet = reading["nodal_quartet"]
             .as_array()
@@ -463,14 +491,19 @@ impl ShapeBasis {
         let max = hz.iter().cloned().fold(0.0, f64::max);
         let mut voices = Vec::with_capacity(VOICES);
         let mut shape_ref = format!("{PROVIDER}:a{address72}");
+        let mut world_ref = shape_ref.clone();
         for (i, (planet, voice)) in PLANETS.iter().zip(sky).enumerate() {
             if voice["planet_ref"] != *planet {
                 return Err("sky voices out of scalar-degree order".into());
             }
-            let longitude = voice["longitude_degrees"]
+            let worlds = voice["longitude_degrees"]
                 .as_f64()
                 .filter(|l| l.is_finite())
                 .ok_or("sky voice lacks its longitude")?;
+            let longitude = match reception {
+                Some(reception) => reception.longitude(planet)?,
+                None => worlds,
+            };
             let node = &quartet[i % 4];
             let small = |key: &str| node[key].as_u64().filter(|v| (1..=12).contains(v));
             let (m, n) = (
@@ -500,6 +533,7 @@ impl ShapeBasis {
             });
             // Whole degrees: a planet moving within its degree keeps its shape.
             shape_ref.push_str(&format!(":{m}x{n}@{}", longitude.floor() as i64));
+            world_ref.push_str(&format!(":{m}x{n}@{}", worlds.floor() as i64));
         }
         let boundaries = quartet
             .iter()
@@ -553,6 +587,7 @@ impl ShapeBasis {
         };
         Ok(Self {
             shape_ref,
+            world_ref,
             address72,
             voices: voices.try_into().map_err(|_| "voice count")?,
             octet: group(Tuning::Logic)?,
@@ -1072,6 +1107,9 @@ pub struct BindingRequest {
     /// Optional Nara constitution for a personal reception of this event.
     #[serde(default)]
     pub reception: Option<PersonalConstitution>,
+    /// Your own place's sky to hear the scene on, beside `sky`, the world's (`SceneConfig::reception_sky`, `RECEPTION_SKY_LAW`).
+    #[serde(default)]
+    pub reception_sky: Option<Value>,
     /// A saved Torus sound to open with (`SceneConfig::torus`); absent, a new Torus.
     #[serde(default)]
     pub torus: Option<m1_prime::SettingsEdit>,
@@ -1136,6 +1174,9 @@ pub(crate) fn attach_sky(event: &mut CoupledInput, sky: &Value) -> Result<(), St
     if sky["schema"] != "ql.sky-snapshot/v1" {
         return Err("sky must be an accepted ql.sky-snapshot/v1".into());
     }
+    if personal_sky(sky) {
+        return Err("your own place's sky cannot enter an event, which is the world's: the scene is heard on it beside the world's sky, as its reception sky (QL-MEF #289 packet N)".into());
+    }
     if sky["source_binding"]["registry_revision"] != json!(event.m2.registry_revision) {
         return Err("sky snapshot and M2 registry revision differ".into());
     }
@@ -1179,6 +1220,98 @@ pub(crate) fn attach_sky(event: &mut CoupledInput, sky: &Value) -> Result<(), St
         .retain(|receipt| receipt["schema"] != "ql.sky-snapshot/v1");
     event.source_receipts.push(sky.clone());
     Ok(())
+}
+
+/// Your own place's sky and the world's (O-I #856; QL-MEF #289 packet N; DLW manual §21.2 Rules: "Where you stand is yours. It is
+/// never shown, and never kept in a take, its render or a saved sound. A take renders in the world's context").
+pub const RECEPTION_SKY_LAW: &str = "an event is the world's: the sky it carries is the world's, the sky seen from the centre of the Earth for no observer, and your own place's sky never enters it, as the sky provider's own attach_m2 keeps a private observer's sky out of a shared event. The scene is heard on your own place's sky beside it, as its reception sky: the same instant, read in the same zodiac, as seen from your place. Only where the Sky's voices stand on the torus moves by it, each at its planet's longitude as seen from there, so a strike at a point, the surface you stand near and the picture are your sky's; every pitch, the event, its M2 reading and its seeds stay the world's. A checkpoint keeps the world's event and the form the world's sky gives, so a take or a sound is kept on the world's sky and your place's sky is not kept; a take renders in the world's context, on a second owner opened without it. Your place's sky is kept nowhere";
+/// The scope of the world's sky, as the sky provider states it (providers/sky/kerykeion_snapshot.py): seen from the centre of the
+/// Earth, for no observer.
+const WORLDS_SKY: &str = "shared-geocentric";
+
+/// Whether `sky` is your own place's sky (`RECEPTION_SKY_LAW`): scoped otherwise than the world's, or asked for an observer.
+pub fn personal_sky(sky: &Value) -> bool {
+    sky["scope"] != WORLDS_SKY || !sky["request"]["observer"].is_null()
+}
+
+/// Your own place's sky as the scene is heard on it (`RECEPTION_SKY_LAW`): the longitude of each planet the Sky's voices sound, as
+/// seen from there.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ReceptionSky {
+    longitudes: Vec<(&'static str, f64)>,
+}
+
+impl ReceptionSky {
+    /// Reads `sky`, your own place's, beside `event`, the world's: the same instant and zodiac as the world's sky the event
+    /// carries, under its M2 registry. Refused in words that name nothing of the place.
+    pub fn read(sky: &Value, event: &CoupledInput) -> Result<Self, String> {
+        if sky["schema"] != "ql.sky-snapshot/v1" {
+            return Err("a reception sky must be an accepted ql.sky-snapshot/v1".into());
+        }
+        if !personal_sky(sky) {
+            return Err(
+                "a reception sky is your own place's sky: the world's sky is the event's own"
+                    .into(),
+            );
+        }
+        let world = event
+            .source_receipts
+            .iter()
+            .find(|receipt| receipt["schema"] == "ql.sky-snapshot/v1")
+            .ok_or("your own place's sky is heard beside the world's sky of the same instant, and the event carries none")?;
+        if sky["epoch_unix_ms"].as_u64().is_none() || sky["epoch_unix_ms"] != world["epoch_unix_ms"]
+        {
+            return Err(
+                "your own place's sky and the world's sky were read for different instants".into(),
+            );
+        }
+        if sky["request"]["zodiac"] != world["request"]["zodiac"]
+            || sky["request"]["ayanamsha"] != world["request"]["ayanamsha"]
+        {
+            return Err(
+                "your own place's sky and the world's sky were read in different zodiacs".into(),
+            );
+        }
+        if sky["source_binding"]["registry_revision"] != json!(event.m2.registry_revision) {
+            return Err("your own place's sky and the M2 registry revision differ".into());
+        }
+        let planets = crate::m2::catalogue().table("planet")?;
+        let bodies = sky["bodies"]
+            .as_array()
+            .ok_or("your own place's sky states no bodies")?;
+        let longitudes = PLANETS
+            .iter()
+            .map(|planet| {
+                bodies
+                    .iter()
+                    .find(|body| {
+                        body["native_planet_id"]
+                            .as_u64()
+                            .filter(|id| *id < 10)
+                            .is_some_and(|id| planets.binding(id as usize) == Some(*planet))
+                    })
+                    .and_then(|body| body["longitude_degrees"].as_f64())
+                    .filter(|longitude| longitude.is_finite())
+                    .map(|longitude| (*planet, longitude))
+                    .ok_or_else(|| {
+                        "your own place's sky does not state every planet the Sky's voices sound"
+                            .to_string()
+                    })
+            })
+            .collect::<Result<_, String>>()?;
+        Ok(Self { longitudes })
+    }
+
+    /// Where `planet` stands as seen from your place, in degrees.
+    fn longitude(&self, planet: &str) -> Result<f64, String> {
+        self.longitudes
+            .iter()
+            .find(|(each, _)| *each == planet)
+            .map(|(_, longitude)| *longitude)
+            .ok_or_else(|| {
+                "your own place's sky does not state every planet the Sky's voices sound".into()
+            })
+    }
 }
 
 /// Current geometric successor T² plus its distinct source clocks. The
@@ -1263,6 +1396,7 @@ pub fn binding(request: BindingRequest) -> Result<Value, String> {
         geometry: request.geometry.unwrap_or_else(default_geometry),
         material: request.material.unwrap_or_else(default_material),
         reception: request.reception,
+        reception_sky: request.reception_sky,
         torus: request.torus,
     };
     config.validate()?;
@@ -1674,6 +1808,8 @@ pub struct SceneInstrument {
     hearing: Option<Hearing>,
     /// The form the body is made from (`torus-body`, `TORUS_BODY_LAW`); `None` while the torus rings.
     body: Option<SceneBody>,
+    /// Your own place's sky the scene is heard on (`RECEPTION_SKY_LAW`); `None` is the world's. Never kept or disclosed.
+    reception: Option<ReceptionSky>,
 }
 
 /// A form made the scene's body: the body its owner prepared, and the voices it rings, the scene's resident voices in the
@@ -1829,7 +1965,9 @@ impl SceneInstrument {
             MaterialFibre::Earth,
             settings.tuning,
         )?;
-        let shape = ShapeBasis::from_basis(&basis)?;
+        // Heard on your own place's sky where one stands beside the world's (`RECEPTION_SKY_LAW`).
+        let reception = config.reception_sky()?;
+        let shape = ShapeBasis::heard_on(&basis, reception.as_ref())?;
         let field = torus_field(&config.field, &shape, &config.geometry, &config.material)?;
         let personal = config
             .reception
@@ -1864,6 +2002,7 @@ impl SceneInstrument {
             moving: false,
             hearing: None,
             body: None,
+            reception,
         };
         instrument.heard = instrument.declared_gains();
         instrument.sync_carrier()?;
@@ -2489,7 +2628,7 @@ impl SceneInstrument {
         event.fundamental_hz = hz;
         let event = next_generation(&event, self.event.m2.stamp.identity.profile_generation)?;
         let (input, basis) = complete(&event, &self.material, self.fibre(), self.tuning())?;
-        let shape = ShapeBasis::from_basis(&basis)?;
+        let shape = ShapeBasis::heard_on(&basis, self.reception.as_ref())?;
         if !shape.same_body(&self.shape) {
             return Err("a Fundamental edit cannot change the scene's shapes".into());
         }
@@ -2785,7 +2924,8 @@ impl SceneInstrument {
             sample_rate: self.sample_rate()?,
             event: self.event(),
             seeds: self.session.current_basis().m2["vimarsha"]["reading"]["seed"].clone(),
-            shape_ref: self.shape.shape_ref.clone(),
+            // The form the world's sky gives, never the one your own place's sky gives (`RECEPTION_SKY_LAW`).
+            shape_ref: self.shape.world_ref.clone(),
             damping_per_second: self.material.damping_per_second,
             voices: self
                 .shape
@@ -2869,7 +3009,7 @@ impl SceneInstrument {
             material.damping_per_second = kept.damping_per_second;
             let event = next_generation(&kept.event, applied)?;
             let (_, basis) = complete(&event, &material, self.fibre(), tuning)?;
-            ShapeBasis::from_basis(&basis)?
+            ShapeBasis::heard_on(&basis, self.reception.as_ref())?
         };
         let voices: Vec<String> = shape
             .resident_voices()
@@ -2902,7 +3042,7 @@ impl SceneInstrument {
                     .into(),
             );
         }
-        if shape.shape_ref != kept.shape_ref {
+        if shape.world_ref != kept.shape_ref {
             return Err("the checkpoint's form is not this scene's: its shapes differ".into());
         }
         if !shape.resident(tuning) {
@@ -3070,11 +3210,11 @@ impl SceneInstrument {
             Some(checkpoint) => {
                 // A new take replaces the last render: its owner closes first.
                 self.render = None;
-                let mut owner = Box::new(SceneInstrument::open(
-                    &self.worker,
-                    (*self.opened).clone(),
-                    self.timeout,
-                )?);
+                // A take renders in the world's context (`RECEPTION_SKY_LAW`): its owner opens without your place's sky.
+                let mut worlds = (*self.opened).clone();
+                worlds.reception_sky = None;
+                let mut owner =
+                    Box::new(SceneInstrument::open(&self.worker, worlds, self.timeout)?);
                 owner.torus_restore(checkpoint)?;
                 owner
             }
@@ -3249,7 +3389,7 @@ impl SceneInstrument {
         // law the M1-advance path follows on its own address and clock).
         input.m3_commands = Vec::new();
         rebase_m3_request(&mut input.m3, &basis)?;
-        let shape = ShapeBasis::from_basis(&basis)?;
+        let shape = ShapeBasis::heard_on(&basis, self.reception.as_ref())?;
         let mut field = self.continue_field(input.clone(), &shape, strike)?;
         self.event = input;
         if shape != self.shape {
@@ -3288,7 +3428,7 @@ impl SceneInstrument {
             self.event.m2.stamp.identity.profile_generation,
         )?;
         let (input, basis) = complete(&event, &material, self.fibre(), self.tuning())?;
-        if ShapeBasis::from_basis(&basis)? != self.shape {
+        if ShapeBasis::heard_on(&basis, self.reception.as_ref())? != self.shape {
             return Err("a damping edit cannot change the scene shape or voices".into());
         }
         let field = self.session.replace_field_state(input.clone(), false)?;
@@ -3769,6 +3909,7 @@ mod tests {
         };
         let basis = ShapeBasis {
             shape_ref: "t".into(),
+            world_ref: "t".into(),
             address72: 0,
             voices: std::array::from_fn(|_| voice(1, 2, 1.0, 0.0)),
             octet: Vec::new(),
@@ -3812,6 +3953,7 @@ mod tests {
         };
         let shape = |m, n| ShapeBasis {
             shape_ref: "t".into(),
+            world_ref: "t".into(),
             address72: 0,
             voices: std::array::from_fn(|_| voice(m, n, 1.0, 0.7)),
             octet: Vec::new(),
@@ -3921,6 +4063,7 @@ mod scene_tests {
             geometry: None,
             material: None,
             reception: None,
+            reception_sky: None,
             torus: None,
         });
         assert!(result.unwrap_err().contains("registry revision differ"));
@@ -3952,6 +4095,7 @@ mod scene_tests {
             geometry: None,
             material: None,
             reception: None,
+            reception_sky: None,
             torus: None,
         })
         .unwrap();
@@ -3965,5 +4109,214 @@ mod scene_tests {
         );
         assert_eq!(reading["scene"]["snapshot_ref"], sky["snapshot_ref"]);
         assert_eq!(reading["host"]["basis"], json!(event));
+    }
+}
+
+/// Your own place's sky and the world's (O-I #856; QL-MEF #289 packet N; DLW manual §21.2 Rules, "Where you stand is yours. It is
+/// never shown, and never kept in a take, its render or a saved sound. A take renders in the world's context").
+#[cfg(test)]
+mod reception_tests {
+    use super::*;
+
+    /// The dated world sky the scene tests read: the shared geocentric sky, for no observer.
+    pub(crate) fn worlds_sky() -> Value {
+        serde_json::from_str(include_str!(
+            "../../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json"
+        ))
+        .unwrap()
+    }
+
+    /// A place made up for the tests: no one's.
+    pub(crate) fn your_place() -> Value {
+        json!({"reference":"place:made-up-home","longitude_degrees":12.5,"latitude_degrees":41.875,"altitude_metres":20.0})
+    }
+
+    /// The same instant's sky as seen from `your_place` (the provider's topocentric request, scoped `observer-private`): the Moon
+    /// stands `moon` degrees off where the world sees it, as its parallax moves it; the far planets stand where the world's do.
+    pub(crate) fn your_sky(moon: f64) -> Value {
+        let mut sky = worlds_sky();
+        sky["scope"] = json!("observer-private");
+        sky["request"]["perspective"] = json!("Topocentric");
+        sky["request"]["observer"] = your_place();
+        for body in sky["bodies"].as_array_mut().unwrap() {
+            if body["body"] == "Moon" {
+                let at = body["longitude_degrees"].as_f64().unwrap();
+                body["longitude_degrees"] = json!((at + moon).rem_euclid(360.0));
+            }
+        }
+        sky["snapshot_ref"] = json!("sha256:made-up-private-sky");
+        sky
+    }
+
+    fn holds_your_place(value: &Value) -> bool {
+        let text = value.to_string();
+        [
+            "observer-private",
+            "made-up-home",
+            "made-up-private-sky",
+            "41.875",
+        ]
+        .iter()
+        .any(|place| text.contains(place))
+    }
+
+    #[test]
+    fn your_own_places_sky_never_enters_an_event_and_the_worlds_does() {
+        let event: CoupledInput = serde_json::from_str(DEFAULT_EVENT).unwrap();
+        let mut unscoped = worlds_sky();
+        unscoped["request"]["observer"] = your_place();
+        for (sky, case) in [
+            (your_sky(0.9), "scoped as yours"),
+            (unscoped, "naming your place"),
+        ] {
+            let mut tried = event.clone();
+            let refused = attach_sky(&mut tried, &sky).unwrap_err();
+            assert!(
+                refused.contains("your own place's sky"),
+                "{case}: {refused}"
+            );
+            assert!(!holds_your_place(&json!(refused)), "{case}: {refused}");
+            assert_eq!(json!(tried), json!(event), "{case}: the event is unchanged");
+            // Nor through a binding, which attaches the sky the same way.
+            let bound = binding(BindingRequest {
+                schema: BINDING_REQUEST.into(),
+                instance_ref: "test:your-sky".into(),
+                texture: [8, 8],
+                units_per_metre: 1.0,
+                event: None,
+                sky: Some(sky),
+                field: None,
+                geometry: None,
+                material: None,
+                reception: None,
+                reception_sky: None,
+                torus: None,
+            });
+            assert!(
+                bound.unwrap_err().contains("your own place's sky"),
+                "{case}"
+            );
+        }
+        let mut world = event.clone();
+        attach_sky(&mut world, &worlds_sky()).unwrap();
+        assert!(world.source_receipts.contains(&worlds_sky()));
+    }
+
+    fn bound(reception_sky: Option<Value>) -> Result<Value, String> {
+        binding(BindingRequest {
+            schema: BINDING_REQUEST.into(),
+            instance_ref: "test:your-sky".into(),
+            texture: [8, 8],
+            units_per_metre: 1.0,
+            event: None,
+            sky: Some(worlds_sky()),
+            field: None,
+            geometry: None,
+            material: None,
+            reception: None,
+            reception_sky,
+            torus: None,
+        })
+    }
+
+    /// The planet the Moon's voice sounds, as the map binds the sky provider's body 1.
+    fn moon() -> &'static str {
+        let planets = crate::m2::catalogue().table("planet").unwrap();
+        PLANETS
+            .iter()
+            .find(|planet| planets.binding(1) == Some(**planet))
+            .unwrap()
+    }
+
+    #[test]
+    fn a_scene_on_your_own_places_sky_is_heard_there_beside_the_worlds_event() {
+        let (world, yours) = (bound(None).unwrap(), bound(Some(your_sky(0.9))).unwrap());
+        // The event, its composition and the scene read from its sky are the world's, as on the world's sky alone.
+        for key in ["native_basis", "scene", "native_readback"] {
+            assert_eq!(world[key], yours[key], "{key}");
+            assert!(!holds_your_place(&yours[key]), "{key}");
+        }
+        assert_eq!(world["host"]["basis"], yours["host"]["basis"]);
+        assert!(!holds_your_place(&yours["host"]["basis"]));
+        // Only the owner is handed your place's sky, to hear the scene on.
+        assert_eq!(yours["host"]["reception_sky"], your_sky(0.9));
+        assert!(world["host"].get("reception_sky").is_none());
+        let config: SceneConfig = serde_json::from_value(yours["host"].clone()).unwrap();
+        let (_, basis) = complete(
+            &config.opening_event(),
+            &config.material,
+            MaterialFibre::Earth,
+            config.torus_settings().unwrap().tuning,
+        )
+        .unwrap();
+        let reception = config.reception_sky().unwrap().unwrap();
+        let (heard, worlds) = (
+            ShapeBasis::heard_on(&basis, Some(&reception)).unwrap(),
+            ShapeBasis::from_basis(&basis).unwrap(),
+        );
+        // Each of the Sky's voices stands where your place sees its planet: the Moon 0.9° on, every other where the world sees it.
+        for (h, w) in heard.voices.iter().zip(&worlds.voices) {
+            let on = if h.planet_ref == moon() { 0.9 } else { 0.0 };
+            assert!(
+                (h.longitude_radians - (w.longitude_radians + f64::to_radians(on))).abs() < 1e-12,
+                "{}",
+                h.planet_ref
+            );
+            assert_eq!(
+                (h.frequency_hz, h.m, h.n, h.weight, h.phase_radians),
+                (w.frequency_hz, w.m, w.n, w.weight, w.phase_radians),
+                "{}: every pitch and term but its place is the world's",
+                h.planet_ref
+            );
+        }
+        assert_eq!(
+            (
+                &heard.octet,
+                &heard.maqam,
+                &heard.boundaries,
+                heard.address72
+            ),
+            (
+                &worlds.octet,
+                &worlds.maqam,
+                &worlds.boundaries,
+                worlds.address72
+            )
+        );
+        // The Moon crosses into its next degree as your place sees it: the form heard is yours, the form kept the world's.
+        assert_ne!(heard.shape_ref, worlds.shape_ref);
+        assert_eq!(heard.world_ref, worlds.shape_ref);
+        assert_eq!(worlds.world_ref, worlds.shape_ref);
+    }
+
+    #[test]
+    fn a_reception_sky_is_your_places_of_the_same_instant_and_zodiac_or_refused_naming_nothing_of_it()
+     {
+        let mut later = your_sky(0.9);
+        later["epoch_unix_ms"] = json!(later["epoch_unix_ms"].as_u64().unwrap() + 60_000);
+        let mut sidereal = your_sky(0.9);
+        sidereal["request"]["zodiac"] = json!("Sidereal");
+        sidereal["request"]["ayanamsha"] = json!("LAHIRI");
+        let mut moonless = your_sky(0.9);
+        moonless["bodies"]
+            .as_array_mut()
+            .unwrap()
+            .retain(|body| body["body"] != "Moon");
+        for (sky, words) in [
+            (worlds_sky(), "the world's sky is the event's own"),
+            (later, "different instants"),
+            (sidereal, "different zodiacs"),
+            (moonless, "every planet"),
+        ] {
+            let refused = bound(Some(sky)).unwrap_err();
+            assert!(refused.contains(words), "{words}: {refused}");
+            assert!(!holds_your_place(&json!(refused)), "{refused}");
+        }
+        let mut skyless: CoupledInput = serde_json::from_str(DEFAULT_EVENT).unwrap();
+        skyless
+            .source_receipts
+            .retain(|receipt| receipt["schema"] != "ql.sky-snapshot/v1");
+        let refused = ReceptionSky::read(&your_sky(0.9), &skyless).unwrap_err();
+        assert!(refused.contains("carries none"), "{refused}");
     }
 }

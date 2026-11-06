@@ -18,13 +18,18 @@ fn worker() -> PathBuf {
 }
 
 fn open() -> FieldHost {
+    open_on(None, None)
+}
+
+/// The scene on `sky` (the default event's own when `None`), heard on `reception_sky`, your own place's, where one is given.
+fn open_on(sky: Option<Value>, reception_sky: Option<Value>) -> FieldHost {
     let binding = ql_mef::continuous::scene_field::binding(BindingRequest {
         schema: BINDING_REQUEST.into(),
         instance_ref: "test:torus".into(),
         texture: [32, 16],
         units_per_metre: 1.0,
         event: None,
-        sky: None,
+        sky,
         field: None,
         geometry: Some(ql_mef::continuous::scene_field::SceneGeometry {
             longitude_samples: 32,
@@ -34,6 +39,7 @@ fn open() -> FieldHost {
         }),
         material: None,
         reception: None,
+        reception_sky,
         torus: None,
     })
     .unwrap();
@@ -48,7 +54,12 @@ struct Driver {
 
 impl Driver {
     fn open() -> Self {
-        let host = open();
+        Self::opened(open())
+    }
+    fn on(sky: Option<Value>, reception_sky: Option<Value>) -> Self {
+        Self::opened(open_on(sky, reception_sky))
+    }
+    fn opened(host: FieldHost) -> Self {
         let current = host.ready();
         assert_eq!(current["status"], "ready");
         Self { host, current }
@@ -3046,4 +3057,145 @@ fn returning_to_a_context_resumes_it_where_it_last_stood() {
             .contains("a place or a context"),
         "{both}"
     );
+}
+
+/// The dated world sky: the shared geocentric sky, for no observer.
+fn worlds_sky() -> Value {
+    serde_json::from_str(include_str!(
+        "../../../fixtures/kernel/sky-snapshot-world-2026-09-28-v5.json"
+    ))
+    .unwrap()
+}
+
+/// The same instant's sky as seen from a place made up for the tests (no one's), scoped `observer-private` as the sky provider
+/// scopes a topocentric reading: the Moon `moon` degrees off where the world sees it, as its parallax moves it.
+fn your_sky(moon: f64) -> Value {
+    let mut sky = worlds_sky();
+    sky["scope"] = json!("observer-private");
+    sky["request"]["perspective"] = json!("Topocentric");
+    sky["request"]["observer"] = json!({"reference":"place:made-up-home","longitude_degrees":12.5,"latitude_degrees":41.875,"altitude_metres":20.0});
+    for body in sky["bodies"].as_array_mut().unwrap() {
+        if body["body"] == "Moon" {
+            let at = body["longitude_degrees"].as_f64().unwrap();
+            body["longitude_degrees"] = json!((at + moon).rem_euclid(360.0));
+        }
+    }
+    sky["snapshot_ref"] = json!("sha256:made-up-private-sky");
+    sky
+}
+
+fn holds_your_place(value: &Value) -> bool {
+    let text = value.to_string();
+    [
+        "observer-private",
+        "made-up-home",
+        "made-up-private-sky",
+        "41.875",
+    ]
+    .iter()
+    .any(|place| text.contains(place))
+}
+
+#[test]
+#[ignore = "needs QL_FIELD_WORKER"]
+fn one_performance_on_the_worlds_sky_and_on_yours_is_heard_apart_and_kept_and_rendered_as_the_worlds()
+ {
+    // O-I #856 (QL-MEF #289 packet N; RECEPTION_SKY_LAW): the scene heard on your own place's sky beside the world's event. Under
+    // Tuning Sky the voices take the planets of the sky (DLW §21.2 To use the Torus, step 6), so where your place sees them is heard;
+    // a take or a sound is kept on the world's sky, and a take renders in the world's context.
+    let mut world = Driver::on(Some(worlds_sky()), None);
+    let mut mine = Driver::on(Some(worlds_sky()), Some(your_sky(0.9)));
+    let sky = json!({"operation":"torus-set","edit":{"tuning":"sky"}});
+    let (set_w, set_m) = (world.send(sky.clone()), mine.send(sky));
+    assert_eq!(set_m["status"], "ok", "{set_m}");
+    let (a, b) = (world.send(chord()), mine.send(chord()));
+    assert_eq!(b["status"], "ok", "{b}");
+    assert_eq!(
+        a["field"]["event_ref"], b["field"]["event_ref"],
+        "one event"
+    );
+    assert_eq!(
+        a["torus"]["settings"], b["torus"]["settings"],
+        "one session"
+    );
+    let (heard_w, heard_m) = (&set_w["influence"]["voices"], &set_m["influence"]["voices"]);
+    let places = |voices: &Value| -> Vec<(f64, f64)> {
+        voices
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| {
+                (
+                    v["frequency_hz"].as_f64().unwrap(),
+                    v["longitude_radians"].as_f64().unwrap(),
+                )
+            })
+            .collect()
+    };
+    let (pw, pm) = (places(heard_w), places(heard_m));
+    assert_eq!(pw.len(), 9, "{heard_w}");
+    assert_eq!(
+        pw.iter().map(|p| p.0).collect::<Vec<_>>(),
+        pm.iter().map(|p| p.0).collect::<Vec<_>>(),
+        "every pitch is the world's"
+    );
+    let moved: Vec<f64> = pw.iter().zip(&pm).map(|(w, m)| m.1 - w.1).collect();
+    assert_eq!(
+        moved.iter().filter(|d| d.abs() > 1e-12).count(),
+        1,
+        "only the Moon's voice stands elsewhere: {moved:?}"
+    );
+    assert!(
+        moved
+            .iter()
+            .any(|d| (d - f64::to_radians(0.9)).abs() < 1e-12)
+    );
+    let (live_w, live_m) = (
+        render_frames(&mut world, 4096, 1024),
+        render_frames(&mut mine, 4096, 1024),
+    );
+    assert_ne!(live_w, live_m, "heard on your own place's sky");
+
+    // Kept on the world's sky: the checkpoint is the world's event and the world's form, and nothing of your place.
+    let (kept_w, kept_m) = (
+        world.send(json!({"operation":"torus-checkpoint"})),
+        mine.send(json!({"operation":"torus-checkpoint"})),
+    );
+    assert_eq!(kept_m["status"], "ok", "{kept_m}");
+    let (cw, cm) = (&kept_w["torus_checkpoint"], &kept_m["torus_checkpoint"]);
+    for key in [
+        "event",
+        "shape_ref",
+        "seeds",
+        "voices",
+        "session",
+        "sample_rate",
+        "taken_at_samples",
+    ] {
+        assert_eq!(cw[key], cm[key], "{key}");
+    }
+    assert!(
+        cm["event"]["source_receipts"]
+            .as_array()
+            .unwrap()
+            .contains(&worlds_sky())
+    );
+    assert!(!holds_your_place(&kept_m), "{kept_m}");
+
+    // A take renders in the world's context: from the checkpoint kept on your sky, the same sound on either owner.
+    let render = |d: &mut Driver, checkpoint: &Value| {
+        let r = d.send(json!({"operation":"torus-render","checkpoint":checkpoint,"frames":4096,
+            "acts":[{"action":"strike","at_samples_elapsed":(checkpoint["taken_at_samples"].as_str().unwrap().parse::<u64>().unwrap() + 1024).to_string(),
+                "keys":[{"row":2,"column":6}],"amplitude":[0.3,0.0]}]}));
+        assert_eq!(r["status"], "ok", "{r}");
+        assert!(!holds_your_place(&r), "{r}");
+        audio(&r["torus_render"])
+    };
+    let rendered = render(&mut mine, cm);
+    assert_eq!(rendered, render(&mut world, cm));
+
+    // And the sound kept on your sky opens again on the owner it was kept on, heard there as before.
+    let restored = mine.send(json!({"operation":"torus-restore","checkpoint":cm}));
+    assert_eq!(restored["status"], "ok", "{restored}");
+    assert_eq!(places(&restored["influence"]["voices"]), pm);
 }
