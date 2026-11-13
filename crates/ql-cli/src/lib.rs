@@ -17,6 +17,7 @@ use std::fmt::{self, Display};
 use std::process::ExitCode;
 use std::str::FromStr;
 
+mod action_field;
 mod agent_event_command;
 pub mod configuration;
 mod context_frame_reading;
@@ -326,6 +327,8 @@ pub fn execute_cli(args: &[String]) -> Result<String, CliFailure> {
             option_env!("SUITE_BUILD_REVISION").unwrap_or("unknown")
         )),
         Some("capabilities") => plain(render_capabilities(json)),
+        Some("actions") => plain(action_field::actions(json)),
+        Some("action") => action_field::action_command(&args[1..]),
         Some("kernel") => plain(kernel_command(&args[1..], json)),
         Some("matheme") => plain(matheme_command(&args[1..], json)),
         Some("mef") => plain(mef_command(&args[1..], json)),
@@ -370,7 +373,7 @@ Nara personal field (contextual):\n  ql nara capabilities [--json]\n  ql nara <i
 Specialised constitution and invocation (contextual; not the generic Agent creator):\n  ql epi-agent constitution [--json]\n  ql epi-agent faculty <#0..#5> [--json]\n  ql epi-agent invoke <request.json> [--json]\n\n\
 Agent event reading (supplied events; deterministic completion before optional decisions):\n  ql agent-event project <request.json|-> [--json]\n  ql agent-event frame <request.json|-> [--json]\n  ql agent-event harmonic <request.json|-> [--json]\n  ql agent-event validate <request.json|-> [--json]\n\n\
 Service negotiation (operator negotiation, contextual supplied operations):\n  ql service capabilities [--json]\n  ql service negotiate <capabilities|locate|refract|relate|synthesise> [--json]\n                                    provider-backed operations disclose their current negotiated availability\n\n\
-System, diagnosis and configuration (operator; the configuration surface is disclosure-only):\n  ql verify [--json]\n  ql capabilities [--json]\n  ql kernel capabilities [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n                                    every contributed setting is read-only; mutation refuses with a structured unsupported_setting error\n  ql --version\n\n\
+System, diagnosis and configuration (operator; the configuration surface is disclosure-only):\n  ql verify [--json]\n  ql capabilities [--json]\n  ql actions [--json]\n                                    QL's Action field (oi.owner-action-field/v1): its routes as Actions, with their inputs\n  ql action run <id> <json|->\n                                    run one Action: its input, checked by name, makes the route's words\n  ql kernel capabilities [--json]\n  ql system [--json]\n  ql config-contribution [--json]\n  ql config validate --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config plan --setting <ref> [--scope <kind[:ref]>] (--value <json> | --value-file <path|->) [--json]\n  ql config apply (--plan-file <path|->) [--changeset <id>] [--json]\n  ql config reset --setting <ref> [--scope <kind[:ref]>] [--changeset <id>] [--json]\n                                    every contributed setting is read-only; mutation refuses with a structured unsupported_setting error\n  ql --version\n\n\
 The CLI projects accepted QL kernel, MEF registry, Context-Frame, Vāk registry, and service contracts.",
         env!("CARGO_PKG_VERSION")
     )
@@ -390,6 +393,8 @@ fn render_capabilities(json: bool) -> Result<String, CliError> {
         commands: vec![
             "capabilities",
             "version",
+            "actions",
+            "action.run",
             "kernel.capabilities",
             "kernel.m1",
             "kernel.m3",

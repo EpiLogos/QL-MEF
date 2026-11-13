@@ -1170,6 +1170,17 @@
     "crates/ql-codec/tests/thought.rs"
    ],
    "kind": "structural-index"
+  },
+  {
+   "path": "crates/ql-cli/src/action_field.rs",
+   "stratum": "rust",
+   "disposition": "infrastructural",
+   "coordinates": [],
+   "rationale": "QL's Action field for the O:I Action registry (O-I #1002): ql actions --json lists QL's routes as oi.owner-action-field/v1 Actions with their inputs and mutation class, and ql action run <id> <json|-> checks the input by name, makes the route's words and runs them through execute_cli in this process, so the answer or refusal is QL's own. It names routes; it computes nothing, binds no coordinate and persists nothing of its own.",
+   "tests": [
+    "crates/ql-cli/src/action_field.rs"
+   ],
+   "kind": "structural-index"
   }
  ]
 }
